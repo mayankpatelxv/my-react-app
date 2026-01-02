@@ -82,7 +82,7 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
         </nav>
 
         <div className="sidebar-bottom">
-          <div className="menu-item" onClick={() => {}}>
+          <div className="menu-item" onClick={() => onNavigate("Settings")}>
             <span className="menu-icon">⚙️</span>
             <span className="menu-text">Settings</span>
           </div>

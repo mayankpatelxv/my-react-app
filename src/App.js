@@ -12,6 +12,7 @@ import AddItem from './AddItem';
 import Sales from './Sales';
 import Purchases from './Purchases';
 import AnnualReports from './AnnualReports';
+import Settings from './Settings';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('landing');
@@ -70,6 +71,9 @@ function App() {
         break;
       case 'Annual Reports':
         setCurrentPage('annual-reports');
+        break;
+      case 'Settings':
+        setCurrentPage('settings');
         break;
       default:
         setCurrentPage('dashboard');
@@ -158,6 +162,11 @@ function App() {
           user={user} 
           onLogout={handleLogout} 
           onNavigate={handleNavigation}
+        />
+      )}
+      {currentPage === 'settings' && (
+        <Settings 
+          onBack={() => setCurrentPage('dashboard')}
         />
       )}
     </div>
