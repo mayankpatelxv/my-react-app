@@ -37,8 +37,8 @@ const LoginPage = ({ onSwitchToRegister, onLoginSuccess }) => {
         </div>
 
         <div className="login-header">
-          <h1>Login to Smart</h1>
-          <h1>Business Management</h1>
+          <h1>Login to</h1>
+          <h1>bizBuddy</h1>
         </div>
 
         <form onSubmit={handleLogin} className="login-form">
@@ -91,7 +91,7 @@ const LoginPage = ({ onSwitchToRegister, onLoginSuccess }) => {
       </div>
 
       <footer className="login-footer">
-        © 2025 Smart Business Management. All rights reserved.
+        © 2025 bizBuddy. All rights reserved.
       </footer>
     </div>
   );

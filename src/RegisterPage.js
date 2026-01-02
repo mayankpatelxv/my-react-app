@@ -63,7 +63,7 @@ const RegisterPage = ({ onSwitchToLogin }) => {
         
         <div className="register-header">
           <h1>Create Account</h1>
-          <h1>Smart Business Management</h1>
+          <h1>bizBuddy</h1>
         </div>
 
         <form onSubmit={handleRegister} className="register-form">
@@ -147,7 +147,7 @@ const RegisterPage = ({ onSwitchToLogin }) => {
       </div>
 
       <footer className="register-footer">
-        © 2025 Smart Business Management. All rights reserved.
+        © 2025 bizBuddy. All rights reserved.
       </footer>
     </div>
   );
