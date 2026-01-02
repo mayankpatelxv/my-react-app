@@ -97,8 +97,8 @@
 }
 
 .signup-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
 }
 
 /* Hero Section */
@@ -163,8 +163,8 @@
 }
 
 .cta-button.primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
 }
 
 .cta-button.secondary {
@@ -205,12 +205,11 @@
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);
   transition: transform 0.3s ease;
 }
 
 .dashboard-preview:hover {
-  transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+  transform: translateY(-5px);
 }
 
 .preview-header {
@@ -327,12 +326,6 @@
   flex: 1;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 4px 4px 0 0;
-  animation: growUp 1s ease-out;
-}
-
-@keyframes growUp {
-  from { height: 0; }
-  to { height: var(--height); }
 }
 
 /* Features Section */
@@ -376,8 +369,8 @@
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 .feature-icon {
@@ -507,8 +500,8 @@
 }
 
 .cta-button.large:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
 }
 
 .cta-note {
