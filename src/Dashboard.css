@@ -39,10 +39,11 @@
   font-weight: bold;
   font-size: 16px;
   box-shadow: 0 8px 25px rgba(74, 158, 255, 0.3);
+  transition: box-shadow 0.2s ease;
 }
 
 .logo-icon:hover {
-  box-shadow: 0 8px 25px rgba(74, 158, 255, 0.3);
+  box-shadow: 0 12px 35px rgba(74, 158, 255, 0.4);
 }
 
 .nav-menu {
@@ -56,6 +57,7 @@
   cursor: pointer;
   color: #6b7280;
   position: relative;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .menu-item:hover {
@@ -133,11 +135,12 @@
   cursor: pointer;
   font-size: 18px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .notification-btn:hover, .user-avatar:hover {
   background: rgba(255, 255, 255, 1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 /* Stats Grid */
@@ -157,10 +160,11 @@
   position: relative;
   overflow: hidden;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s ease;
 }
 
 .stat-card:hover {
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
 }
 
 .stat-header {
@@ -266,10 +270,11 @@
   position: relative;
   overflow: hidden;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease;
 }
 
 .action-btn:hover {
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
 }
 
 .action-btn.blue {

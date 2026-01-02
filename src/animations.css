@@ -1,39 +1,57 @@
-/* Simple Animations and Effects */
+/* Simple and Normal Animations */
 
-/* Disable all animations and transitions globally */
-*, *::before, *::after {
-  animation-duration: 0s !important;
-  animation-delay: 0s !important;
-  transition-duration: 0s !important;
-  transition-delay: 0s !important;
+/* Basic hover effects for buttons and interactive elements */
+button, .btn, .action-btn {
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Basic Fade In Animation - Disabled */
-@keyframes fadeIn {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 1;
-  }
+button:hover, .btn:hover, .action-btn:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Utility Classes - All disabled */
-.animate-fadeIn {
-  opacity: 1;
+/* Menu item hover effects */
+.menu-item {
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Simple Hover Effects - Minimal only */
-.hover-subtle {
-  transition: none;
+/* Card hover effects */
+.stat-card, .metric-card, .card {
+  transition: box-shadow 0.2s ease;
 }
 
-.hover-subtle:hover {
-  transform: none;
-  box-shadow: none;
+.stat-card:hover, .metric-card:hover, .card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Smooth Transitions - Disabled */
+/* Input focus effects */
+input, textarea, select {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
+}
+
+/* Icon hover effects */
+.logo-icon, .notification-btn, .user-avatar {
+  transition: box-shadow 0.2s ease;
+}
+
+.logo-icon:hover, .notification-btn:hover, .user-avatar:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Table row hover */
+tr:hover {
+  background-color: rgba(74, 158, 255, 0.05);
+}
+
+/* Link hover effects */
+a {
+  transition: color 0.2s ease;
+}
+
+/* Smooth transitions for all interactive elements */
 .smooth-transition {
-  transition: none;
+  transition: all 0.2s ease;
 }

@@ -45,6 +45,7 @@
   padding: 12px 20px;
   cursor: pointer;
   color: #6b7280;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .menu-item:hover {
@@ -120,6 +121,7 @@
   padding: 10px;
   cursor: pointer;
   font-size: 18px;
+  transition: background-color 0.2s ease;
 }
 
 .notification-btn:hover, .user-avatar:hover {
@@ -137,6 +139,7 @@
   padding: 10px 16px;
   cursor: pointer;
   font-weight: 500;
+  transition: background-color 0.2s ease;
 }
 
 .add-party-btn:hover {
@@ -172,10 +175,12 @@
   border-radius: 8px;
   font-size: 14px;
   outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .search-box input:focus {
   border-color: #4a9eff;
+  box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
 }
 
 .filter-dropdown {

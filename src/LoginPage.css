@@ -162,7 +162,7 @@
   font-size: 16px;
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   color: #1f2937;
 }
 
@@ -193,7 +193,7 @@
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
   position: relative;
   overflow: hidden;
   text-transform: uppercase;
@@ -218,8 +218,7 @@
 }
 
 .login-button:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 16px 35px rgba(102, 126, 234, 0.4);
 }
 
 .login-button:active {
