@@ -1,12 +1,8 @@
 {
-  "typescript.validate.enable": false,
-  "javascript.validate.enable": true,
-  "typescript.preferences.includePackageJsonAutoImports": "off",
-  "typescript.suggest.autoImports": false,
-  "javascript.preferences.includePackageJsonAutoImports": "on",
-  "javascript.suggest.autoImports": true,
-  "files.associations": {
-    "*.js": "javascript",
-    "*.jsx": "javascriptreact"
-  }
+  "json.schemas": [
+    {
+      "fileMatch": ["package.json"],
+      "schema": {}
+    }
+  ]
 }

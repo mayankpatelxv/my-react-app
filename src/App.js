@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import LandingPage from './LandingPage';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
 import Dashboard from './Dashboard';
@@ -13,8 +14,12 @@ import Purchases from './Purchases';
 import AnnualReports from './AnnualReports';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('login');
+  const [currentPage, setCurrentPage] = useState('landing');
   const [user, setUser] = useState(null);
+
+  const handleGetStarted = () => {
+    setCurrentPage('login');
+  };
 
   const switchToRegister = () => {
     setCurrentPage('register');
@@ -31,7 +36,7 @@ function App() {
 
   const handleLogout = () => {
     setUser(null);
-    setCurrentPage('login');
+    setCurrentPage('landing');
   };
 
   const handleNavigation = (pageName) => {
@@ -73,6 +78,9 @@ function App() {
 
   return (
     <div className="App">
+      {currentPage === 'landing' && (
+        <LandingPage onGetStarted={handleGetStarted} />
+      )}
       {currentPage === 'login' && (
         <LoginPage 
           onSwitchToRegister={switchToRegister} 
