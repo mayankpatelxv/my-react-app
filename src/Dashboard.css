@@ -39,12 +39,10 @@
   font-weight: bold;
   font-size: 16px;
   box-shadow: 0 8px 25px rgba(74, 158, 255, 0.3);
-  transition: all 0.2s ease;
 }
 
 .logo-icon:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 35px rgba(74, 158, 255, 0.4);
+  box-shadow: 0 8px 25px rgba(74, 158, 255, 0.3);
 }
 
 .nav-menu {
@@ -56,7 +54,6 @@
   align-items: center;
   padding: 12px 20px;
   cursor: pointer;
-  transition: all 0.2s ease;
   color: #6b7280;
   position: relative;
 }
@@ -135,14 +132,12 @@
   padding: 12px;
   cursor: pointer;
   font-size: 18px;
-  transition: all 0.2s ease;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .notification-btn:hover, .user-avatar:hover {
   background: rgba(255, 255, 255, 1);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 /* Stats Grid */
@@ -159,15 +154,13 @@
   border-radius: 20px;
   padding: 28px;
   border: 1px solid rgba(229, 231, 235, 0.8);
-  transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
 }
 
 .stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
 }
 
 .stat-header {
@@ -270,15 +263,13 @@
   cursor: pointer;
   font-weight: 600;
   font-size: 14px;
-  transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .action-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .action-btn.blue {

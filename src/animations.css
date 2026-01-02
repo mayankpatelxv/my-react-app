@@ -1,31 +1,39 @@
 /* Simple Animations and Effects */
 
-/* Basic Fade In Animation */
+/* Disable all animations and transitions globally */
+*, *::before, *::after {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+}
+
+/* Basic Fade In Animation - Disabled */
 @keyframes fadeIn {
   from {
-    opacity: 0;
+    opacity: 1;
   }
   to {
     opacity: 1;
   }
 }
 
-/* Utility Classes */
+/* Utility Classes - All disabled */
 .animate-fadeIn {
-  animation: fadeIn 0.3s ease-out forwards;
+  opacity: 1;
 }
 
-/* Simple Hover Effects */
+/* Simple Hover Effects - Minimal only */
 .hover-subtle {
-  transition: all 0.2s ease;
+  transition: none;
 }
 
 .hover-subtle:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: none;
+  box-shadow: none;
 }
 
-/* Smooth Transitions */
+/* Smooth Transitions - Disabled */
 .smooth-transition {
-  transition: all 0.2s ease;
+  transition: none;
 }
