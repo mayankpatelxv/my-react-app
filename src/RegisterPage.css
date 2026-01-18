@@ -310,10 +310,13 @@
   80%, 100% { text-shadow: 0.25em 0 0 white, 0.5em 0 0 white; }
 }
 
-/* Responsive Design */
+/* Enhanced Mobile Responsive Design for Android */
 @media (max-width: 768px) {
   .register-container {
     padding: 20px;
+    /* Better height handling on Android */
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
   }
   
   .register-card {
@@ -321,10 +324,15 @@
     padding: 40px 32px;
     max-width: 100%;
     border-radius: 20px;
+    /* Better positioning on Android */
+    position: relative;
+    top: auto;
+    transform: none;
   }
   
   .register-header h1 {
     font-size: 28px;
+    text-rendering: optimizeLegibility;
   }
   
   .logo-icon {
@@ -336,11 +344,24 @@
   .form-group input {
     padding: 14px 18px;
     font-size: 16px;
+    /* Better touch targets for Android */
+    min-height: 48px;
+    /* Prevent zoom on Android */
+    -webkit-user-select: text;
+    user-select: text;
   }
   
   .register-button {
     padding: 16px;
     font-size: 15px;
+    /* Enhanced touch target */
+    min-height: 56px;
+    /* Better touch feedback */
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .register-button:active {
+    transform: translateY(0) scale(0.98);
   }
 }
 
@@ -362,11 +383,19 @@
 @media (max-width: 480px) {
   .register-container {
     padding: 15px;
+    /* Android Chrome address bar fix */
+    height: 100vh;
+    height: -webkit-fill-available;
   }
   
   .register-card {
     padding: 32px 20px;
     border-radius: 16px;
+    /* Better centering on small Android screens */
+    margin: auto;
+    max-height: 95vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
   .register-header {
@@ -396,12 +425,17 @@
     padding: 12px 16px;
     font-size: 16px;
     border-radius: 12px;
+    /* Better input handling on Android */
+    -webkit-appearance: none;
+    appearance: none;
   }
   
   .register-button {
     padding: 14px;
     font-size: 14px;
     border-radius: 12px;
+    /* Better button interaction */
+    touch-action: manipulation;
   }
   
   .login-link {
@@ -414,12 +448,14 @@
     left: auto;
     transform: none;
     margin-top: 20px;
+    padding: 10px;
   }
 }
 
 @media (max-width: 360px) {
   .register-card {
     padding: 24px 16px;
+    margin: 5px;
   }
   
   .register-header h1 {
@@ -432,5 +468,53 @@
   
   .register-button {
     padding: 12px;
+  }
+}
+
+/* Android-specific optimizations */
+@media screen and (-webkit-min-device-pixel-ratio: 1.5) {
+  .register-card {
+    /* Hardware acceleration for better performance */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+  
+  .logo-icon {
+    /* Better rendering on high-DPI Android screens */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+}
+
+/* Landscape mode optimizations for Android */
+@media (max-height: 500px) and (orientation: landscape) {
+  .register-container {
+    padding: 10px;
+  }
+  
+  .register-card {
+    padding: 15px;
+    max-height: 98vh;
+    overflow-y: auto;
+  }
+  
+  .logo {
+    margin-bottom: 10px;
+  }
+  
+  .register-header {
+    margin-bottom: 15px;
+  }
+  
+  .register-header h1 {
+    font-size: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 12px;
+  }
+  
+  .name-row {
+    gap: 10px;
   }
 }

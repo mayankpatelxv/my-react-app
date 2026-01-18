@@ -324,10 +324,13 @@
   80%, 100% { text-shadow: 0.25em 0 0 white, 0.5em 0 0 white; }
 }
 
-/* Responsive Design */
+/* Enhanced Mobile Responsive Design for Android */
 @media (max-width: 768px) {
   .login-container {
     padding: 20px;
+    /* Better height handling on Android */
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
   }
   
   .login-card {
@@ -335,10 +338,15 @@
     padding: 40px 32px;
     max-width: 100%;
     border-radius: 20px;
+    /* Better positioning on Android */
+    position: relative;
+    top: auto;
+    transform: none;
   }
   
   .login-header h1 {
     font-size: 28px;
+    text-rendering: optimizeLegibility;
   }
   
   .logo-icon {
@@ -350,22 +358,43 @@
   .form-group input {
     padding: 14px 18px;
     font-size: 16px;
+    /* Better touch targets for Android */
+    min-height: 48px;
+    /* Prevent zoom on Android */
+    -webkit-user-select: text;
+    user-select: text;
   }
   
   .login-button {
     padding: 16px;
     font-size: 15px;
+    /* Enhanced touch target */
+    min-height: 56px;
+    /* Better touch feedback */
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .login-button:active {
+    transform: translateY(0) scale(0.98);
   }
 }
 
 @media (max-width: 480px) {
   .login-container {
     padding: 15px;
+    /* Android Chrome address bar fix */
+    height: 100vh;
+    height: -webkit-fill-available;
   }
   
   .login-card {
     padding: 32px 24px;
     border-radius: 16px;
+    /* Better centering on small Android screens */
+    margin: auto;
+    max-height: 90vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
   .login-header {
@@ -395,12 +424,17 @@
     padding: 12px 16px;
     font-size: 16px;
     border-radius: 12px;
+    /* Better input handling on Android */
+    -webkit-appearance: none;
+    appearance: none;
   }
   
   .login-button {
     padding: 14px;
     font-size: 14px;
     border-radius: 12px;
+    /* Better button interaction */
+    touch-action: manipulation;
   }
   
   .register-link {
@@ -413,12 +447,14 @@
     left: auto;
     transform: none;
     margin-top: 20px;
+    padding: 10px;
   }
 }
 
 @media (max-width: 360px) {
   .login-card {
     padding: 24px 20px;
+    margin: 10px;
   }
   
   .login-header h1 {
@@ -431,5 +467,49 @@
   
   .login-button {
     padding: 12px;
+  }
+}
+
+/* Android-specific optimizations */
+@media screen and (-webkit-min-device-pixel-ratio: 1.5) {
+  .login-card {
+    /* Hardware acceleration for better performance */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+  
+  .logo-icon {
+    /* Better rendering on high-DPI Android screens */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+}
+
+/* Landscape mode optimizations for Android */
+@media (max-height: 500px) and (orientation: landscape) {
+  .login-container {
+    padding: 10px;
+  }
+  
+  .login-card {
+    padding: 20px;
+    max-height: 95vh;
+    overflow-y: auto;
+  }
+  
+  .logo {
+    margin-bottom: 15px;
+  }
+  
+  .login-header {
+    margin-bottom: 20px;
+  }
+  
+  .login-header h1 {
+    font-size: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
   }
 }

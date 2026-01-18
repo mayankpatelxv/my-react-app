@@ -1,4 +1,4 @@
-/* Global Mobile Optimizations */
+/* Global Mobile Optimizations for Android */
 * {
   box-sizing: border-box;
 }
@@ -7,6 +7,10 @@ html {
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   touch-action: manipulation;
+  /* Better font rendering on Android */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
@@ -18,17 +22,26 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   min-height: 100vh;
+  /* Prevent bounce scrolling on mobile */
+  overscroll-behavior: none;
+  /* Better touch scrolling */
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Prevent zoom on input focus on iOS */
-input, select, textarea {
+/* Prevent zoom on input focus on iOS and Android */
+input, select, textarea, button {
   font-size: 16px !important;
+  /* Prevent zoom on Android */
+  -webkit-user-select: text;
+  user-select: text;
 }
 
-/* Improve touch targets */
-button, a, input, select, textarea {
-  min-height: 44px;
-  min-width: 44px;
+/* Improve touch targets for Android */
+button, a, input, select, textarea, [role="button"] {
+  min-height: 48px;
+  min-width: 48px;
+  /* Better touch response */
+  touch-action: manipulation;
 }
 
 /* Smooth scrolling */
@@ -44,17 +57,63 @@ button {
   border: none;
   background: none;
   cursor: pointer;
+  /* Better touch feedback */
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
 
-/* Improve tap highlighting */
+/* Improve tap highlighting for Android */
 * {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  -webkit-touch-callout: none;
 }
 
 /* Responsive images */
 img {
   max-width: 100%;
   height: auto;
+}
+
+/* Better form controls for Android */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+select,
+textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+  padding: 12px 16px;
+  font-size: 16px;
+  line-height: 1.5;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Android-specific fixes */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  select {
+    background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    padding-right: 40px;
+  }
 }
 
 /* Mobile-first responsive utilities */
@@ -74,6 +133,22 @@ img {
   .desktop-hidden {
     display: none;
   }
+}
+
+/* Android Chrome address bar fix */
+.full-height {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+}
+
+html {
+  height: -webkit-fill-available;
+}
+
+/* Better scrolling for Android */
+.scroll-container {
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
 }
 
 code {

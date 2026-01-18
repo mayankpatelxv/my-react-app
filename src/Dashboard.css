@@ -361,13 +361,13 @@
   display: none;
 }
 
-/* Mobile Responsive */
+/* Mobile Responsive - Enhanced for Android */
 @media (max-width: 1024px) {
   .mobile-menu-btn {
     display: block;
     position: fixed;
-    top: 20px;
-    left: 20px;
+    top: 15px;
+    left: 15px;
     z-index: 1001;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
@@ -377,10 +377,28 @@
     cursor: pointer;
     font-size: 18px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    /* Better touch target for Android */
+    min-width: 48px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Prevent text selection */
+    -webkit-user-select: none;
+    user-select: none;
+    /* Better touch feedback */
+    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
+  }
+  
+  .mobile-menu-btn:active {
+    transform: scale(0.95);
+    background: rgba(102, 126, 234, 0.1);
   }
   
   .dashboard-container {
     position: relative;
+    /* Prevent horizontal scroll on Android */
+    overflow-x: hidden;
   }
   
   .sidebar {
@@ -388,18 +406,26 @@
     left: -250px;
     top: 0;
     height: 100vh;
+    height: -webkit-fill-available; /* Android Chrome fix */
     z-index: 1000;
     transition: left 0.3s ease;
     width: 250px;
+    /* Better scrolling on Android */
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
   }
   
   .sidebar.mobile-open {
     left: 0;
+    /* Add shadow when open */
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
   }
   
   .main-content {
     margin-left: 0;
     width: 100%;
+    /* Prevent content from going under mobile menu */
+    padding-top: 70px;
   }
   
   .mobile-overlay {
@@ -411,6 +437,8 @@
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
     display: none;
+    /* Better touch handling */
+    touch-action: none;
   }
   
   .mobile-overlay.active {
@@ -421,6 +449,9 @@
 @media (max-width: 768px) {
   .main-content {
     padding: 80px 15px 20px;
+    /* Better spacing for Android */
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
   }
   
   .header {
@@ -428,14 +459,33 @@
     align-items: flex-start;
     gap: 15px;
     margin-bottom: 25px;
+    /* Better touch targets */
+    padding: 10px 0;
   }
   
   .header h1 {
     font-size: 24px;
+    /* Better text rendering on Android */
+    text-rendering: optimizeLegibility;
   }
   
   .header-actions {
     align-self: flex-end;
+    /* Better spacing for touch */
+    gap: 12px;
+  }
+  
+  .notification-btn, .user-avatar {
+    /* Enhanced touch targets for Android */
+    min-width: 48px;
+    min-height: 48px;
+    padding: 12px;
+    /* Better touch feedback */
+    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
+  }
+  
+  .notification-btn:active, .user-avatar:active {
+    transform: scale(0.95);
   }
   
   .stats-grid {
@@ -446,10 +496,18 @@
   
   .stat-card {
     padding: 20px;
+    /* Better touch interaction */
+    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.1);
+  }
+  
+  .stat-card:active {
+    transform: translateY(1px);
   }
   
   .stat-value {
     font-size: 24px;
+    /* Better text rendering */
+    text-rendering: optimizeLegibility;
   }
   
   .actions-grid {
@@ -459,16 +517,28 @@
   
   .action-btn {
     justify-content: center;
-    padding: 14px 20px;
+    padding: 16px 20px;
+    /* Enhanced touch targets */
+    min-height: 56px;
+    /* Better touch feedback */
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .action-btn:active {
+    transform: translateY(1px) scale(0.98);
   }
   
   .chart-section {
     padding: 20px;
     margin: 0 -5px;
+    /* Better scrolling if needed */
+    -webkit-overflow-scrolling: touch;
   }
   
   .chart-container {
     height: 250px;
+    /* Prevent horizontal scroll */
+    overflow-x: hidden;
   }
   
   .empty-icon {
@@ -477,16 +547,37 @@
   
   .empty-chart h3 {
     font-size: 18px;
+    text-rendering: optimizeLegibility;
   }
   
   .empty-chart p {
     font-size: 13px;
+    line-height: 1.5;
+  }
+  
+  /* Better menu item touch targets */
+  .menu-item {
+    padding: 16px 20px;
+    min-height: 56px;
+    /* Better touch feedback */
+    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.1);
+  }
+  
+  .menu-item:active {
+    background: rgba(102, 126, 234, 0.2);
   }
 }
 
 @media (max-width: 480px) {
   .main-content {
     padding: 70px 10px 15px;
+  }
+  
+  .mobile-menu-btn {
+    top: 10px;
+    left: 10px;
+    padding: 10px;
+    font-size: 16px;
   }
   
   .header h1 {
@@ -511,5 +602,25 @@
   
   .chart-container {
     height: 200px;
+  }
+  
+  .action-btn {
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+}
+
+/* Android-specific optimizations */
+@media screen and (-webkit-min-device-pixel-ratio: 1.5) {
+  .mobile-menu-btn {
+    /* Better rendering on high-DPI Android screens */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+  
+  .sidebar {
+    /* Hardware acceleration for smoother animations */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
   }
 }
