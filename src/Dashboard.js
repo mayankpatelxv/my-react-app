@@ -5,6 +5,7 @@ import AIChatbot from "./AIChatbot";
 const Dashboard = ({ user, onLogout, onNavigate }) => {
   const [activeMenu, setActiveMenu] = useState("Dashboard");
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
     { name: "Dashboard", icon: "📊" },
@@ -55,8 +56,22 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
 
   return (
     <div className="dashboard-container">
+      {/* Mobile Menu Button */}
+      <button 
+        className="mobile-menu-btn"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+      >
+        ☰
+      </button>
+
+      {/* Mobile Overlay */}
+      <div 
+        className={`mobile-overlay ${isMobileMenuOpen ? 'active' : ''}`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      ></div>
+
       {/* Sidebar */}
-      <div className="sidebar">
+      <div className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
         <div className="logo-section">
           <div className="logo-icon">
             <span>&lt;/&gt;</span>
@@ -70,6 +85,7 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
               className={`menu-item ${activeMenu === item.name ? "active" : ""}`}
               onClick={() => {
                 setActiveMenu(item.name);
+                setIsMobileMenuOpen(false);
                 if (item.name !== "Dashboard") {
                   onNavigate(item.name);
                 }
@@ -82,11 +98,17 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
         </nav>
 
         <div className="sidebar-bottom">
-          <div className="menu-item" onClick={() => onNavigate("Settings")}>
+          <div className="menu-item" onClick={() => {
+            setIsMobileMenuOpen(false);
+            onNavigate("Settings");
+          }}>
             <span className="menu-icon">⚙️</span>
             <span className="menu-text">Settings</span>
           </div>
-          <div className="menu-item logout" onClick={onLogout}>
+          <div className="menu-item logout" onClick={() => {
+            setIsMobileMenuOpen(false);
+            onLogout();
+          }}>
             <span className="menu-icon">🚪</span>
             <span className="menu-text">Logout</span>
           </div>

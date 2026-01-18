@@ -562,54 +562,234 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .navbar {
+    padding: 15px 30px;
+  }
+  
+  .hero-section {
+    padding: 100px 30px 60px;
+  }
+  
+  .features-section,
+  .benefits-section,
+  .how-it-works-section,
+  .cta-section {
+    padding: 60px 30px;
+  }
+  
+  .landing-footer {
+    padding: 40px 30px 20px;
+  }
+}
+
 @media (max-width: 768px) {
+  .navbar {
+    padding: 15px 20px;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .nav-actions {
+    flex-direction: row;
+    gap: 10px;
+  }
+  
+  .nav-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  
+  .hero-section {
+    padding: 80px 20px 40px;
+    min-height: auto;
+  }
+  
   .hero-content {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 30px;
     text-align: center;
   }
   
   .hero-title {
-    font-size: 36px;
+    font-size: 32px;
+  }
+  
+  .hero-description {
+    font-size: 16px;
   }
   
   .hero-actions {
     flex-direction: column;
     align-items: center;
+    gap: 15px;
+  }
+  
+  .cta-button {
+    width: 100%;
+    max-width: 280px;
   }
   
   .hero-stats {
     justify-content: center;
+    gap: 30px;
   }
   
-  .navbar {
-    padding: 15px 20px;
+  .dashboard-preview {
+    margin-top: 20px;
   }
   
-  .nav-actions {
+  .preview-content {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .preview-sidebar {
+    width: 100%;
+    padding: 15px;
+  }
+  
+  .preview-main {
+    padding: 15px;
+  }
+  
+  .preview-cards {
     flex-direction: column;
     gap: 10px;
   }
   
+  .features-section,
+  .benefits-section,
+  .how-it-works-section,
+  .cta-section {
+    padding: 40px 20px;
+  }
+  
+  .section-header h2 {
+    font-size: 28px;
+  }
+  
+  .section-header p {
+    font-size: 16px;
+  }
+  
   .features-grid {
     grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .feature-card {
+    padding: 25px;
   }
   
   .benefits-grid {
     grid-template-columns: 1fr;
+    gap: 30px;
   }
   
   .steps-container {
     grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .step {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .cta-content h2 {
+    font-size: 28px;
+  }
+  
+  .cta-content p {
+    font-size: 16px;
   }
   
   .footer-content {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 30px;
+    text-align: center;
   }
   
   .footer-links {
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 25px;
+  }
+  
+  .landing-footer {
+    padding: 30px 20px 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 12px 15px;
+  }
+  
+  .brand-name {
+    font-size: 20px;
+  }
+  
+  .logo-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
+  }
+  
+  .hero-section {
+    padding: 70px 15px 30px;
+  }
+  
+  .hero-title {
+    font-size: 28px;
+  }
+  
+  .hero-description {
+    font-size: 15px;
+  }
+  
+  .hero-stats {
+    gap: 20px;
+  }
+  
+  .stat-number {
+    font-size: 20px;
+  }
+  
+  .stat-label {
+    font-size: 12px;
+  }
+  
+  .features-section,
+  .benefits-section,
+  .how-it-works-section,
+  .cta-section {
+    padding: 30px 15px;
+  }
+  
+  .section-header h2 {
+    font-size: 24px;
+  }
+  
+  .feature-card {
+    padding: 20px;
+  }
+  
+  .feature-icon {
+    font-size: 40px;
+  }
+  
+  .benefit-icon {
+    font-size: 50px;
+  }
+  
+  .cta-content h2 {
+    font-size: 24px;
+  }
+  
+  .cta-button.large {
+    padding: 15px 30px;
+    font-size: 16px;
   }
 }
