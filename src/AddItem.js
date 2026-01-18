@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./AddItem.css";
+import { addItem } from "./supabaseClient";
 
 const AddItem = ({ user, onLogout, onNavigate }) => {
   const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ const AddItem = ({ user, onLogout, onNavigate }) => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const menuItems = [
     { name: "Dashboard", icon: "📊" },
@@ -67,36 +69,49 @@ const AddItem = ({ user, onLogout, onNavigate }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
     
     try {
-      // Here you would typically save to your database
-      console.log("Adding new item:", formData);
+      // Validate required fields
+      if (!formData.name || !formData.price || !formData.stockLevel) {
+        setError("Please fill in all required fields");
+        setIsLoading(false);
+        return;
+      }
+
+      // Save to Supabase
+      const result = await addItem(formData, user.id);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      alert(`Item "${formData.name}" has been added successfully!`);
-      
-      // Reset form
-      setFormData({
-        name: "",
-        category: "Electronics",
-        unit: "Pcs",
-        price: "",
-        stockLevel: "",
-        minStockLevel: "",
-        description: "",
-        sku: "",
-        barcode: "",
-        supplier: "",
-        location: "",
-        weight: "",
-        dimensions: "",
-        notes: ""
-      });
+      if (result.success) {
+        alert(`Item "${formData.name}" has been added successfully!`);
+        
+        // Reset form
+        setFormData({
+          name: "",
+          category: "Electronics",
+          unit: "Pcs",
+          price: "",
+          stockLevel: "",
+          minStockLevel: "",
+          description: "",
+          sku: "",
+          barcode: "",
+          supplier: "",
+          location: "",
+          weight: "",
+          dimensions: "",
+          notes: ""
+        });
+        
+        // Navigate back to Item Management
+        onNavigate("Item Management");
+      } else {
+        setError(result.error || "Failed to add item");
+      }
       
     } catch (error) {
-      alert("Error adding item: " + error.message);
+      setError("Error adding item: " + error.message);
+      console.error("Error adding item:", error);
     } finally {
       setIsLoading(false);
     }
@@ -130,7 +145,7 @@ const AddItem = ({ user, onLogout, onNavigate }) => {
         </nav>
 
         <div className="sidebar-bottom">
-          <div className="menu-item" onClick={() => {}}>
+          <div className="menu-item" onClick={() => onNavigate("Settings")}>
             <span className="menu-icon">⚙️</span>
             <span className="menu-text">Settings</span>
           </div>
@@ -164,6 +179,13 @@ const AddItem = ({ user, onLogout, onNavigate }) => {
 
         {/* Form Content */}
         <div className="form-container">
+          {error && (
+            <div className="error-message">
+              <span className="error-icon">❌</span>
+              {error}
+            </div>
+          )}
+          
           <form onSubmit={handleSubmit} className="item-form">
             {/* Basic Information */}
             <div className="form-section">

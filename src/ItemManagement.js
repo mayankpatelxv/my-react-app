@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./ItemManagement.css";
+import { getItems, deleteItem } from "./supabaseClient";
 
 const ItemManagement = ({ user, onLogout, onNavigate }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeMenu, setActiveMenu] = useState("Item Management");
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const menuItems = [
     { name: "Dashboard", icon: "📊" },
@@ -14,64 +18,30 @@ const ItemManagement = ({ user, onLogout, onNavigate }) => {
     { name: "Annual Reports", icon: "📈" }
   ];
 
-  const items = [
-    {
-      id: 1,
-      name: "Wireless Ergonomic Mouse",
-      category: "Electronics",
-      unit: "Pcs",
-      price: 29.99,
-      stockLevel: 75
-    },
-    {
-      id: 2,
-      name: "Premium Ballpoint Pens (Blue, 12-pack)",
-      category: "Stationery",
-      unit: "Box",
-      price: 12.50,
-      stockLevel: 200
-    },
-    {
-      id: 3,
-      name: "A4 Photo Paper (Glossy, 100 sheets)",
-      category: "Office Supplies",
-      unit: "Pcs",
-      price: 18.00,
-      stockLevel: 45
-    },
-    {
-      id: 4,
-      name: "USB-C to HDMI Adapter",
-      category: "Electronics",
-      unit: "Pcs",
-      price: 24.99,
-      stockLevel: 8
-    },
-    {
-      id: 5,
-      name: "Desktop Organizer with Drawers",
-      category: "Office Furniture",
-      unit: "Pcs",
-      price: 35.75,
-      stockLevel: 15
-    },
-    {
-      id: 6,
-      name: "High-Speed External SSD 1TB",
-      category: "Electronics",
-      unit: "Pcs",
-      price: 99.99,
-      stockLevel: 60
-    },
-    {
-      id: 7,
-      name: "Organic Coffee Beans (500g)",
-      category: "Pantry",
-      unit: "Kg",
-      price: 15.00,
-      stockLevel: 25
+  useEffect(() => {
+    fetchItems();
+  }, [user]);
+
+  const fetchItems = async () => {
+    if (!user?.id) return;
+    
+    setLoading(true);
+    setError("");
+    
+    try {
+      const result = await getItems(user.id);
+      if (result.success) {
+        setItems(result.data || []);
+      } else {
+        setError(result.error || "Failed to fetch items");
+      }
+    } catch (err) {
+      setError("Failed to fetch items");
+      console.error("Error fetching items:", err);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   const filteredItems = items.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -86,12 +56,28 @@ const ItemManagement = ({ user, onLogout, onNavigate }) => {
 
   const handleEdit = (itemId) => {
     console.log("Edit item:", itemId);
-    // Future implementation
+    // Navigate to edit item page (you can implement this later)
+    // onNavigate("Edit Item", { itemId });
   };
 
-  const handleDelete = (itemId) => {
-    console.log("Delete item:", itemId);
-    // Future implementation
+  const handleDelete = async (itemId) => {
+    if (!window.confirm("Are you sure you want to delete this item?")) {
+      return;
+    }
+
+    try {
+      const result = await deleteItem(itemId, user.id);
+      if (result.success) {
+        // Remove item from local state
+        setItems(items.filter(item => item.id !== itemId));
+        alert("Item deleted successfully!");
+      } else {
+        alert("Error deleting item: " + result.error);
+      }
+    } catch (err) {
+      alert("Error deleting item: " + err.message);
+      console.error("Error deleting item:", err);
+    }
   };
 
   return (
@@ -123,7 +109,7 @@ const ItemManagement = ({ user, onLogout, onNavigate }) => {
         </nav>
 
         <div className="sidebar-bottom">
-          <div className="menu-item" onClick={() => {}}>
+          <div className="menu-item" onClick={() => onNavigate("Settings")}>
             <span className="menu-icon">⚙️</span>
             <span className="menu-text">Settings</span>
           </div>
@@ -173,57 +159,81 @@ const ItemManagement = ({ user, onLogout, onNavigate }) => {
         <div className="items-section">
           <h2>Available Items</h2>
           
-          <div className="items-table-container">
-            <table className="items-table">
-              <thead>
-                <tr>
-                  <th>Item Name</th>
-                  <th>Category</th>
-                  <th>Unit</th>
-                  <th>Price</th>
-                  <th>Stock Level</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredItems.map((item) => (
-                  <tr key={item.id}>
-                    <td className="item-name">{item.name}</td>
-                    <td className="category">{item.category}</td>
-                    <td className="unit">{item.unit}</td>
-                    <td className="price">${item.price}</td>
-                    <td className="stock-level">
-                      <span className={`stock-badge ${getStockStatus(item.stockLevel)}`}>
-                        {item.stockLevel}
-                      </span>
-                    </td>
-                    <td className="actions">
-                      <button 
-                        className="action-btn edit-btn"
-                        onClick={() => handleEdit(item.id)}
-                        title="Edit Item"
-                      >
-                        ✏️
-                      </button>
-                      <button 
-                        className="action-btn delete-btn"
-                        onClick={() => handleDelete(item.id)}
-                        title="Delete Item"
-                      >
-                        🗑️
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {loading && (
+            <div className="loading-state">
+              <div className="loading-spinner">⏳</div>
+              <p>Loading items...</p>
+            </div>
+          )}
 
-          {filteredItems.length === 0 && (
+          {error && (
+            <div className="error-state">
+              <div className="error-icon">❌</div>
+              <p>{error}</p>
+              <button onClick={fetchItems} className="retry-btn">
+                Try Again
+              </button>
+            </div>
+          )}
+
+          {!loading && !error && (
+            <div className="items-table-container">
+              <table className="items-table">
+                <thead>
+                  <tr>
+                    <th>Item Name</th>
+                    <th>Category</th>
+                    <th>Unit</th>
+                    <th>Price</th>
+                    <th>Stock Level</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredItems.map((item) => (
+                    <tr key={item.id}>
+                      <td className="item-name">{item.name}</td>
+                      <td className="category">{item.category}</td>
+                      <td className="unit">{item.unit}</td>
+                      <td className="price">${item.price}</td>
+                      <td className="stock-level">
+                        <span className={`stock-badge ${getStockStatus(item.stock_level)}`}>
+                          {item.stock_level}
+                        </span>
+                      </td>
+                      <td className="actions">
+                        <button 
+                          className="action-btn edit-btn"
+                          onClick={() => handleEdit(item.id)}
+                          title="Edit Item"
+                        >
+                          ✏️
+                        </button>
+                        <button 
+                          className="action-btn delete-btn"
+                          onClick={() => handleDelete(item.id)}
+                          title="Delete Item"
+                        >
+                          🗑️
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {!loading && !error && filteredItems.length === 0 && (
             <div className="empty-state">
               <div className="empty-icon">📦</div>
               <h3>No Items Found</h3>
-              <p>No items match your search criteria. Try adjusting your search or add new items.</p>
+              <p>
+                {items.length === 0 
+                  ? "You haven't added any items yet. Click 'Add Item' to get started!"
+                  : "No items match your search criteria. Try adjusting your search or add new items."
+                }
+              </p>
             </div>
           )}
         </div>

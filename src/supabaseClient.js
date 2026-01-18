@@ -216,3 +216,149 @@ export const deleteParty = async (partyId, userId) => {
     };
   }
 };
+
+// Item management functions
+export const addItem = async (itemData, userId) => {
+  try {
+    console.log("Attempting to insert item:", itemData);
+    console.log("User ID:", userId);
+    
+    const insertData = {
+      name: itemData.name,
+      category: itemData.category,
+      unit: itemData.unit,
+      price: parseFloat(itemData.price),
+      stock_level: parseInt(itemData.stockLevel),
+      min_stock_level: itemData.minStockLevel ? parseInt(itemData.minStockLevel) : null,
+      description: itemData.description || null,
+      sku: itemData.sku || null,
+      barcode: itemData.barcode || null,
+      supplier: itemData.supplier || null,
+      location: itemData.location || null,
+      weight: itemData.weight ? parseFloat(itemData.weight) : null,
+      dimensions: itemData.dimensions || null,
+      notes: itemData.notes || null,
+      user_id: userId.toString()
+    };
+    
+    console.log("Insert data:", insertData);
+    
+    const { data, error } = await supabase
+      .from("items")
+      .insert([insertData])
+      .select();
+
+    if (error) {
+      console.log("Supabase Error:", error);
+      return {
+        success: false,
+        error: error.message || "Database error occurred",
+      };
+    } else {
+      console.log("Item inserted successfully:", data);
+      return { success: true, data: data[0] };
+    }
+  } catch (err) {
+    console.log("Network/Connection Error:", err);
+    return {
+      success: false,
+      error: "Connection failed. Please check your internet connection.",
+    };
+  }
+};
+
+export const getItems = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .from("items")
+      .select("*")
+      .eq("user_id", userId.toString())
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.log("Get Items Error:", error);
+      return { success: false, error: error.message || "Failed to fetch items" };
+    } else {
+      console.log("Items fetched successfully:", data);
+      return { success: true, data };
+    }
+  } catch (err) {
+    console.log("Network/Connection Error:", err);
+    return {
+      success: false,
+      error: "Connection failed. Please check your internet connection.",
+    };
+  }
+};
+
+export const updateItem = async (itemId, itemData, userId) => {
+  try {
+    console.log("Attempting to update item:", itemId, itemData);
+    
+    const updateData = {
+      name: itemData.name,
+      category: itemData.category,
+      unit: itemData.unit,
+      price: parseFloat(itemData.price),
+      stock_level: parseInt(itemData.stockLevel),
+      min_stock_level: itemData.minStockLevel ? parseInt(itemData.minStockLevel) : null,
+      description: itemData.description || null,
+      sku: itemData.sku || null,
+      barcode: itemData.barcode || null,
+      supplier: itemData.supplier || null,
+      location: itemData.location || null,
+      weight: itemData.weight ? parseFloat(itemData.weight) : null,
+      dimensions: itemData.dimensions || null,
+      notes: itemData.notes || null
+    };
+    
+    const { data, error } = await supabase
+      .from("items")
+      .update(updateData)
+      .eq("id", itemId)
+      .eq("user_id", userId)
+      .select();
+
+    if (error) {
+      console.log("Supabase Error:", error);
+      return {
+        success: false,
+        error: error.message || "Database error occurred",
+      };
+    } else {
+      console.log("Item updated successfully:", data);
+      return { success: true, data: data[0] };
+    }
+  } catch (err) {
+    console.log("Network/Connection Error:", err);
+    return {
+      success: false,
+      error: "Connection failed. Please check your internet connection.",
+    };
+  }
+};
+
+export const deleteItem = async (itemId, userId) => {
+  try {
+    const { data, error } = await supabase
+      .from("items")
+      .delete()
+      .eq("id", itemId)
+      .eq("user_id", userId)
+      .select();
+
+    if (error) {
+      console.log("Delete Item Error:", error);
+      return { success: false, error: error.message || "Failed to delete item" };
+    } else {
+      console.log("Item deleted successfully:", data);
+      return { success: true, data: data[0] };
+    }
+  } catch (err) {
+    console.log("Network/Connection Error:", err);
+    return {
+      success: false,
+      error: "Connection failed. Please check your internet connection.",
+    };
+  }
+};
