@@ -84,11 +84,11 @@ export const migrateUserPasswords = async () => {
   try {
     console.log("Starting password migration...");
     
-    // Get all users with plain text passwords
+    // Get all users with plain text passwords (or where password_hashed is false/null)
     const { data: users, error: fetchError } = await supabase
       .from("users_data")
-      .select("id, email, password")
-      .is("password_hashed", false);
+      .select("id, email, password, password_hashed")
+      .or("password_hashed.is.null,password_hashed.eq.false");
 
     if (fetchError) {
       console.log("Error fetching users:", fetchError);
@@ -101,7 +101,13 @@ export const migrateUserPasswords = async () => {
     }
 
     // Update each user's password
+    let migratedCount = 0;
     for (const user of users) {
+      // Skip if password is already hashed or empty
+      if (!user.password || user.password === 'RESET_REQUIRED') {
+        continue;
+      }
+
       const hashedPassword = btoa(user.password);
       
       const { error: updateError } = await supabase
@@ -116,10 +122,11 @@ export const migrateUserPasswords = async () => {
         console.log(`Error updating user ${user.email}:`, updateError);
       } else {
         console.log(`Updated password for user: ${user.email}`);
+        migratedCount++;
       }
     }
 
-    return { success: true, message: `Migrated ${users.length} user passwords` };
+    return { success: true, message: `Migrated ${migratedCount} user passwords` };
   } catch (err) {
     console.log("Migration Error:", err);
     return { success: false, error: err.message };
