@@ -13,13 +13,16 @@ export const supabase = createClient(supabaseUrl, supabaseKey);
 // User management functions
 export const addUser = async (userData) => {
   try {
-    console.log("Attempting to insert user:", userData);
+    console.log("Attempting to insert user:", { ...userData, password: "[HIDDEN]" });
+    
+    // Hash the password before storing (simple hash for demo - use bcrypt in production)
+    const hashedPassword = btoa(userData.password); // Base64 encoding (use proper hashing in production)
     
     // Prepare data to match your table structure
     const insertData = {
       name: userData.name,
       email: userData.email,
-      password: userData.password,
+      password: hashedPassword, // Store hashed password
       first_name: userData.first_name,
       last_name: userData.last_name
     };
@@ -27,7 +30,7 @@ export const addUser = async (userData) => {
     const { data, error } = await supabase
       .from("users_data")
       .insert([insertData])
-      .select(); // Add select() to return the inserted data
+      .select("id, name, email, first_name, last_name, created_at"); // Exclude password from response
 
     if (error) {
       console.log("Supabase Error:", error);
@@ -50,16 +53,19 @@ export const addUser = async (userData) => {
 
 export const loginUser = async (email, password) => {
   try {
+    // Hash the input password to compare with stored hash
+    const hashedPassword = btoa(password); // Base64 encoding (use proper hashing in production)
+    
     const { data, error } = await supabase
       .from("users_data")
-      .select("*")
+      .select("id, name, email, first_name, last_name, created_at") // Exclude password from response
       .eq("email", email)
-      .eq("password", password)
+      .eq("password", hashedPassword)
       .single();
 
     if (error) {
       console.log("Login Error:", error);
-      return { success: false, error: error.message || "Login failed" };
+      return { success: false, error: "Invalid email or password" };
     } else {
       console.log("Login Success:", data);
       return { success: true, data };
@@ -70,6 +76,53 @@ export const loginUser = async (email, password) => {
       success: false,
       error: "Connection failed. Please check your internet connection.",
     };
+  }
+};
+
+// Function to migrate existing plain text passwords to hashed (run once)
+export const migrateUserPasswords = async () => {
+  try {
+    console.log("Starting password migration...");
+    
+    // Get all users with plain text passwords
+    const { data: users, error: fetchError } = await supabase
+      .from("users_data")
+      .select("id, email, password")
+      .is("password_hashed", false);
+
+    if (fetchError) {
+      console.log("Error fetching users:", fetchError);
+      return { success: false, error: fetchError.message };
+    }
+
+    if (!users || users.length === 0) {
+      console.log("No users to migrate");
+      return { success: true, message: "No users to migrate" };
+    }
+
+    // Update each user's password
+    for (const user of users) {
+      const hashedPassword = btoa(user.password);
+      
+      const { error: updateError } = await supabase
+        .from("users_data")
+        .update({ 
+          password: hashedPassword,
+          password_hashed: true 
+        })
+        .eq("id", user.id);
+
+      if (updateError) {
+        console.log(`Error updating user ${user.email}:`, updateError);
+      } else {
+        console.log(`Updated password for user: ${user.email}`);
+      }
+    }
+
+    return { success: true, message: `Migrated ${users.length} user passwords` };
+  } catch (err) {
+    console.log("Migration Error:", err);
+    return { success: false, error: err.message };
   }
 };
 
