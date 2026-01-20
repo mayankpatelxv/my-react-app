@@ -207,6 +207,20 @@
   background-clip: text;
 }
 
+.stat-card.green .stat-value {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-card.purple .stat-value {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .stat-card.red .stat-value {
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   -webkit-background-clip: text;
@@ -626,18 +640,22 @@
 }
 /* Chart Styles */
 .simple-chart {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 20px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .chart-bars {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: flex-end;
   height: 200px;
-  gap: 40px;
+  gap: 60px;
+  width: 100%;
+  max-width: 400px;
 }
 
 .chart-bar {
@@ -645,50 +663,54 @@
   flex-direction: column;
   align-items: center;
   flex: 1;
-  max-width: 120px;
+  max-width: 100px;
 }
 
 .bar-label {
   font-size: 14px;
   font-weight: 600;
   color: #374151;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  text-align: center;
 }
 
 .bar-container {
-  width: 60px;
-  height: 150px;
+  width: 50px;
+  height: 120px;
   background: #f3f4f6;
   border-radius: 8px;
   display: flex;
   align-items: flex-end;
   overflow: hidden;
   position: relative;
+  border: 2px solid #e5e7eb;
 }
 
 .bar {
   width: 100%;
-  border-radius: 8px 8px 0 0;
+  border-radius: 6px 6px 0 0;
   transition: height 0.8s ease;
   position: relative;
+  min-height: 10px;
 }
 
 .sales-bar {
   background: linear-gradient(135deg, #4a9eff 0%, #667eea 100%);
-  box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(74, 158, 255, 0.3);
 }
 
 .purchases-bar {
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
 }
 
 .bar-value {
   font-size: 12px;
   font-weight: 600;
   color: #6b7280;
-  margin-top: 8px;
+  margin-top: 10px;
   text-align: center;
+  white-space: nowrap;
 }
 
 .loading-chart {
@@ -697,9 +719,7 @@
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 .loading-chart .loading-icon {
