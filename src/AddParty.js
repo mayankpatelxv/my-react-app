@@ -175,6 +175,7 @@ const AddParty = ({ user, onLogout, onNavigate }) => {
                   >
                     <option value="Customer">Customer</option>
                     <option value="Supplier">Supplier</option>
+                    <option value="Both">Both (Customer & Supplier)</option>
                   </select>
                 </div>
 

@@ -1,36 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Purchases.css";
+import { getItems, getParties, createPurchaseWithItems, uploadPurchaseDocument } from "./supabaseClient";
+import PurchasesList from "./PurchasesList";
 
 const Purchases = ({ user, onLogout, onNavigate }) => {
   const [activeMenu, setActiveMenu] = useState("Purchases");
-  const [selectedSupplier, setSelectedSupplier] = useState("Global Tech Solutions");
-  const [purchaseDate, setPurchaseDate] = useState("2025-12-30");
-  const [invoiceNumber, setInvoiceNumber] = useState("INV-2025-001");
+  const [selectedSupplier, setSelectedSupplier] = useState("");
+  const [selectedSupplierId, setSelectedSupplierId] = useState(null);
+  const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString().split('T')[0]);
+  const [billNumber, setBillNumber] = useState("");
   const [attachedDocument, setAttachedDocument] = useState("");
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showPurchasesList, setShowPurchasesList] = useState(false);
+  
+  // Data from database
+  const [availableItems, setAvailableItems] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
+  const [loadingData, setLoadingData] = useState(true);
 
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      name: "Laptop Pro X",
-      quantity: 2,
-      unitCost: 1200,
-      total: 2400
-    },
-    {
-      id: 2,
-      name: "Wireless Keyboard",
-      quantity: 1,
-      unitCost: 75,
-      total: 75
-    },
-    {
-      id: 3,
-      name: "Office Chair Deluxe",
-      quantity: 3,
-      unitCost: 250,
-      total: 750
-    }
-  ]);
+  const [items, setItems] = useState([]);
 
   const menuItems = [
     { name: "Dashboard", icon: "📊" },
@@ -41,26 +31,58 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
     { name: "Annual Reports", icon: "📈" }
   ];
 
-  const suppliers = [
-    "Global Tech Solutions",
-    "Office Supplies Inc",
-    "Tech Hardware Ltd",
-    "Business Equipment Co",
-    "Digital Solutions Provider"
-  ];
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchData();
+  }, [user]);
 
-  const availableItems = [
-    "Laptop Pro X",
-    "Wireless Keyboard",
-    "Office Chair Deluxe",
-    "Desktop Monitor",
-    "Printer Multifunction",
-    "External Hard Drive",
-    "Wireless Mouse",
-    "Standing Desk",
-    "Conference Phone",
-    "Projector HD"
-  ];
+  const fetchData = async () => {
+    if (!user?.id) return;
+    
+    setLoadingData(true);
+    try {
+      // Fetch items and parties in parallel
+      const [itemsResult, partiesResult] = await Promise.all([
+        getItems(user.id),
+        getParties(user.id)
+      ]);
+
+      if (itemsResult.success) {
+        setAvailableItems(itemsResult.data);
+      } else {
+        console.error("Failed to fetch items:", itemsResult.error);
+      }
+
+      if (partiesResult.success) {
+        console.log("All parties fetched:", partiesResult.data);
+        
+        // Filter for suppliers only (matching the actual party_type values from AddParty)
+        const supplierList = partiesResult.data.filter(party => 
+          party.party_type === 'Supplier' || party.party_type === 'Both'
+        );
+        
+        console.log("Filtered supplier list:", supplierList);
+        setSuppliers(supplierList);
+        
+        // Set first supplier as default if available
+        if (supplierList.length > 0) {
+          setSelectedSupplier(supplierList[0].name);
+          setSelectedSupplierId(supplierList[0].id);
+        }
+      } else {
+        console.error("Failed to fetch parties:", partiesResult.error);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoadingData(false);
+    }
+  };
+
+  // If showing purchases list, render that component
+  if (showPurchasesList) {
+    return <PurchasesList user={user} onBack={() => setShowPurchasesList(false)} />;
+  }
 
   const calculateGrandTotal = () => {
     return items.reduce((sum, item) => sum + item.total, 0);
@@ -94,10 +116,18 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
     }));
   };
 
-  const handleItemNameChange = (itemId, newName) => {
+  const handleItemChange = (itemId, field, value) => {
     setItems(items.map(item => 
-      item.id === itemId ? { ...item, name: newName } : item
+      item.id === itemId 
+        ? { ...item, [field]: value }
+        : item
     ));
+  };
+
+  const handleSupplierChange = (supplierName) => {
+    setSelectedSupplier(supplierName);
+    const supplier = suppliers.find(s => s.name === supplierName);
+    setSelectedSupplierId(supplier ? supplier.id : null);
   };
 
   const handleRemoveItem = (itemId) => {
@@ -105,32 +135,136 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
   };
 
   const handleAddItem = () => {
+    if (availableItems.length === 0) {
+      alert("No items available. Please add items in Item Management first.");
+      return;
+    }
+    
+    // Add first available item that's not already in the list
+    const availableItem = availableItems.find(item => 
+      !items.some(selectedItem => selectedItem.itemId === item.id)
+    );
+    
+    if (!availableItem) {
+      alert("All available items have been added to the purchase.");
+      return;
+    }
+    
     const newItem = {
-      id: Date.now(),
-      name: "New Item",
+      id: Date.now(), // Temporary ID for the UI
+      itemId: availableItem.id, // Reference to the actual item
+      name: availableItem.name,
+      unitCost: availableItem.price || 0,
       quantity: 1,
-      unitCost: 0,
-      total: 0
+      total: availableItem.price || 0,
+      description: availableItem.description
     };
     setItems([...items, newItem]);
   };
 
-  const handleSavePurchase = () => {
-    console.log("Saving purchase...", {
-      supplier: selectedSupplier,
-      purchaseDate,
-      invoiceNumber,
-      items,
-      total: calculateGrandTotal()
-    });
-    alert("Purchase entry saved successfully!");
+  const handleSavePurchase = async () => {
+    if (!selectedSupplier) {
+      alert("Please select a supplier.");
+      return;
+    }
+    
+    if (items.length === 0) {
+      alert("Please add at least one item to the purchase.");
+      return;
+    }
+    
+    if (items.some(item => item.quantity <= 0)) {
+      alert("All items must have a quantity greater than 0.");
+      return;
+    }
+
+    setIsSaving(true);
+    
+    try {
+      let documentPath = null;
+      
+      // First, upload the file if there is one
+      if (uploadedFile) {
+        console.log("Starting file upload...");
+        setIsUploading(true);
+        const uploadResult = await uploadPurchaseDocument(uploadedFile, user.id, null);
+        setIsUploading(false);
+        
+        console.log("Upload result:", uploadResult);
+        
+        if (uploadResult.success) {
+          documentPath = uploadResult.data.path;
+          console.log("File uploaded successfully, path:", documentPath);
+        } else {
+          console.error("Upload failed:", uploadResult.error);
+          alert("Failed to upload document: " + uploadResult.error);
+          setIsSaving(false);
+          return;
+        }
+      }
+
+      console.log("Creating purchase with document path:", documentPath);
+
+      const purchaseData = {
+        supplierName: selectedSupplier,
+        supplierId: selectedSupplierId,
+        billNumber: billNumber || null, // Will be auto-generated if empty
+        purchaseDate: purchaseDate,
+        subtotal: calculateGrandTotal(),
+        taxRate: 0,
+        taxAmount: 0,
+        discountAmount: 0,
+        totalAmount: calculateGrandTotal(),
+        status: 'pending',
+        paymentTerms: null,
+        notes: null,
+        attachedDocument: documentPath || attachedDocument || null // Use uploaded file path or text
+      };
+
+      const result = await createPurchaseWithItems(purchaseData, items, user.id);
+      
+      if (result.success) {
+        alert(`Purchase saved successfully! Bill #${result.data.purchase.bill_number}`);
+        
+        // Reset form
+        setItems([]);
+        setBillNumber("");
+        setAttachedDocument("");
+        setUploadedFile(null);
+        
+        // Optionally navigate to a purchases list or dashboard
+        // onNavigate("Dashboard");
+      } else {
+        alert("Failed to save purchase: " + result.error);
+      }
+    } catch (error) {
+      console.error("Error saving purchase:", error);
+      alert("Failed to save purchase. Please try again.");
+    } finally {
+      setIsSaving(false);
+      setIsUploading(false);
+    }
   };
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        alert("Please upload only PDF, JPEG, PNG, GIF, or WebP files.");
+        return;
+      }
+      
+      // Validate file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        alert("File size must be less than 10MB.");
+        return;
+      }
+      
+      setUploadedFile(file);
       setAttachedDocument(file.name);
-      console.log("File uploaded:", file.name);
+      console.log("File selected for upload:", file.name);
     }
   };
 
@@ -182,6 +316,12 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
             <h1>Purchases - Create Entry</h1>
           </div>
           <div className="header-actions">
+            <button 
+              className="view-history-btn"
+              onClick={() => setShowPurchasesList(true)}
+            >
+              📋 View Purchase History
+            </button>
             <button className="notification-btn">🔔</button>
             <div className="user-menu">
               <button className="user-avatar" onClick={onLogout}>
@@ -193,170 +333,233 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
 
         {/* Purchase Content */}
         <div className="purchase-content">
-          {/* Purchase Details */}
-          <div className="section purchase-details-section">
-            <h2>Purchase Details</h2>
-            <div className="purchase-details-grid">
-              <div className="form-group">
-                <label htmlFor="supplier">Supplier</label>
-                <select
-                  id="supplier"
-                  value={selectedSupplier}
-                  onChange={(e) => setSelectedSupplier(e.target.value)}
-                  className="supplier-select"
-                >
-                  {suppliers.map(supplier => (
-                    <option key={supplier} value={supplier}>{supplier}</option>
-                  ))}
-                </select>
+          {loadingData ? (
+            <div className="loading-container">
+              <div className="loading-spinner">⏳</div>
+              <p>Loading data...</p>
+            </div>
+          ) : (
+            <>
+              {/* Purchase Details */}
+              <div className="section purchase-details-section">
+                <h2>Purchase Details</h2>
+                <div className="purchase-details-grid">
+                  <div className="form-group">
+                    <label htmlFor="supplier">Supplier</label>
+                    <select
+                      id="supplier"
+                      value={selectedSupplier}
+                      onChange={(e) => handleSupplierChange(e.target.value)}
+                      className="supplier-select"
+                      disabled={suppliers.length === 0}
+                    >
+                      <option value="">Select a supplier...</option>
+                      {suppliers.map(supplier => (
+                        <option key={supplier.id} value={supplier.name}>
+                          {supplier.name}
+                        </option>
+                      ))}
+                    </select>
+                    {suppliers.length === 0 && (
+                      <p className="no-data-message">
+                        No suppliers found. Please add suppliers in Party Management first.
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="purchaseDate">Purchase Date</label>
+                    <input
+                      type="date"
+                      id="purchaseDate"
+                      value={purchaseDate}
+                      onChange={(e) => setPurchaseDate(e.target.value)}
+                      className="date-input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="billNumber">Bill / Invoice No.</label>
+                    <input
+                      type="text"
+                      id="billNumber"
+                      value={billNumber}
+                      onChange={(e) => setBillNumber(e.target.value)}
+                      className="invoice-input"
+                      placeholder="Leave empty for auto-generation"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="attachDocument">Attach Document</label>
+                    <div className="file-upload-container">
+                      <input
+                        type="file"
+                        id="attachDocument"
+                        onChange={handleFileUpload}
+                        className="file-input"
+                        accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
+                        disabled={isUploading}
+                      />
+                      <label htmlFor="attachDocument" className={`file-upload-btn ${isUploading ? 'uploading' : ''}`}>
+                        {isUploading ? '⏳ Uploading...' : '📎 Choose File'}
+                      </label>
+                      {attachedDocument && (
+                        <div className="file-info">
+                          <span className="file-name">{attachedDocument}</span>
+                          {uploadedFile && (
+                            <span className="file-size">
+                              ({(uploadedFile.size / 1024 / 1024).toFixed(2)} MB)
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      <div className="file-help">
+                        Supported: PDF, JPEG, PNG, GIF, WebP (Max 10MB)
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="purchaseDate">Purchase Date</label>
-                <input
-                  type="date"
-                  id="purchaseDate"
-                  value={purchaseDate}
-                  onChange={(e) => setPurchaseDate(e.target.value)}
-                  className="date-input"
-                />
-              </div>
+              {/* Purchased Items */}
+              <div className="section purchased-items-section">
+                <div className="section-header">
+                  <h2>Purchased Items</h2>
+                  <button 
+                    className="add-item-btn" 
+                    onClick={handleAddItem}
+                    disabled={availableItems.length === 0}
+                  >
+                    <span className="add-icon">➕</span>
+                    Add Item
+                  </button>
+                </div>
 
-              <div className="form-group">
-                <label htmlFor="invoiceNumber">Invoice / Bill No.</label>
-                <input
-                  type="text"
-                  id="invoiceNumber"
-                  value={invoiceNumber}
-                  onChange={(e) => setInvoiceNumber(e.target.value)}
-                  className="invoice-input"
-                  placeholder="Enter invoice number"
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="attachDocument">Attach Document</label>
-                <div className="file-upload-container">
-                  <input
-                    type="file"
-                    id="attachDocument"
-                    onChange={handleFileUpload}
-                    className="file-input"
-                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                  />
-                  <label htmlFor="attachDocument" className="file-upload-btn">
-                    📎 Choose File
-                  </label>
-                  {attachedDocument && (
-                    <span className="file-name">{attachedDocument}</span>
+                <div className="items-table-container">
+                  <table className="items-table">
+                    <thead>
+                      <tr>
+                        <th>Item Name</th>
+                        <th>Quantity</th>
+                        <th>Unit Cost</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {items.map((item) => (
+                        <tr key={item.id}>
+                          <td className="item-name-cell">
+                            <select
+                              value={item.itemId || ''}
+                              onChange={(e) => {
+                                const selectedItem = availableItems.find(ai => ai.id === parseInt(e.target.value));
+                                if (selectedItem) {
+                                  handleItemChange(item.id, 'itemId', selectedItem.id);
+                                  handleItemChange(item.id, 'name', selectedItem.name);
+                                  handleItemChange(item.id, 'unitCost', selectedItem.price || 0);
+                                  handleItemChange(item.id, 'description', selectedItem.description);
+                                  // Recalculate total
+                                  const newTotal = (selectedItem.price || 0) * item.quantity;
+                                  handleItemChange(item.id, 'total', newTotal);
+                                }
+                              }}
+                              className="item-select"
+                            >
+                              <option value="">Select item...</option>
+                              {availableItems.map(availableItem => (
+                                <option key={availableItem.id} value={availableItem.id}>
+                                  {availableItem.name} - ${availableItem.price || 0}
+                                </option>
+                              ))}
+                            </select>
+                          </td>
+                          <td className="quantity-cell">
+                            <input
+                              type="number"
+                              value={item.quantity}
+                              onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                              min="0"
+                              className="quantity-input"
+                            />
+                          </td>
+                          <td className="unit-cost-cell">
+                            <input
+                              type="number"
+                              value={item.unitCost}
+                              onChange={(e) => handleUnitCostChange(item.id, e.target.value)}
+                              min="0"
+                              step="0.01"
+                              className="unit-cost-input"
+                            />
+                          </td>
+                          <td className="total-cell">
+                            <span className="total-amount">${item.total.toFixed(2)}</span>
+                          </td>
+                          <td className="actions-cell">
+                            <button
+                              className="remove-btn"
+                              onClick={() => handleRemoveItem(item.id)}
+                              title="Remove Item"
+                            >
+                              🗑️
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {availableItems.length === 0 && (
+                    <p className="no-data-message">
+                      No items available. Please add items in Item Management first.
+                    </p>
                   )}
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Purchased Items */}
-          <div className="section purchased-items-section">
-            <div className="section-header">
-              <h2>Purchased Items</h2>
-              <button className="add-item-btn" onClick={handleAddItem}>
-                <span className="add-icon">➕</span>
-                Add Item
-              </button>
-            </div>
+              {/* Summary */}
+              <div className="section summary-section">
+                <h2>Summary</h2>
+                <div className="summary-content">
+                  <div className="summary-row">
+                    <span className="summary-label">Total Items:</span>
+                    <span className="summary-value">{items.length}</span>
+                  </div>
+                  <div className="summary-row">
+                    <span className="summary-label">Total Quantity:</span>
+                    <span className="summary-value">
+                      {items.reduce((sum, item) => sum + item.quantity, 0)}
+                    </span>
+                  </div>
+                  <div className="summary-row total-row">
+                    <span className="summary-label">Grand Total:</span>
+                    <span className="summary-value">${calculateGrandTotal().toFixed(2)}</span>
+                  </div>
+                </div>
 
-            <div className="items-table-container">
-              <table className="items-table">
-                <thead>
-                  <tr>
-                    <th>Item Name</th>
-                    <th>Quantity</th>
-                    <th>Unit Cost</th>
-                    <th>Total</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((item) => (
-                    <tr key={item.id}>
-                      <td className="item-name-cell">
-                        <select
-                          value={item.name}
-                          onChange={(e) => handleItemNameChange(item.id, e.target.value)}
-                          className="item-select"
-                        >
-                          {availableItems.map(itemName => (
-                            <option key={itemName} value={itemName}>{itemName}</option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="quantity-cell">
-                        <input
-                          type="number"
-                          value={item.quantity}
-                          onChange={(e) => handleQuantityChange(item.id, e.target.value)}
-                          min="0"
-                          className="quantity-input"
-                        />
-                      </td>
-                      <td className="unit-cost-cell">
-                        <input
-                          type="number"
-                          value={item.unitCost}
-                          onChange={(e) => handleUnitCostChange(item.id, e.target.value)}
-                          min="0"
-                          step="0.01"
-                          className="unit-cost-input"
-                        />
-                      </td>
-                      <td className="total-cell">
-                        <span className="total-amount">${item.total.toFixed(2)}</span>
-                      </td>
-                      <td className="actions-cell">
-                        <button
-                          className="remove-btn"
-                          onClick={() => handleRemoveItem(item.id)}
-                          title="Remove Item"
-                        >
-                          🗑️
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Summary */}
-          <div className="section summary-section">
-            <h2>Summary</h2>
-            <div className="summary-content">
-              <div className="summary-row">
-                <span className="summary-label">Total Items:</span>
-                <span className="summary-value">{items.length}</span>
+                <div className="action-buttons">
+                  <button 
+                    className="save-btn" 
+                    onClick={handleSavePurchase}
+                    disabled={isSaving || isUploading || items.length === 0 || !selectedSupplier}
+                  >
+                    {isSaving ? (
+                      <>
+                        <span className="loading-spinner">⏳</span>
+                        {isUploading ? 'Uploading & Saving...' : 'Saving...'}
+                      </>
+                    ) : (
+                      "Save Purchase Entry"
+                    )}
+                  </button>
+                  <button className="cancel-btn" onClick={() => onNavigate("Dashboard")}>
+                    Cancel
+                  </button>
+                </div>
               </div>
-              <div className="summary-row">
-                <span className="summary-label">Total Quantity:</span>
-                <span className="summary-value">
-                  {items.reduce((sum, item) => sum + item.quantity, 0)}
-                </span>
-              </div>
-              <div className="summary-row total-row">
-                <span className="summary-label">Grand Total:</span>
-                <span className="summary-value">${calculateGrandTotal().toFixed(2)}</span>
-              </div>
-            </div>
-
-            <div className="action-buttons">
-              <button className="save-btn" onClick={handleSavePurchase}>
-                Save Purchase Entry
-              </button>
-              <button className="cancel-btn" onClick={() => onNavigate("Dashboard")}>
-                Cancel
-              </button>
-            </div>
-          </div>
+            </>
+          )}
         </div>
       </div>
     </div>

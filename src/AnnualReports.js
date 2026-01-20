@@ -1,15 +1,135 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./AnnualReports.css";
 import AnalyticsReport from "./AnalyticsReport";
+import { getSales, getPurchases } from "./supabaseClient";
 
 const AnnualReports = ({ user, onLogout, onNavigate }) => {
   const [activeMenu, setActiveMenu] = useState("Annual Reports");
   const [selectedYear, setSelectedYear] = useState("2024");
   const [showAnalyticsReport, setShowAnalyticsReport] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [reportData, setReportData] = useState({
+    totalRevenue: 0,
+    totalExpenses: 0,
+    netProfit: 0,
+    profitMargin: 0,
+    revenueGrowth: 0,
+    expenseGrowth: 0,
+    profitGrowth: 0,
+    marginGrowth: 0
+  });
+  const [monthlyData, setMonthlyData] = useState([]);
+  const [topCustomers, setTopCustomers] = useState([]);
+  const [topSuppliers, setTopSuppliers] = useState([]);
+
+  useEffect(() => {
+    fetchReportData();
+  }, [user, selectedYear]);
+
+  const fetchReportData = async () => {
+    if (!user?.id) return;
+    
+    setLoading(true);
+    try {
+      const [salesResult, purchasesResult] = await Promise.all([
+        getSales(user.id),
+        getPurchases(user.id)
+      ]);
+
+      let totalRevenue = 0;
+      let totalExpenses = 0;
+      let customerSales = {};
+      let supplierPurchases = {};
+      let monthlyStats = {};
+
+      // Process sales data
+      if (salesResult.success && salesResult.data) {
+        salesResult.data.forEach(sale => {
+          totalRevenue += sale.total_amount || 0;
+          
+          // Group by customer
+          const customer = sale.customer_name;
+          if (!customerSales[customer]) {
+            customerSales[customer] = { name: customer, revenue: 0, growth: 0 };
+          }
+          customerSales[customer].revenue += sale.total_amount || 0;
+
+          // Group by month
+          const saleDate = new Date(sale.invoice_date || sale.created_at);
+          const monthKey = saleDate.toLocaleString('default', { month: 'short' });
+          if (!monthlyStats[monthKey]) {
+            monthlyStats[monthKey] = { month: monthKey, sales: 0, purchases: 0, expenses: 0 };
+          }
+          monthlyStats[monthKey].sales += sale.total_amount || 0;
+        });
+      }
+
+      // Process purchases data
+      if (purchasesResult.success && purchasesResult.data) {
+        purchasesResult.data.forEach(purchase => {
+          totalExpenses += purchase.total_amount || 0;
+          
+          // Group by supplier
+          const supplier = purchase.supplier_name;
+          if (!supplierPurchases[supplier]) {
+            supplierPurchases[supplier] = { name: supplier, amount: 0, growth: 0 };
+          }
+          supplierPurchases[supplier].amount += purchase.total_amount || 0;
+
+          // Group by month
+          const purchaseDate = new Date(purchase.purchase_date || purchase.created_at);
+          const monthKey = purchaseDate.toLocaleString('default', { month: 'short' });
+          if (!monthlyStats[monthKey]) {
+            monthlyStats[monthKey] = { month: monthKey, sales: 0, purchases: 0, expenses: 0 };
+          }
+          monthlyStats[monthKey].purchases += purchase.total_amount || 0;
+          monthlyStats[monthKey].expenses += purchase.total_amount || 0;
+        });
+      }
+
+      const netProfit = totalRevenue - totalExpenses;
+      const profitMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
+
+      setReportData({
+        totalRevenue,
+        totalExpenses,
+        netProfit,
+        profitMargin,
+        revenueGrowth: 0, // Would need historical data
+        expenseGrowth: 0, // Would need historical data
+        profitGrowth: 0, // Would need historical data
+        marginGrowth: 0 // Would need historical data
+      });
+
+      // Convert to arrays and sort
+      const topCustomersList = Object.values(customerSales)
+        .sort((a, b) => b.revenue - a.revenue)
+        .slice(0, 5);
+
+      const topSuppliersList = Object.values(supplierPurchases)
+        .sort((a, b) => b.amount - a.amount)
+        .slice(0, 5);
+
+      // Create monthly data array
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const monthlyDataArray = monthNames.map(month => 
+        monthlyStats[month] || { month, sales: 0, purchases: 0, expenses: 0 }
+      );
+
+      setTopCustomers(topCustomersList);
+      setTopSuppliers(topSuppliersList);
+      setMonthlyData(monthlyDataArray);
+
+    } catch (error) {
+      console.error("Error fetching report data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // If Analytics Report is active, show that component
   if (showAnalyticsReport) {
-    return <AnalyticsReport onBack={() => setShowAnalyticsReport(false)} />;
+    return <AnalyticsReport onBack={() => setShowAnalyticsReport(false)} user={user} />;
   }
 
   const menuItems = [
@@ -23,48 +143,7 @@ const AnnualReports = ({ user, onLogout, onNavigate }) => {
 
   const years = ["2024", "2023", "2022", "2021", "2020"];
 
-  // Sample data for the reports
-  const reportData = {
-    totalRevenue: 1250000,
-    totalExpenses: 850000,
-    netProfit: 400000,
-    profitMargin: 32,
-    revenueGrowth: 12.5,
-    expenseGrowth: -5.2,
-    profitGrowth: 25.0,
-    marginGrowth: 3.5
-  };
-
-  const monthlyData = [
-    { month: "Jan", sales: 95000, purchases: 45000, expenses: 25000 },
-    { month: "Feb", sales: 88000, purchases: 42000, expenses: 23000 },
-    { month: "Mar", sales: 105000, purchases: 48000, expenses: 27000 },
-    { month: "Apr", sales: 98000, purchases: 46000, expenses: 25000 },
-    { month: "May", sales: 115000, purchases: 52000, expenses: 28000 },
-    { month: "Jun", sales: 108000, purchases: 50000, expenses: 26000 },
-    { month: "Jul", sales: 125000, purchases: 55000, expenses: 30000 },
-    { month: "Aug", sales: 132000, purchases: 58000, expenses: 32000 },
-    { month: "Sep", sales: 118000, purchases: 54000, expenses: 29000 },
-    { month: "Oct", sales: 128000, purchases: 56000, expenses: 31000 },
-    { month: "Nov", sales: 110000, purchases: 51000, expenses: 28000 },
-    { month: "Dec", sales: 102000, purchases: 48000, expenses: 26000 }
-  ];
-
-  const topCustomers = [
-    { name: "Acme Corporation", revenue: 125000, growth: 15.2 },
-    { name: "Tech Solutions Ltd", revenue: 98000, growth: 8.7 },
-    { name: "Global Industries", revenue: 87000, growth: -2.1 },
-    { name: "Innovation Hub", revenue: 76000, growth: 22.5 },
-    { name: "Digital Dynamics", revenue: 65000, growth: 12.8 }
-  ];
-
-  const topSuppliers = [
-    { name: "Office Supplies Inc", amount: 85000, growth: -5.2 },
-    { name: "Tech Hardware Ltd", amount: 72000, growth: 3.8 },
-    { name: "Business Equipment Co", amount: 68000, growth: 8.1 },
-    { name: "Global Tech Solutions", amount: 59000, growth: -1.5 },
-    { name: "Digital Solutions Provider", amount: 45000, growth: 15.3 }
-  ];
+  // Remove the sample data - now using real data from state
 
   const handleExportPDF = () => {
     console.log("Exporting PDF report for year:", selectedYear);
@@ -170,8 +249,16 @@ const AnnualReports = ({ user, onLogout, onNavigate }) => {
 
         {/* Reports Content */}
         <div className="reports-content">
-          {/* Key Metrics */}
-          <div className="metrics-grid">
+          {loading ? (
+            <div className="loading-container">
+              <div className="loading-spinner">⏳</div>
+              <h3>Loading Annual Reports...</h3>
+              <p>Please wait while we fetch your data for {selectedYear}.</p>
+            </div>
+          ) : (
+            <>
+              {/* Key Metrics */}
+              <div className="metrics-grid">
             <div className="metric-card revenue">
               <div className="metric-header">
                 <h3>Total Revenue</h3>
@@ -318,6 +405,8 @@ const AnnualReports = ({ user, onLogout, onNavigate }) => {
               </div>
             </div>
           </div>
+            </>
+          )}
         </div>
       </div>
     </div>

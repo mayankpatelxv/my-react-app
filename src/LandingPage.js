@@ -5,143 +5,169 @@ const LandingPage = ({ onGetStarted }) => {
   const features = [
     {
       icon: '📊',
-      title: 'Smart Dashboard',
-      description: 'Get real-time insights into your business performance with interactive charts and analytics.'
+      title: 'Smart Analytics',
+      description: 'Real-time business insights with interactive dashboards and comprehensive reporting tools.'
     },
     {
-      icon: '👥',
-      title: 'Party Management',
-      description: 'Efficiently manage customers and suppliers with detailed profiles and transaction history.'
+      icon: '💰',
+      title: 'Financial Management',
+      description: 'Complete sales, purchase, and invoice management with automated calculations.'
     },
     {
       icon: '📦',
       title: 'Inventory Control',
-      description: 'Track your products, manage stock levels, and optimize your inventory management.'
+      description: 'Track stock levels, manage products, and optimize your inventory with smart alerts.'
     },
     {
-      icon: '💰',
-      title: 'Sales & Purchases',
-      description: 'Streamline your sales process and purchase management with automated workflows.'
-    },
-    {
-      icon: '📈',
-      title: 'Advanced Analytics',
-      description: 'Make data-driven decisions with comprehensive reports and business intelligence.'
+      icon: '👥',
+      title: 'Customer Relations',
+      description: 'Manage customers and suppliers with detailed profiles and transaction history.'
     },
     {
       icon: '🤖',
       title: 'AI Assistant',
-      description: 'Get instant help and insights with our built-in AI chatbot for business queries.'
-    }
-  ];
-
-  const benefits = [
-    {
-      icon: '⚡',
-      title: 'Lightning Fast',
-      description: 'Built with modern React technology for blazing fast performance and smooth user experience.'
-    },
-    {
-      icon: '🔒',
-      title: 'Secure & Reliable',
-      description: 'Your business data is protected with enterprise-grade security and reliable cloud infrastructure.'
+      description: 'Get instant business insights and help with our intelligent AI chatbot.'
     },
     {
       icon: '📱',
-      title: 'Mobile Responsive',
-      description: 'Access your business data anywhere, anytime with our fully responsive design.'
+      title: 'Mobile Ready',
+      description: 'Access your business data anywhere with our responsive, mobile-first design.'
+    }
+  ];
+
+  const testimonials = [
+    {
+      name: 'Sarah Johnson',
+      role: 'Small Business Owner',
+      company: 'Johnson\'s Bakery',
+      quote: 'BizzBuddy transformed how I manage my bakery. The inventory tracking and sales analytics are game-changers!',
+      avatar: '👩‍💼'
+    },
+    {
+      name: 'Michael Chen',
+      role: 'Retail Manager',
+      company: 'Tech Solutions Inc.',
+      quote: 'The AI assistant helps me make quick decisions. Customer management has never been this easy.',
+      avatar: '👨‍💻'
+    },
+    {
+      name: 'Emma Rodriguez',
+      role: 'Restaurant Owner',
+      company: 'Bella Vista Restaurant',
+      quote: 'From inventory to sales tracking, BizzBuddy handles everything. Highly recommended!',
+      avatar: '👩‍🍳'
     }
   ];
 
   return (
     <div className="landing-page">
-      {/* Header */}
-      <header className="landing-header">
-        <nav className="navbar">
+      {/* Navigation */}
+      <nav className="navbar">
+        <div className="nav-container">
           <div className="nav-brand">
-            <div className="logo-icon">
-              <span>&lt;/&gt;</span>
+            <div className="brand-logo">
+              <span className="logo-text">BB</span>
             </div>
-            <span className="brand-name">bizBuddy</span>
+            <span className="brand-name">BizzBuddy</span>
           </div>
-          <div className="nav-actions">
-            <button className="nav-btn login-btn" onClick={onGetStarted}>
-              Login
-            </button>
-            <button className="nav-btn signup-btn" onClick={onGetStarted}>
-              Get Started
-            </button>
+          <div className="nav-right">
+            <button className="nav-btn login" onClick={onGetStarted}>Login</button>
           </div>
-        </nav>
-      </header>
+        </div>
+      </nav>
 
       {/* Hero Section */}
-      <section className="hero-section">
-        <div className="hero-content">
-          <div className="hero-text">
+      <section className="hero">
+        <div className="hero-container">
+          <div className="hero-content">
+            <div className="hero-badge">
+              <span>🚀 New: AI-Powered Business Insights</span>
+            </div>
             <h1 className="hero-title">
-              bizBuddy is the <span className="highlight">Smart Business</span> Management Solution!
+              Manage Your Business
+              <span className="gradient-text"> Smarter</span>
             </h1>
-            <p className="hero-description">
-              bizBuddy is a comprehensive business management software that helps you streamline operations, 
-              manage finances, track inventory, and grow your business with powerful analytics and AI assistance.
+            <p className="hero-subtitle">
+              BizzBuddy is the all-in-one business management platform that helps you streamline operations, 
+              track finances, and grow your business with powerful AI-driven insights.
             </p>
             <div className="hero-actions">
-              <button className="cta-button primary" onClick={onGetStarted}>
+              <button className="btn-primary" onClick={onGetStarted}>
                 Start Free Trial
-              </button>
-              <button className="cta-button secondary">
-                Watch Demo
+                <span className="btn-icon">→</span>
               </button>
             </div>
-            <div className="hero-stats">
-              <div className="stat">
-                <span className="stat-number">10,000+</span>
-                <span className="stat-label">Business owners trust bizBuddy</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">50+</span>
-                <span className="stat-label">Countries worldwide</span>
+            <div className="hero-social-proof">
+              <div className="social-proof-item">
+                <div className="avatars">
+                  <div className="avatar">👨‍💼</div>
+                  <div className="avatar">👩‍💻</div>
+                  <div className="avatar">👨‍🍳</div>
+                  <div className="avatar">👩‍🔬</div>
+                </div>
+                <div className="social-proof-text">
+                  <strong>2,500+</strong> business owners trust BizzBuddy
+                </div>
               </div>
             </div>
           </div>
-          <div className="hero-image">
-            <div className="dashboard-preview">
-              <div className="preview-header">
-                <div className="preview-dots">
-                  <span></span>
-                  <span></span>
-                  <span></span>
+          <div className="hero-visual">
+            <div className="dashboard-mockup">
+              <div className="mockup-header">
+                <div className="mockup-controls">
+                  <span className="control red"></span>
+                  <span className="control yellow"></span>
+                  <span className="control green"></span>
                 </div>
+                <div className="mockup-title">BizzBuddy Dashboard</div>
               </div>
-              <div className="preview-content">
-                <div className="preview-sidebar">
-                  <div className="sidebar-item active">📊 Dashboard</div>
-                  <div className="sidebar-item">👥 Parties</div>
-                  <div className="sidebar-item">📦 Items</div>
-                  <div className="sidebar-item">💰 Sales</div>
-                  <div className="sidebar-item">📈 Reports</div>
+              <div className="mockup-content">
+                <div className="mockup-sidebar">
+                  <div className="sidebar-item active">
+                    <span className="sidebar-icon">📊</span>
+                    Dashboard
+                  </div>
+                  <div className="sidebar-item">
+                    <span className="sidebar-icon">💰</span>
+                    Sales
+                  </div>
+                  <div className="sidebar-item">
+                    <span className="sidebar-icon">📦</span>
+                    Inventory
+                  </div>
+                  <div className="sidebar-item">
+                    <span className="sidebar-icon">👥</span>
+                    Customers
+                  </div>
                 </div>
-                <div className="preview-main">
-                  <div className="preview-cards">
-                    <div className="preview-card">
-                      <div className="card-header">Total Sales</div>
-                      <div className="card-value">$45,231</div>
-                      <div className="card-trend positive">+20.1%</div>
+                <div className="mockup-main">
+                  <div className="stats-cards">
+                    <div className="stat-card">
+                      <div className="stat-header">
+                        <span className="stat-title">Total Revenue</span>
+                        <span className="stat-icon">💰</span>
+                      </div>
+                      <div className="stat-value">$124,500</div>
+                      <div className="stat-change positive">+12.5%</div>
                     </div>
-                    <div className="preview-card">
-                      <div className="card-header">Net Profit</div>
-                      <div className="card-value">$30,131</div>
-                      <div className="card-trend positive">+18.8%</div>
+                    <div className="stat-card">
+                      <div className="stat-header">
+                        <span className="stat-title">Orders</span>
+                        <span className="stat-icon">📋</span>
+                      </div>
+                      <div className="stat-value">1,247</div>
+                      <div className="stat-change positive">+8.2%</div>
                     </div>
                   </div>
-                  <div className="preview-chart">
-                    <div className="chart-bars">
-                      <div className="bar" style={{height: '60%'}}></div>
-                      <div className="bar" style={{height: '80%'}}></div>
-                      <div className="bar" style={{height: '45%'}}></div>
-                      <div className="bar" style={{height: '90%'}}></div>
-                      <div className="bar" style={{height: '70%'}}></div>
+                  <div className="chart-area">
+                    <div className="chart-header">Sales Overview</div>
+                    <div className="chart">
+                      <div className="chart-bar" style={{height: '60%'}}></div>
+                      <div className="chart-bar" style={{height: '80%'}}></div>
+                      <div className="chart-bar" style={{height: '45%'}}></div>
+                      <div className="chart-bar" style={{height: '90%'}}></div>
+                      <div className="chart-bar" style={{height: '70%'}}></div>
+                      <div className="chart-bar" style={{height: '85%'}}></div>
                     </div>
                   </div>
                 </div>
@@ -152,11 +178,14 @@ const LandingPage = ({ onGetStarted }) => {
       </section>
 
       {/* Features Section */}
-      <section className="features-section">
+      <section className="features" id="features">
         <div className="container">
           <div className="section-header">
-            <h2>Why bizBuddy is the Perfect Business Management Solution</h2>
-            <p>Discover powerful features designed to streamline your business operations and boost productivity.</p>
+            <div className="section-badge">Features</div>
+            <h2 className="section-title">Everything you need to run your business</h2>
+            <p className="section-subtitle">
+              Powerful tools designed to streamline your operations and boost productivity
+            </p>
           </div>
           <div className="features-grid">
             {features.map((feature, index) => (
@@ -170,105 +199,135 @@ const LandingPage = ({ onGetStarted }) => {
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="benefits-section">
+      {/* Stats Section */}
+      <section className="stats">
+        <div className="container">
+          <div className="stats-grid">
+            <div className="stat-item">
+              <div className="stat-number">2,500+</div>
+              <div className="stat-label">Active Users</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-number">$2M+</div>
+              <div className="stat-label">Revenue Managed</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-number">99.9%</div>
+              <div className="stat-label">Uptime</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-number">24/7</div>
+              <div className="stat-label">Support</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="testimonials">
         <div className="container">
           <div className="section-header">
-            <h2>3 Reasons Why bizBuddy is Your Best Business Partner</h2>
-            <p>Built with cutting-edge technology and designed for modern businesses.</p>
+            <div className="section-badge">Testimonials</div>
+            <h2 className="section-title">Loved by business owners worldwide</h2>
           </div>
-          <div className="benefits-grid">
-            {benefits.map((benefit, index) => (
-              <div key={index} className="benefit-card">
-                <div className="benefit-icon">{benefit.icon}</div>
-                <h3 className="benefit-title">{benefit.title}</h3>
-                <p className="benefit-description">{benefit.description}</p>
+          <div className="testimonials-grid">
+            {testimonials.map((testimonial, index) => (
+              <div key={index} className="testimonial-card">
+                <div className="testimonial-content">
+                  <div className="quote-icon">"</div>
+                  <p className="testimonial-quote">{testimonial.quote}</p>
+                </div>
+                <div className="testimonial-author">
+                  <div className="author-avatar">{testimonial.avatar}</div>
+                  <div className="author-info">
+                    <div className="author-name">{testimonial.name}</div>
+                    <div className="author-role">{testimonial.role}</div>
+                    <div className="author-company">{testimonial.company}</div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="how-it-works-section">
-        <div className="container">
-          <div className="section-header">
-            <h2>How bizBuddy Makes Business Management Simple</h2>
-            <p>Get started in minutes with our intuitive interface and powerful automation.</p>
-          </div>
-          <div className="steps-container">
-            <div className="step">
-              <div className="step-number">1</div>
-              <div className="step-content">
-                <h3>Sign Up & Setup</h3>
-                <p>Create your account and set up your business profile in under 5 minutes.</p>
-              </div>
-            </div>
-            <div className="step">
-              <div className="step-number">2</div>
-              <div className="step-content">
-                <h3>Import Your Data</h3>
-                <p>Easily import your existing customers, products, and financial data.</p>
-              </div>
-            </div>
-            <div className="step">
-              <div className="step-number">3</div>
-              <div className="step-content">
-                <h3>Start Managing</h3>
-                <p>Begin managing your business with powerful tools and real-time insights.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
-      <section className="cta-section">
+      <section className="cta">
         <div className="container">
           <div className="cta-content">
-            <h2>Ready to Transform Your Business?</h2>
-            <p>Join thousands of business owners who trust bizBuddy to manage and grow their operations.</p>
-            <button className="cta-button large" onClick={onGetStarted}>
-              Get Started Free
-            </button>
-            <p className="cta-note">No credit card required • 14-day free trial • Cancel anytime</p>
+            <h2 className="cta-title">Ready to transform your business?</h2>
+            <p className="cta-subtitle">
+              Join thousands of business owners who trust BizzBuddy to manage and grow their operations.
+            </p>
+            <div className="cta-actions">
+              <button className="btn-primary large" onClick={onGetStarted}>
+                Start Your Free Trial
+                <span className="btn-icon">→</span>
+              </button>
+            </div>
+            <div className="cta-features">
+              <div className="cta-feature">
+                <span className="check-icon">✓</span>
+                14-day free trial
+              </div>
+              <div className="cta-feature">
+                <span className="check-icon">✓</span>
+                No credit card required
+              </div>
+              <div className="cta-feature">
+                <span className="check-icon">✓</span>
+                Cancel anytime
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="landing-footer">
+      <footer className="footer">
         <div className="container">
           <div className="footer-content">
             <div className="footer-brand">
-              <div className="logo-icon">
-                <span>&lt;/&gt;</span>
+              <div className="brand-logo">
+                <span className="logo-text">BB</span>
               </div>
-              <span className="brand-name">bizBuddy</span>
+              <span className="brand-name">BizzBuddy</span>
+              <p className="footer-description">
+                The smart business management platform for modern entrepreneurs.
+              </p>
             </div>
             <div className="footer-links">
               <div className="footer-section">
                 <h4>Product</h4>
                 <a href="#features">Features</a>
                 <a href="#pricing">Pricing</a>
-                <a href="#demo">Demo</a>
+                <a href="#integrations">Integrations</a>
+                <a href="#api">API</a>
+              </div>
+              <div className="footer-section">
+                <h4>Company</h4>
+                <a href="#about">About Us</a>
+                <a href="#careers">Careers</a>
+                <a href="#blog">Blog</a>
+                <a href="#press">Press</a>
               </div>
               <div className="footer-section">
                 <h4>Support</h4>
                 <a href="#help">Help Center</a>
                 <a href="#contact">Contact</a>
-                <a href="#docs">Documentation</a>
-              </div>
-              <div className="footer-section">
-                <h4>Company</h4>
-                <a href="#about">About</a>
-                <a href="#blog">Blog</a>
-                <a href="#careers">Careers</a>
+                <a href="#status">Status</a>
+                <a href="#security">Security</a>
               </div>
             </div>
           </div>
           <div className="footer-bottom">
-            <p>&copy; 2025 bizBuddy. All rights reserved.</p>
+            <div className="footer-copyright">
+              © 2025 BizzBuddy. All rights reserved.
+            </div>
+            <div className="footer-legal">
+              <a href="#privacy">Privacy Policy</a>
+              <a href="#terms">Terms of Service</a>
+            </div>
           </div>
         </div>
       </footer>

@@ -289,6 +289,118 @@
   font-weight: 500;
   animation: shake 0.5s ease-in-out;
   backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.success-message {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(22, 163, 74, 0.05) 100%);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #16a34a;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.field-error {
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 6px;
+  display: block;
+  animation: fadeInUp 0.3s ease;
+}
+
+.form-group input.error {
+  border-color: #dc2626;
+  background: rgba(239, 68, 68, 0.05);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-group input.error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.password-requirements {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.password-requirements small {
+  color: #6b7280;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.password-requirements ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.password-requirements li {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-bottom: 4px;
+  padding-left: 20px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.password-requirements li::before {
+  content: '✗';
+  position: absolute;
+  left: 0;
+  color: #dc2626;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.password-requirements li.valid {
+  color: #16a34a;
+  font-weight: 500;
+}
+
+.password-requirements li.valid::before {
+  content: '✓';
+  color: #16a34a;
+}
+
+.loading-spinner {
+  display: inline-block;
+  margin-right: 8px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes shake {
@@ -362,6 +474,22 @@
   
   .register-button:active {
     transform: translateY(0) scale(0.98);
+  }
+  
+  .password-requirements {
+    padding: 10px;
+    margin-top: 10px;
+  }
+  
+  .password-requirements ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+  
+  .password-requirements li {
+    font-size: 11px;
+    margin-bottom: 2px;
   }
 }
 
@@ -449,6 +577,21 @@
     transform: none;
     margin-top: 20px;
     padding: 10px;
+  }
+  
+  .password-requirements {
+    padding: 8px;
+    margin-top: 8px;
+  }
+  
+  .password-requirements ul {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  
+  .password-requirements li {
+    font-size: 10px;
+    padding-left: 16px;
   }
 }
 

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": ["@supabase/mcp-server", "https://mcp.supabase.com/mcp?project_ref=wgnvnlhklwanqzcusxxv&read_only=false"],
+      "env": {},
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

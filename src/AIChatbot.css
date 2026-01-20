@@ -468,3 +468,146 @@
     font-size: 18px;
   }
 }
+/* Connection Status Styles */
+.status.online {
+  color: #10b981;
+}
+
+.status.offline {
+  color: #f59e0b;
+  animation: pulse 2s infinite;
+}
+
+/* Enhanced Message Styles */
+.message.bot .message-content {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border-left: 4px solid #3b82f6;
+}
+
+.message.user .message-content {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+}
+
+/* Improved Quick Actions */
+.quick-action-btn {
+  transition: all 0.2s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.quick-action-btn:hover {
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Loading Animation for AI Response */
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 8px 0;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6b7280;
+  animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes typing {
+  0%, 80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Enhanced Input Area */
+.chat-input-container {
+  border-top: 2px solid #f3f4f6;
+  background: white;
+}
+
+.send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.send-btn:not(:disabled):hover {
+  background: #2563eb;
+  transform: scale(1.05);
+}
+/* Analyzing business data indicator */
+.analyzing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-style: italic;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* Enhanced status indicator */
+.status.online {
+  color: #10b981;
+  font-weight: 500;
+}
+
+.status.offline {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+/* Improved quick action buttons */
+.quick-action-btn:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.quick-action-btn:active {
+  transform: translateY(0);
+}
+
+/* Enhanced message styling */
+.message.bot .message-content {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-left: 4px solid #667eea;
+}
+
+.message.user .message-content {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+/* Connection status styling */
+.chatbot-header .status {
+  font-size: 0.85em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chatbot-header .status::before {
+  content: "●";
+  font-size: 1.2em;
+}

@@ -463,3 +463,599 @@ export const deleteItem = async (itemId, userId) => {
     };
   }
 };
+
+// Sales management functions
+export const addSale = async (saleData, userId) => {
+  try {
+    console.log("Attempting to insert sale:", saleData);
+    console.log("User ID:", userId);
+    
+    const insertData = {
+      user_id: userId.toString(),
+      customer_name: saleData.customerName,
+      customer_id: saleData.customerId || null,
+      invoice_date: saleData.invoiceDate || new Date().toISOString().split('T')[0],
+      due_date: saleData.dueDate || null,
+      subtotal: parseFloat(saleData.subtotal),
+      tax_rate: parseFloat(saleData.taxRate),
+      tax_amount: parseFloat(saleData.taxAmount),
+      discount_amount: parseFloat(saleData.discountAmount),
+      total_amount: parseFloat(saleData.totalAmount),
+      status: saleData.status || 'draft',
+      payment_terms: saleData.paymentTerms || null,
+      notes: saleData.notes || null
+    };
+    
+    console.log("Insert data:", insertData);
+    
+    const { data, error } = await supabase
+      .from("sales")
+      .insert([insertData])
+      .select();
+
+    if (error) {
+      console.log("Supabase Error:", error);
+      return {
+        success: false,
+        error: error.message || "Database error occurred",
+      };
+    } else {
+      console.log("Sale inserted successfully:", data);
+      return { success: true, data: data[0] };
+    }
+  } catch (err) {
+    console.log("Network/Connection Error:", err);
+    return {
+      success: false,
+      error: "Connection failed. Please check your internet connection.",
+    };
+  }
+};
+
+export const addSaleItems = async (saleId, items) => {
+  try {
+    console.log("Attempting to insert sale items:", saleId, items);
+    
+    const insertData = items.map(item => ({
+      sale_id: saleId,
+      item_id: item.itemId || null,
+      item_name: item.name,
+      item_description: item.description || null,
+      quantity: parseInt(item.quantity),
+      unit_price: parseFloat(item.price),
+      line_total: parseFloat(item.price) * parseInt(item.quantity)
+    }));
+    
+    console.log("Insert items data:", insertData);
+    
+    const { data, error } = await supabase
+      .from("sales_items")
+      .insert(insertData)
+      .select();
+
+    if (error) {
+      console.log("Supabase Error:", error);
+      return {
+        success: false,
+        error: error.message || "Database error occurred",
+      };
+    } else {
+      console.log("Sale items inserted successfully:", data);
+      return { success: true, data };
+    }
+  } catch (err) {
+    console.log("Network/Connection Error:", err);
+    return {
+      success: false,
+      error: "Connection failed. Please check your internet connection.",
+    };
+  }
+};
+
+export const getSales = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .from("sales")
+      .select(`
+        *,
+        sales_items (
+          id,
+          item_id,
+          item_name,
+          item_description,
+          quantity,
+          unit_price,
+          line_total
+        )
+      `)
+      .eq("user_id", userId.toString())
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.log("Get Sales Error:", error);
+      return { success: false, error: error.message || "Failed to fetch sales" };
+    } else {
+      console.log("Sales fetched successfully:", data);
+      return { success: true, data };
+    }
+  } catch (err) {
+    console.log("Network/Connection Error:", err);
+    return {
+      success: false,
+      error: "Connection failed. Please check your internet connection.",
+    };
+  }
+};
+
+export const updateSale = async (saleId, saleData, userId) => {
+  try {
+    console.log("Attempting to update sale:", saleId, saleData);
+    
+    const updateData = {
+      customer_name: saleData.customerName,
+      customer_id: saleData.customerId || null,
+      invoice_date: saleData.invoiceDate,
+      due_date: saleData.dueDate || null,
+      subtotal: parseFloat(saleData.subtotal),
+      tax_rate: parseFloat(saleData.taxRate),
+      tax_amount: parseFloat(saleData.taxAmount),
+      discount_amount: parseFloat(saleData.discountAmount),
+      total_amount: parseFloat(saleData.totalAmount),
+      status: saleData.status,
+      payment_terms: saleData.paymentTerms || null,
+      notes: saleData.notes || null
+    };
+    
+    const { data, error } = await supabase
+      .from("sales")
+      .update(updateData)
+      .eq("id", saleId)
+      .eq("user_id", userId)
+      .select();
+
+    if (error) {
+      console.log("Supabase Error:", error);
+      return {
+        success: false,
+        error: error.message || "Database error occurred",
+      };
+    } else {
+      console.log("Sale updated successfully:", data);
+      return { success: true, data: data[0] };
+    }
+  } catch (err) {
+    console.log("Network/Connection Error:", err);
+    return {
+      success: false,
+      error: "Connection failed. Please check your internet connection.",
+    };
+  }
+};
+
+export const deleteSale = async (saleId, userId) => {
+  try {
+    const { data, error } = await supabase
+      .from("sales")
+      .delete()
+      .eq("id", saleId)
+      .eq("user_id", userId)
+      .select();
+
+    if (error) {
+      console.log("Delete Sale Error:", error);
+      return { success: false, error: error.message || "Failed to delete sale" };
+    } else {
+      console.log("Sale deleted successfully:", data);
+      return { success: true, data: data[0] };
+    }
+  } catch (err) {
+    console.log("Network/Connection Error:", err);
+    return {
+      success: false,
+      error: "Connection failed. Please check your internet connection.",
+    };
+  }
+};
+
+// Function to create a complete sale with items in a transaction
+export const createSaleWithItems = async (saleData, items, userId) => {
+  try {
+    console.log("Creating sale with items:", saleData, items);
+    
+    // First create the sale
+    const saleResult = await addSale(saleData, userId);
+    if (!saleResult.success) {
+      return saleResult;
+    }
+    
+    // Then add the items
+    const itemsResult = await addSaleItems(saleResult.data.id, items);
+    if (!itemsResult.success) {
+      // If items failed, we should ideally rollback the sale
+      // For now, we'll return the error
+      return itemsResult;
+    }
+    
+    return {
+      success: true,
+      data: {
+        sale: saleResult.data,
+        items: itemsResult.data
+      }
+    };
+  } catch (err) {
+    console.log("Create Sale with Items Error:", err);
+    return {
+      success: false,
+      error: "Failed to create sale with items.",
+    };
+  }
+};
+
+// Purchase management functions
+export const addPurchase = async (purchaseData, userId) => {
+  try {
+    console.log("Attempting to insert purchase:", purchaseData);
+    console.log("User ID:", userId);
+    
+    const insertData = {
+      user_id: userId.toString(),
+      supplier_name: purchaseData.supplierName,
+      supplier_id: purchaseData.supplierId || null,
+      bill_number: purchaseData.billNumber || null, // Will be auto-generated if null
+      purchase_date: purchaseData.purchaseDate || new Date().toISOString().split('T')[0],
+      due_date: purchaseData.dueDate || null,
+      subtotal: parseFloat(purchaseData.subtotal),
+      tax_rate: parseFloat(purchaseData.taxRate || 0),
+      tax_amount: parseFloat(purchaseData.taxAmount || 0),
+      discount_amount: parseFloat(purchaseData.discountAmount || 0),
+      total_amount: parseFloat(purchaseData.totalAmount),
+      status: purchaseData.status || 'pending',
+      payment_terms: purchaseData.paymentTerms || null,
+      notes: purchaseData.notes || null,
+      attached_document: purchaseData.attachedDocument || null
+    };
+    
+    console.log("Insert data:", insertData);
+    
+    const { data, error } = await supabase
+      .from("purchases")
+      .insert([insertData])
+      .select();
+
+    if (error) {
+      console.log("Supabase Error:", error);
+      return {
+        success: false,
+        error: error.message || "Database error occurred",
+      };
+    } else {
+      console.log("Purchase inserted successfully:", data);
+      return { success: true, data: data[0] };
+    }
+  } catch (err) {
+    console.log("Network/Connection Error:", err);
+    return {
+      success: false,
+      error: "Connection failed. Please check your internet connection.",
+    };
+  }
+};
+
+export const addPurchaseItems = async (purchaseId, items) => {
+  try {
+    console.log("Attempting to insert purchase items:", purchaseId, items);
+    
+    const insertData = items.map(item => ({
+      purchase_id: purchaseId,
+      item_id: item.itemId || null,
+      item_name: item.name,
+      item_description: item.description || null,
+      quantity: parseInt(item.quantity),
+      unit_cost: parseFloat(item.unitCost || item.price || 0),
+      line_total: parseFloat(item.unitCost || item.price || 0) * parseInt(item.quantity)
+    }));
+    
+    console.log("Insert items data:", insertData);
+    
+    const { data, error } = await supabase
+      .from("purchase_items")
+      .insert(insertData)
+      .select();
+
+    if (error) {
+      console.log("Supabase Error:", error);
+      return {
+        success: false,
+        error: error.message || "Database error occurred",
+      };
+    } else {
+      console.log("Purchase items inserted successfully:", data);
+      return { success: true, data };
+    }
+  } catch (err) {
+    console.log("Network/Connection Error:", err);
+    return {
+      success: false,
+      error: "Connection failed. Please check your internet connection.",
+    };
+  }
+};
+
+export const getPurchases = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .from("purchases")
+      .select(`
+        *,
+        purchase_items (
+          id,
+          item_id,
+          item_name,
+          item_description,
+          quantity,
+          unit_cost,
+          line_total
+        )
+      `)
+      .eq("user_id", userId.toString())
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.log("Get Purchases Error:", error);
+      return { success: false, error: error.message || "Failed to fetch purchases" };
+    } else {
+      console.log("Purchases fetched successfully:", data);
+      return { success: true, data };
+    }
+  } catch (err) {
+    console.log("Network/Connection Error:", err);
+    return {
+      success: false,
+      error: "Connection failed. Please check your internet connection.",
+    };
+  }
+};
+
+export const updatePurchase = async (purchaseId, purchaseData, userId) => {
+  try {
+    console.log("Attempting to update purchase:", purchaseId, purchaseData);
+    
+    const updateData = {
+      supplier_name: purchaseData.supplierName,
+      supplier_id: purchaseData.supplierId || null,
+      bill_number: purchaseData.billNumber,
+      purchase_date: purchaseData.purchaseDate,
+      due_date: purchaseData.dueDate || null,
+      subtotal: parseFloat(purchaseData.subtotal),
+      tax_rate: parseFloat(purchaseData.taxRate || 0),
+      tax_amount: parseFloat(purchaseData.taxAmount || 0),
+      discount_amount: parseFloat(purchaseData.discountAmount || 0),
+      total_amount: parseFloat(purchaseData.totalAmount),
+      status: purchaseData.status,
+      payment_terms: purchaseData.paymentTerms || null,
+      notes: purchaseData.notes || null,
+      attached_document: purchaseData.attachedDocument || null
+    };
+    
+    const { data, error } = await supabase
+      .from("purchases")
+      .update(updateData)
+      .eq("id", purchaseId)
+      .eq("user_id", userId)
+      .select();
+
+    if (error) {
+      console.log("Supabase Error:", error);
+      return {
+        success: false,
+        error: error.message || "Database error occurred",
+      };
+    } else {
+      console.log("Purchase updated successfully:", data);
+      return { success: true, data: data[0] };
+    }
+  } catch (err) {
+    console.log("Network/Connection Error:", err);
+    return {
+      success: false,
+      error: "Connection failed. Please check your internet connection.",
+    };
+  }
+};
+
+export const deletePurchase = async (purchaseId, userId) => {
+  try {
+    const { data, error } = await supabase
+      .from("purchases")
+      .delete()
+      .eq("id", purchaseId)
+      .eq("user_id", userId)
+      .select();
+
+    if (error) {
+      console.log("Delete Purchase Error:", error);
+      return { success: false, error: error.message || "Failed to delete purchase" };
+    } else {
+      console.log("Purchase deleted successfully:", data);
+      return { success: true, data: data[0] };
+    }
+  } catch (err) {
+    console.log("Network/Connection Error:", err);
+    return {
+      success: false,
+      error: "Connection failed. Please check your internet connection.",
+    };
+  }
+};
+
+// Function to create a complete purchase with items in a transaction
+export const createPurchaseWithItems = async (purchaseData, items, userId) => {
+  try {
+    console.log("Creating purchase with items:", purchaseData, items);
+    
+    // First create the purchase
+    const purchaseResult = await addPurchase(purchaseData, userId);
+    if (!purchaseResult.success) {
+      return purchaseResult;
+    }
+    
+    // Then add the items
+    const itemsResult = await addPurchaseItems(purchaseResult.data.id, items);
+    if (!itemsResult.success) {
+      // If items failed, we should ideally rollback the purchase
+      // For now, we'll return the error
+      return itemsResult;
+    }
+    
+    return {
+      success: true,
+      data: {
+        purchase: purchaseResult.data,
+        items: itemsResult.data
+      }
+    };
+  } catch (err) {
+    console.log("Create Purchase with Items Error:", err);
+    return {
+      success: false,
+      error: "Failed to create purchase with items.",
+    };
+  }
+};
+
+// File upload functions for purchase documents
+export const uploadPurchaseDocument = async (file, userId, purchaseId) => {
+  try {
+    console.log("Uploading purchase document:", file.name);
+    
+    // Create unique filename
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${userId}/${purchaseId || 'temp'}_${Date.now()}.${fileExt}`;
+    
+    console.log("Uploading to path:", fileName);
+    
+    const { data, error } = await supabase.storage
+      .from('purchase-documents')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (error) {
+      console.log("Upload Error:", error);
+      return { success: false, error: error.message };
+    }
+
+    console.log("File uploaded successfully:", data);
+    return { success: true, data: { path: data.path, fileName: file.name } };
+  } catch (err) {
+    console.log("Upload Error:", err);
+    return { success: false, error: err.message };
+  }
+};
+
+export const getPurchaseDocumentUrl = async (filePath) => {
+  try {
+    const { data, error } = await supabase.storage
+      .from('purchase-documents')
+      .createSignedUrl(filePath, 3600); // 1 hour expiry
+
+    if (error) {
+      console.log("Get URL Error:", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data: data.signedUrl };
+  } catch (err) {
+    console.log("Get URL Error:", err);
+    return { success: false, error: err.message };
+  }
+};
+
+export const deletePurchaseDocument = async (filePath) => {
+  try {
+    const { data, error } = await supabase.storage
+      .from('purchase-documents')
+      .remove([filePath]);
+
+    if (error) {
+      console.log("Delete Error:", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data };
+  } catch (err) {
+    console.log("Delete Error:", err);
+    return { success: false, error: err.message };
+  }
+};
+// Enhanced getPurchases function to include document URLs
+export const getPurchasesWithDocuments = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .from("purchases")
+      .select(`
+        *,
+        purchase_items (
+          id,
+          item_id,
+          item_name,
+          item_description,
+          quantity,
+          unit_cost,
+          line_total
+        )
+      `)
+      .eq("user_id", userId.toString())
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.log("Get Purchases Error:", error);
+      return { success: false, error: error.message || "Failed to fetch purchases" };
+    }
+
+    // For each purchase with attached_document, get the signed URL
+    const purchasesWithUrls = await Promise.all(
+      data.map(async (purchase) => {
+        if (purchase.attached_document && purchase.attached_document.includes('/')) {
+          // This is a file path, get signed URL
+          const urlResult = await getPurchaseDocumentUrl(purchase.attached_document);
+          return {
+            ...purchase,
+            document_url: urlResult.success ? urlResult.data : null
+          };
+        }
+        return purchase;
+      })
+    );
+
+    console.log("Purchases with documents fetched successfully:", purchasesWithUrls);
+    return { success: true, data: purchasesWithUrls };
+  } catch (err) {
+    console.log("Network/Connection Error:", err);
+    return {
+      success: false,
+      error: "Connection failed. Please check your internet connection.",
+    };
+  }
+};
+// Test function to check storage bucket
+export const testStorageBucket = async () => {
+  try {
+    const { data, error } = await supabase.storage
+      .from('purchase-documents')
+      .list('', { limit: 1 });
+
+    if (error) {
+      console.log("Storage test error:", error);
+      return { success: false, error: error.message };
+    }
+
+    console.log("Storage bucket accessible:", data);
+    return { success: true, data };
+  } catch (err) {
+    console.log("Storage test error:", err);
+    return { success: false, error: err.message };
+  }
+};

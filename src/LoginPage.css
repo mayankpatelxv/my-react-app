@@ -55,18 +55,7 @@
   text-align: center;
 }
 
-.login-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
-  background-size: 200% 100%;
-  animation: gradientShift 3s ease infinite;
-  border-radius: 24px 24px 0 0;
-}
+/* Removed the gradient line at the top of login card */
 
 .logo {
   margin-bottom: 30px;
@@ -284,12 +273,14 @@
 .login-footer {
   position: fixed;
   bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
   color: rgba(255, 255, 255, 0.8);
   font-size: 12px;
   text-align: center;
   animation: fadeInUp 0.8s ease-out 1s both;
+  width: 100%;
+  z-index: 5;
 }
 
 .error-message {
@@ -303,6 +294,51 @@
   font-weight: 500;
   animation: shake 0.5s ease-in-out;
   backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.field-error {
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 6px;
+  display: block;
+  animation: fadeInUp 0.3s ease;
+}
+
+.form-group input.error {
+  border-color: #dc2626;
+  background: rgba(239, 68, 68, 0.05);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-group input.error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.loading-spinner {
+  display: inline-block;
+  margin-right: 8px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes shake {
@@ -442,12 +478,16 @@
   }
   
   .login-footer {
-    position: relative;
-    bottom: auto;
-    left: auto;
-    transform: none;
-    margin-top: 20px;
-    padding: 10px;
+    position: fixed;
+    bottom: 15px;
+    left: 0;
+    right: 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+    text-align: center;
+    width: 100%;
+    z-index: 5;
+    padding: 0 20px;
   }
 }
 
