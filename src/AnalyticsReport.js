@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './AnalyticsReport.css';
 import { getSales, getPurchases, getItems, getParties } from './supabaseClient';
+import { useSettings } from './SettingsContext';
 
 const AnalyticsReport = ({ onBack, user }) => {
+  const { formatCurrency, getText } = useSettings();
   const [dateRange, setDateRange] = useState('Last 7 Days');
   const [location, setLocation] = useState('All Locations');
   const [loading, setLoading] = useState(true);
@@ -55,7 +57,7 @@ const AnalyticsReport = ({ onBack, user }) => {
           .slice(0, 5)
           .map(customer => ({
             ...customer,
-            revenue: `$${customer.revenue.toFixed(2)}`,
+            revenue: formatCurrency(customer.revenue),
             growth: '+0.0%' // Would need historical data to calculate real growth
           }));
 

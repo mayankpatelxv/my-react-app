@@ -1,7 +1,9 @@
 import { useState } from "react";
 import "./CreateInvoice.css";
+import BizBuddyLogo from "./BizBuddyLogo";
 
 const CreateInvoice = ({ user, onLogout, onNavigate }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState("Acme Corp");
   const [items, setItems] = useState([
     { id: 1, name: "Product A - Premium Widget", price: 50, quantity: 5 },
@@ -47,9 +49,257 @@ const CreateInvoice = ({ user, onLogout, onNavigate }) => {
     return subtotal - itemDiscount + tax - additionalDiscount;
   };
 
+  const handlePrintInvoice = () => {
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    
+    // Generate the invoice HTML content
+    const invoiceHTML = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Invoice - ${selectedCustomer}</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+          }
+          .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+          }
+          .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #4a9eff;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+          }
+          .company-info h1 {
+            color: #4a9eff;
+            margin: 0;
+            font-size: 28px;
+          }
+          .company-info p {
+            margin: 5px 0;
+            color: #666;
+          }
+          .invoice-details {
+            text-align: right;
+          }
+          .invoice-details h2 {
+            color: #333;
+            margin: 0;
+            font-size: 24px;
+          }
+          .invoice-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+          }
+          .bill-to, .invoice-info {
+            flex: 1;
+          }
+          .bill-to h3, .invoice-info h3 {
+            color: #4a9eff;
+            margin-bottom: 10px;
+          }
+          .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+          }
+          .items-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+          }
+          .items-table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+          }
+          .items-table .text-right {
+            text-align: right;
+          }
+          .totals-section {
+            margin-left: auto;
+            width: 300px;
+          }
+          .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+          }
+          .total-row.grand-total {
+            font-weight: bold;
+            font-size: 18px;
+            border-top: 2px solid #4a9eff;
+            border-bottom: 2px solid #4a9eff;
+            color: #4a9eff;
+          }
+          .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+          }
+          @media print {
+            body { margin: 0; }
+            .no-print { display: none; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="invoice-container">
+          <div class="invoice-header">
+            <div class="company-info">
+              <h1>BizzBuddy</h1>
+              <p>Business Management System</p>
+              <p>Email: support@bizzbuddy.com</p>
+              <p>Phone: +1 (555) 123-4567</p>
+            </div>
+            <div class="invoice-details">
+              <h2>INVOICE</h2>
+              <p><strong>Invoice #:</strong> INV-${Date.now().toString().slice(-6)}</p>
+              <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+            </div>
+          </div>
+
+          <div class="invoice-meta">
+            <div class="bill-to">
+              <h3>Bill To:</h3>
+              <p><strong>${selectedCustomer}</strong></p>
+              <p>Customer Address</p>
+              <p>City, State 12345</p>
+              <p>customer@email.com</p>
+            </div>
+            <div class="invoice-info">
+              <h3>Invoice Details:</h3>
+              <p><strong>Payment Terms:</strong> Net 30</p>
+              <p><strong>Due Date:</strong> ${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
+              <p><strong>Tax Rate:</strong> ${taxRate}%</p>
+            </div>
+          </div>
+
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>Item Description</th>
+                <th class="text-right">Price</th>
+                <th class="text-right">Quantity</th>
+                <th class="text-right">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items.map(item => `
+                <tr>
+                  <td>${item.name}</td>
+                  <td class="text-right">$${item.price.toFixed(2)}</td>
+                  <td class="text-right">${item.quantity}</td>
+                  <td class="text-right">$${(item.price * item.quantity).toFixed(2)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <div class="totals-section">
+            <div class="total-row">
+              <span>Subtotal:</span>
+              <span>$${calculateSubtotal().toFixed(2)}</span>
+            </div>
+            <div class="total-row">
+              <span>Item Discount:</span>
+              <span>-$${calculateItemDiscount().toFixed(2)}</span>
+            </div>
+            <div class="total-row">
+              <span>Tax (${taxRate}%):</span>
+              <span>$${calculateTax().toFixed(2)}</span>
+            </div>
+            ${additionalDiscount > 0 ? `
+            <div class="total-row">
+              <span>Additional Discount:</span>
+              <span>-$${additionalDiscount.toFixed(2)}</span>
+            </div>
+            ` : ''}
+            <div class="total-row grand-total">
+              <span>Grand Total:</span>
+              <span>$${calculateGrandTotal().toFixed(2)}</span>
+            </div>
+          </div>
+
+          <div class="footer">
+            <p>Thank you for your business!</p>
+            <p>Generated by BizzBuddy Business Management System on ${new Date().toLocaleString()}</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    // Write the HTML to the new window and print
+    printWindow.document.write(invoiceHTML);
+    printWindow.document.close();
+    
+    // Wait for the content to load, then print
+    printWindow.onload = () => {
+      printWindow.print();
+      printWindow.close();
+    };
+  };
+
+  const handleSaveInvoice = () => {
+    // TODO: Implement save to database
+    alert('Invoice saved successfully!');
+  };
+
+  const handleDownloadPDF = () => {
+    // Create a simple text-based invoice for download
+    const invoiceContent = `
+BIZZBUDDY INVOICE
+================
+
+Invoice #: INV-${Date.now().toString().slice(-6)}
+Date: ${new Date().toLocaleDateString()}
+Customer: ${selectedCustomer}
+
+ITEMS:
+------
+${items.map(item => 
+  `${item.name} - $${item.price} x ${item.quantity} = $${(item.price * item.quantity).toFixed(2)}`
+).join('\n')}
+
+TOTALS:
+-------
+Subtotal: $${calculateSubtotal().toFixed(2)}
+Item Discount: -$${calculateItemDiscount().toFixed(2)}
+Tax (${taxRate}%): $${calculateTax().toFixed(2)}
+${additionalDiscount > 0 ? `Additional Discount: -$${additionalDiscount.toFixed(2)}\n` : ''}
+GRAND TOTAL: $${calculateGrandTotal().toFixed(2)}
+
+Generated by BizzBuddy on ${new Date().toLocaleString()}
+    `;
+
+    const blob = new Blob([invoiceContent], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Invoice_${selectedCustomer.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
   const updateItemQuantity = (id, quantity) => {
     setItems(items.map(item => 
-      item.id === id ? { ...item, quantity: parseInt(quantity) || 0 } : item
+      item.id === id ? { ...item, quantity: Math.max(0, parseInt(quantity) || 0) } : item
     ));
   };
 
@@ -69,11 +319,26 @@ const CreateInvoice = ({ user, onLogout, onNavigate }) => {
 
   return (
     <div className="create-invoice-container">
+      {/* Mobile Menu Toggle */}
+      <button 
+        className="mobile-menu-toggle"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        aria-label="Toggle menu"
+      >
+        ☰
+      </button>
+
+      {/* Mobile Overlay */}
+      <div 
+        className={`mobile-overlay ${isMobileMenuOpen ? 'active' : ''}`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      ></div>
+
       {/* Sidebar */}
-      <div className="sidebar">
+      <div className={`sidebar ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}>
         <div className="logo-section">
           <div className="logo-icon">
-            <span>&lt;/&gt;</span>
+            <BizBuddyLogo size={44} />
           </div>
         </div>
         
@@ -82,7 +347,10 @@ const CreateInvoice = ({ user, onLogout, onNavigate }) => {
             <div
               key={item.name}
               className="menu-item"
-              onClick={() => onNavigate(item.name)}
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                onNavigate(item.name);
+              }}
             >
               <span className="menu-icon">{item.icon}</span>
               <span className="menu-text">{item.name}</span>
@@ -91,11 +359,17 @@ const CreateInvoice = ({ user, onLogout, onNavigate }) => {
         </nav>
 
         <div className="sidebar-bottom">
-          <div className="menu-item" onClick={() => {}}>
+          <div className="menu-item" onClick={() => {
+            setIsMobileMenuOpen(false);
+            onNavigate("Settings");
+          }}>
             <span className="menu-icon">⚙️</span>
             <span className="menu-text">Settings</span>
           </div>
-          <div className="menu-item logout" onClick={onLogout}>
+          <div className="menu-item logout" onClick={() => {
+            setIsMobileMenuOpen(false);
+            onLogout();
+          }}>
             <span className="menu-icon">🚪</span>
             <span className="menu-text">Logout</span>
           </div>
@@ -110,7 +384,6 @@ const CreateInvoice = ({ user, onLogout, onNavigate }) => {
             <h1>Create New Invoice</h1>
           </div>
           <div className="header-actions">
-            <button className="notification-btn">🔔</button>
             <div className="user-menu">
               <button className="user-avatar" onClick={onLogout}>
                 👤
@@ -241,9 +514,9 @@ const CreateInvoice = ({ user, onLogout, onNavigate }) => {
               </div>
               
               <div className="action-buttons">
-                <button className="save-btn">Save Invoice</button>
-                <button className="print-btn">Print Invoice</button>
-                <button className="download-btn">Download PDF</button>
+                <button className="save-btn" onClick={handleSaveInvoice}>Save Invoice</button>
+                <button className="print-btn" onClick={handlePrintInvoice}>Print Invoice</button>
+                <button className="download-btn" onClick={handleDownloadPDF}>Download PDF</button>
               </div>
             </div>
           </div>

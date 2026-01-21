@@ -1,22 +1,76 @@
+/* Mobile-first base styles */
 .create-invoice-container {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background-color: #f8f9fa;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
-/* Sidebar - reusing from other pages */
+/* Mobile menu toggle */
+.mobile-menu-toggle {
+  display: block;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: #1f2937;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 101;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  min-height: 48px;
+  min-width: 48px;
+}
+
+/* Mobile overlay */
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
+/* Mobile Sidebar Styles */
 .sidebar {
-  width: 250px;
+  width: 100%;
   background-color: white;
-  border-right: 1px solid #e5e7eb;
-  padding: 20px 0;
-  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 0;
+  display: none;
   flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.sidebar.mobile-menu-open {
+  display: flex;
+  transform: translateX(0);
 }
 
 .logo-section {
-  padding: 0 20px 30px;
+  padding: 0 1rem 1.5rem;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -35,17 +89,18 @@
 }
 
 .nav-menu {
-  padding-top: 20px;
+  padding-top: 1rem;
   flex: 1;
 }
 
 .menu-item {
   display: flex;
   align-items: center;
-  padding: 12px 20px;
+  padding: 0.75rem 1rem;
   cursor: pointer;
   transition: background-color 0.2s;
   color: #6b7280;
+  min-height: 48px;
 }
 
 .menu-item:hover {
@@ -61,36 +116,37 @@
 }
 
 .menu-icon {
-  margin-right: 12px;
-  font-size: 18px;
+  margin-right: 0.75rem;
+  font-size: 1.125rem;
 }
 
 .menu-text {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
 }
 
 .sidebar-bottom {
   border-top: 1px solid #e5e7eb;
-  padding-top: 20px;
+  padding-top: 1rem;
 }
 
 /* Main Content */
 .main-content {
   flex: 1;
-  padding: 30px;
+  padding: 1rem;
   overflow-y: auto;
+  width: 100%;
 }
 
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .header-left h1 {
-  font-size: 28px;
+  font-size: 1.5rem;
   font-weight: 600;
   color: #1f2937;
   margin: 0;
@@ -99,17 +155,19 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 0.75rem;
 }
 
 .notification-btn, .user-avatar {
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  padding: 10px;
+  padding: 0.75rem;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 1rem;
   transition: background-color 0.2s;
+  min-height: 48px;
+  min-width: 48px;
 }
 
 .notification-btn:hover, .user-avatar:hover {
@@ -118,20 +176,19 @@
 
 /* Invoice Content */
 .invoice-content {
-  display: grid;
-  grid-template-columns: 1fr 350px;
-  gap: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .left-column {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 1.25rem;
 }
 
 .right-column {
-  position: sticky;
-  top: 30px;
+  position: static;
   height: fit-content;
 }
 
@@ -139,32 +196,33 @@
 .section {
   background: white;
   border-radius: 12px;
-  padding: 24px;
+  padding: 1.5rem;
   border: 1px solid #e5e7eb;
 }
 
 .section h2 {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 600;
   color: #1f2937;
-  margin: 0 0 20px 0;
+  margin: 0 0 1.25rem 0;
 }
 
 /* Customer Selection */
 .customer-select {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .customer-select select {
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 0.875rem;
   background: white;
   cursor: pointer;
   outline: none;
+  min-height: 48px;
 }
 
 .customer-select select:focus {
@@ -173,14 +231,15 @@
 
 .add-customer-btn {
   align-self: flex-start;
-  padding: 8px 16px;
+  padding: 0.75rem 1rem;
   background: none;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
   color: #6b7280;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.875rem;
   transition: all 0.2s;
+  min-height: 48px;
 }
 
 .add-customer-btn:hover {
@@ -193,14 +252,14 @@
 .items-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .item-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   background: #f9fafb;
@@ -209,34 +268,36 @@
 .item-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .item-name {
   font-weight: 500;
   color: #1f2937;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .item-price {
   color: #6b7280;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .item-controls {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+  gap: 0.75rem;
 }
 
 .quantity-input {
   width: 60px;
-  padding: 8px;
+  padding: 0.5rem;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
   text-align: center;
-  font-size: 14px;
+  font-size: 0.875rem;
   outline: none;
+  min-height: 40px;
 }
 
 .quantity-input:focus {
@@ -247,10 +308,12 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px;
+  padding: 0.5rem;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 1rem;
   transition: background-color 0.2s;
+  min-height: 40px;
+  min-width: 40px;
 }
 
 .remove-item-btn:hover {
@@ -261,15 +324,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px;
+  gap: 0.5rem;
+  padding: 0.75rem;
   border: 2px dashed #e5e7eb;
   border-radius: 8px;
   background: none;
   color: #6b7280;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.875rem;
   transition: all 0.2s;
+  min-height: 48px;
 }
 
 .add-item-btn:hover {
@@ -279,35 +343,37 @@
 }
 
 .add-icon {
-  font-size: 18px;
+  font-size: 1.125rem;
 }
 
 /* Invoice Details */
 .invoice-details {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .detail-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .detail-row label {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #374151;
   font-weight: 500;
 }
 
 .detail-row input {
-  width: 100px;
-  padding: 8px 12px;
+  width: 100%;
+  padding: 0.75rem;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 0.875rem;
   outline: none;
+  min-height: 48px;
+  box-sizing: border-box;
 }
 
 .detail-row input:focus {
@@ -317,8 +383,8 @@
 .checkbox-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .checkbox-row input[type="checkbox"] {
@@ -328,7 +394,7 @@
 }
 
 .checkbox-row label {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #374151;
   cursor: pointer;
 }
@@ -337,23 +403,23 @@
 .invoice-summary {
   background: white;
   border-radius: 12px;
-  padding: 24px;
+  padding: 1.5rem;
   border: 1px solid #e5e7eb;
 }
 
 .invoice-summary h2 {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 600;
   color: #1f2937;
-  margin: 0 0 20px 0;
+  margin: 0 0 1.25rem 0;
 }
 
 .summary-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
-  font-size: 14px;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
 }
 
 .summary-row.discount {
@@ -362,9 +428,9 @@
 
 .summary-row.total {
   border-top: 1px solid #e5e7eb;
-  margin-top: 12px;
-  padding-top: 16px;
-  font-size: 18px;
+  margin-top: 0.75rem;
+  padding-top: 1rem;
+  font-size: 1.125rem;
   font-weight: 600;
   color: #4a9eff;
 }
@@ -372,18 +438,20 @@
 .action-buttons {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 24px;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
 }
 
 .save-btn, .print-btn, .download-btn {
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   border: none;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
+  min-height: 48px;
+  width: 100%;
 }
 
 .save-btn {
@@ -405,56 +473,83 @@
   background-color: #e5e7eb;
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
-  .invoice-content {
-    grid-template-columns: 1fr;
-    gap: 20px;
+/* Tablet Styles */
+@media (min-width: 768px) {
+  .create-invoice-container {
+    flex-direction: row;
   }
-  
-  .right-column {
-    position: static;
+
+  .sidebar {
+    width: 250px;
+    display: flex;
+    position: fixed;
+    transform: translateX(0);
+    border-right: 1px solid #e5e7eb;
+    border-bottom: none;
+    height: 100vh;
+  }
+
+  .mobile-menu-toggle {
+    display: none;
+  }
+
+  .main-content {
+    margin-left: 250px;
+    padding: 1.5rem;
+  }
+
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.875rem;
+  }
+
+  .header-left h1 {
+    font-size: 1.75rem;
+  }
+
+  .header-actions {
+    gap: 0.9375rem;
+  }
+
+  .item-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .item-controls {
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+
+  .detail-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .detail-row input {
+    width: 100px;
   }
 }
 
-@media (max-width: 768px) {
-  .create-invoice-container {
-    flex-direction: column;
-  }
-  
-  .sidebar {
-    width: 100%;
-    height: auto;
-  }
-  
-  .nav-menu {
-    display: flex;
-    overflow-x: auto;
-    padding: 10px 0;
-  }
-  
-  .menu-item {
-    flex-shrink: 0;
-    padding: 8px 16px;
-  }
-  
+/* Desktop Styles */
+@media (min-width: 1024px) {
   .main-content {
-    padding: 20px;
+    padding: 1.875rem;
   }
-  
-  .header {
-    flex-direction: column;
-    gap: 20px;
-    align-items: stretch;
+
+  .invoice-content {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 1.875rem;
   }
-  
-  .item-row {
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
-  }
-  
-  .item-controls {
-    justify-content: space-between;
+
+  .right-column {
+    position: sticky;
+    top: 1.875rem;
   }
 }

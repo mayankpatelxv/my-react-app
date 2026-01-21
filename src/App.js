@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './App.css';
+import { SettingsProvider } from './SettingsContext';
 import LandingPage from './LandingPage';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
@@ -22,50 +23,74 @@ function App() {
 
   // Check for existing authentication on app load
   useEffect(() => {
-    const checkAuthState = async () => {
+    const checkAuthState = () => {
       console.log('🔍 Checking authentication state...');
       
-      // Small delay to ensure localStorage is ready
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
       try {
+        // Check localStorage immediately without delay
         const savedUser = localStorage.getItem('bizBuddy_user');
         const savedPage = localStorage.getItem('bizBuddy_currentPage');
         
-        console.log('💾 Saved user:', savedUser);
-        console.log('📄 Saved page:', savedPage);
+        console.log('💾 Raw saved user:', savedUser);
+        console.log('📄 Raw saved page:', savedPage);
+        console.log('🔍 All localStorage keys:', Object.keys(localStorage));
         
-        if (savedUser && savedUser !== 'null' && savedUser !== 'undefined') {
-          const userData = JSON.parse(savedUser);
-          console.log('✅ User data found:', userData);
-          
-          // Validate user data structure
-          if (userData && userData.id && userData.email) {
-            setUser(userData);
+        // More robust user validation
+        if (savedUser && savedUser !== 'null' && savedUser !== 'undefined' && savedUser.trim() !== '') {
+          try {
+            const userData = JSON.parse(savedUser);
+            console.log('✅ Parsed user data:', userData);
             
-            // If user is logged in, redirect to dashboard or saved page
-            if (savedPage && savedPage !== 'landing' && savedPage !== 'login' && savedPage !== 'register') {
-              console.log('🔄 Redirecting to saved page:', savedPage);
-              setCurrentPage(savedPage);
+            // Validate user data structure more thoroughly
+            if (userData && 
+                typeof userData === 'object' && 
+                userData.id && 
+                userData.email && 
+                userData.email.includes('@')) {
+              
+              console.log('✅ User data is valid, restoring session');
+              setUser(userData);
+              
+              // Restore the saved page or default to dashboard
+              if (savedPage && 
+                  savedPage !== 'null' && 
+                  savedPage !== 'undefined' && 
+                  savedPage !== 'landing' && 
+                  savedPage !== 'login' && 
+                  savedPage !== 'register') {
+                console.log('🔄 Restoring saved page:', savedPage);
+                setCurrentPage(savedPage);
+              } else {
+                console.log('🏠 No valid saved page, going to dashboard');
+                setCurrentPage('dashboard');
+              }
             } else {
-              console.log('🏠 Redirecting to dashboard');
-              setCurrentPage('dashboard');
+              console.log('❌ Invalid user data structure:', userData);
+              // Clear invalid data
+              localStorage.removeItem('bizBuddy_user');
+              localStorage.removeItem('bizBuddy_currentPage');
+              setCurrentPage('landing');
             }
-          } else {
-            console.log('❌ Invalid user data structure, clearing localStorage');
+          } catch (parseError) {
+            console.error('❌ Error parsing user data:', parseError);
+            // Clear corrupted data
             localStorage.removeItem('bizBuddy_user');
             localStorage.removeItem('bizBuddy_currentPage');
             setCurrentPage('landing');
           }
         } else {
-          console.log('❌ No saved user found, staying on landing page');
+          console.log('❌ No valid saved user found');
           setCurrentPage('landing');
         }
       } catch (error) {
-        console.error('💥 Error checking auth state:', error);
-        // Clear corrupted data
-        localStorage.removeItem('bizBuddy_user');
-        localStorage.removeItem('bizBuddy_currentPage');
+        console.error('💥 Error in checkAuthState:', error);
+        // Clear all data on error
+        try {
+          localStorage.removeItem('bizBuddy_user');
+          localStorage.removeItem('bizBuddy_currentPage');
+        } catch (clearError) {
+          console.error('Error clearing localStorage:', clearError);
+        }
         setCurrentPage('landing');
       } finally {
         console.log('⏰ Setting loading to false');
@@ -73,26 +98,69 @@ function App() {
       }
     };
 
+    // Run immediately
     checkAuthState();
   }, []);
 
+  // Save state before page unload
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (user && user.id && currentPage) {
+        try {
+          localStorage.setItem('bizBuddy_user', JSON.stringify(user));
+          if (currentPage !== 'landing' && currentPage !== 'login' && currentPage !== 'register') {
+            localStorage.setItem('bizBuddy_currentPage', currentPage);
+          }
+          console.log('💾 State saved before page unload');
+        } catch (error) {
+          console.error('❌ Error saving state before unload:', error);
+        }
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [user, currentPage]);
+
   // Save authentication state whenever it changes
   useEffect(() => {
-    if (user) {
-      console.log('💾 Saving user to localStorage:', user);
-      localStorage.setItem('bizBuddy_user', JSON.stringify(user));
-    } else {
-      console.log('🗑️ Removing user from localStorage');
-      localStorage.removeItem('bizBuddy_user');
+    if (user && user.id && user.email) {
+      try {
+        const userDataToSave = JSON.stringify(user);
+        localStorage.setItem('bizBuddy_user', userDataToSave);
+        console.log('💾 User saved to localStorage:', user);
+        console.log('💾 Saved data:', userDataToSave);
+      } catch (error) {
+        console.error('❌ Error saving user to localStorage:', error);
+      }
+    } else if (user === null) {
+      try {
+        localStorage.removeItem('bizBuddy_user');
+        console.log('🗑️ User removed from localStorage');
+      } catch (error) {
+        console.error('❌ Error removing user from localStorage:', error);
+      }
     }
   }, [user]);
 
   // Save current page whenever it changes (but not for auth pages)
   useEffect(() => {
-    if (currentPage && currentPage !== 'landing' && currentPage !== 'login' && currentPage !== 'register') {
-      localStorage.setItem('bizBuddy_currentPage', currentPage);
+    if (currentPage && 
+        currentPage !== 'landing' && 
+        currentPage !== 'login' && 
+        currentPage !== 'register' &&
+        user && user.id) { // Only save page if user is logged in
+      try {
+        localStorage.setItem('bizBuddy_currentPage', currentPage);
+        console.log('📄 Page saved to localStorage:', currentPage);
+      } catch (error) {
+        console.error('❌ Error saving page to localStorage:', error);
+      }
     }
-  }, [currentPage]);
+  }, [currentPage, user]);
 
   const handleGetStarted = () => {
     setCurrentPage('login');
@@ -108,17 +176,46 @@ function App() {
 
   const handleLoginSuccess = (userData) => {
     console.log('🎉 Login successful, user data:', userData);
-    setUser(userData);
-    setCurrentPage('dashboard');
-    console.log('💾 User data should be saved to localStorage');
+    
+    // Validate user data before saving
+    if (userData && userData.id && userData.email) {
+      setUser(userData);
+      setCurrentPage('dashboard');
+      
+      // Force immediate save to localStorage
+      try {
+        localStorage.setItem('bizBuddy_user', JSON.stringify(userData));
+        localStorage.setItem('bizBuddy_currentPage', 'dashboard');
+        console.log('💾 User data forcefully saved to localStorage');
+        console.log('💾 Verification - saved user:', localStorage.getItem('bizBuddy_user'));
+        console.log('💾 Verification - saved page:', localStorage.getItem('bizBuddy_currentPage'));
+      } catch (error) {
+        console.error('❌ Error force-saving to localStorage:', error);
+      }
+    } else {
+      console.error('❌ Invalid user data received from login:', userData);
+    }
   };
 
   const handleLogout = () => {
+    console.log('🚪 Logging out user');
+    
+    // Clear state first
     setUser(null);
     setCurrentPage('landing');
-    // Clear all saved data on logout
-    localStorage.removeItem('bizBuddy_user');
-    localStorage.removeItem('bizBuddy_currentPage');
+    
+    // Clear localStorage with error handling
+    try {
+      localStorage.removeItem('bizBuddy_user');
+      localStorage.removeItem('bizBuddy_currentPage');
+      console.log('🗑️ All user data cleared from localStorage');
+      
+      // Verify cleanup
+      console.log('🔍 Verification - user after logout:', localStorage.getItem('bizBuddy_user'));
+      console.log('🔍 Verification - page after logout:', localStorage.getItem('bizBuddy_currentPage'));
+    } catch (error) {
+      console.error('❌ Error clearing localStorage on logout:', error);
+    }
   };
 
   const handleNavigation = (pageName) => {
@@ -187,95 +284,100 @@ function App() {
   }
 
   return (
-    <div className="App">
-      {currentPage === 'landing' && (
-        <LandingPage onGetStarted={handleGetStarted} />
-      )}
-      {currentPage === 'login' && (
-        <LoginPage 
-          onSwitchToRegister={switchToRegister} 
-          onLoginSuccess={handleLoginSuccess}
-        />
-      )}
-      {currentPage === 'register' && (
-        <RegisterPage onSwitchToLogin={switchToLogin} />
-      )}
-      {currentPage === 'dashboard' && (
-        <Dashboard 
-          user={user} 
-          onLogout={handleLogout} 
-          onNavigate={handleNavigation}
-        />
-      )}
-      {currentPage === 'dashboard-analytics' && (
-        <DashboardAnalytics 
-          user={user} 
-          onLogout={handleLogout} 
-          onNavigate={handleNavigation}
-        />
-      )}
-      {currentPage === 'party-management' && (
-        <PartyManagement 
-          user={user} 
-          onLogout={handleLogout} 
-          onNavigate={handleNavigation}
-        />
-      )}
-      {currentPage === 'create-invoice' && (
-        <CreateInvoice 
-          user={user} 
-          onLogout={handleLogout} 
-          onNavigate={handleNavigation}
-        />
-      )}
-      {currentPage === 'add-party' && (
-        <AddParty 
-          user={user} 
-          onLogout={handleLogout} 
-          onNavigate={handleNavigation}
-        />
-      )}
-      {currentPage === 'item-management' && (
-        <ItemManagement 
-          user={user} 
-          onLogout={handleLogout} 
-          onNavigate={handleNavigation}
-        />
-      )}
-      {currentPage === 'add-item' && (
-        <AddItem 
-          user={user} 
-          onLogout={handleLogout} 
-          onNavigate={handleNavigation}
-        />
-      )}
-      {currentPage === 'sales' && (
-        <Sales 
-          user={user} 
-          onLogout={handleLogout} 
-          onNavigate={handleNavigation}
-        />
-      )}
-      {currentPage === 'purchases' && (
-        <Purchases 
-          user={user} 
-          onLogout={handleLogout} 
-          onNavigate={handleNavigation}
-        />
-      )}
-      {currentPage === 'annual-reports' && (
-        <AnnualReports 
-          user={user} 
-          onLogout={handleLogout} 
-          onNavigate={handleNavigation}
-        />
-      )}
-      {currentPage === 'settings' && (
-        <Settings 
-          onBack={() => setCurrentPage('dashboard')}
-        />
-      )}
-    </div>
+    <SettingsProvider>
+      <div className="App">
+        {currentPage === 'landing' && (
+          <LandingPage onGetStarted={handleGetStarted} />
+        )}
+        {currentPage === 'login' && (
+          <LoginPage 
+            onSwitchToRegister={switchToRegister} 
+            onLoginSuccess={handleLoginSuccess}
+          />
+        )}
+        {currentPage === 'register' && (
+          <RegisterPage onSwitchToLogin={switchToLogin} />
+        )}
+        {currentPage === 'dashboard' && (
+          <Dashboard 
+            user={user} 
+            onLogout={handleLogout} 
+            onNavigate={handleNavigation}
+          />
+        )}
+        {currentPage === 'dashboard-analytics' && (
+          <DashboardAnalytics 
+            user={user} 
+            onLogout={handleLogout} 
+            onNavigate={handleNavigation}
+          />
+        )}
+        {currentPage === 'party-management' && (
+          <PartyManagement 
+            user={user} 
+            onLogout={handleLogout} 
+            onNavigate={handleNavigation}
+          />
+        )}
+        {currentPage === 'create-invoice' && (
+          <CreateInvoice 
+            user={user} 
+            onLogout={handleLogout} 
+            onNavigate={handleNavigation}
+          />
+        )}
+        {currentPage === 'add-party' && (
+          <AddParty 
+            user={user} 
+            onLogout={handleLogout} 
+            onNavigate={handleNavigation}
+          />
+        )}
+        {currentPage === 'item-management' && (
+          <ItemManagement 
+            user={user} 
+            onLogout={handleLogout} 
+            onNavigate={handleNavigation}
+          />
+        )}
+        {currentPage === 'add-item' && (
+          <AddItem 
+            user={user} 
+            onLogout={handleLogout} 
+            onNavigate={handleNavigation}
+          />
+        )}
+        {currentPage === 'sales' && (
+          <Sales 
+            user={user} 
+            onLogout={handleLogout} 
+            onNavigate={handleNavigation}
+          />
+        )}
+        {currentPage === 'purchases' && (
+          <Purchases 
+            user={user} 
+            onLogout={handleLogout} 
+            onNavigate={handleNavigation}
+          />
+        )}
+        {currentPage === 'annual-reports' && (
+          <AnnualReports 
+            user={user} 
+            onLogout={handleLogout} 
+            onNavigate={handleNavigation}
+          />
+        )}
+        {currentPage === 'settings' && (
+          <Settings 
+            user={user}
+            onLogout={handleLogout}
+            onNavigate={handleNavigation}
+            onBack={() => setCurrentPage('dashboard')}
+          />
+        )}
+      </div>
+    </SettingsProvider>
   );
 }
 

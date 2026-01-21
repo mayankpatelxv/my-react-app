@@ -2,9 +2,13 @@ import { useState, useEffect } from "react";
 import "./AnnualReports.css";
 import AnalyticsReport from "./AnalyticsReport";
 import { getSales, getPurchases } from "./supabaseClient";
+import { useSettings } from "./SettingsContext";
+import BizBuddyLogo from "./BizBuddyLogo";
 
 const AnnualReports = ({ user, onLogout, onNavigate }) => {
+  const { formatCurrency, getText, formatDate } = useSettings();
   const [activeMenu, setActiveMenu] = useState("Annual Reports");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState("2024");
   const [showAnalyticsReport, setShowAnalyticsReport] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -133,30 +137,152 @@ const AnnualReports = ({ user, onLogout, onNavigate }) => {
   }
 
   const menuItems = [
-    { name: "Dashboard", icon: "📊" },
-    { name: "Party Management", icon: "👥" },
-    { name: "Item Management", icon: "📦" },
-    { name: "Sales", icon: "🛒" },
-    { name: "Purchases", icon: "💰" },
-    { name: "Annual Reports", icon: "📈" }
+    { name: getText('dashboard'), icon: "📊", key: "Dashboard" },
+    { name: getText('parties'), icon: "👥", key: "Party Management" },
+    { name: getText('items'), icon: "📦", key: "Item Management" },
+    { name: getText('sales'), icon: "🛒", key: "Sales" },
+    { name: getText('purchases'), icon: "💰", key: "Purchases" },
+    { name: getText('reports'), icon: "📈", key: "Annual Reports" }
   ];
 
   const years = ["2024", "2023", "2022", "2021", "2020"];
 
   // Remove the sample data - now using real data from state
 
-  const handleExportPDF = () => {
-    console.log("Exporting PDF report for year:", selectedYear);
-    alert("PDF report exported successfully!");
+  const handleExportPDF = async () => {
+    try {
+      // Simple text-based report export (works without additional dependencies)
+      const reportContent = generateReportContent();
+      
+      // Create and download the report
+      const blob = new Blob([reportContent], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `BizzBuddy_Annual_Report_${selectedYear}_${new Date().toISOString().split('T')[0]}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      alert(`📄 Annual Report for ${selectedYear} exported successfully!`);
+    } catch (error) {
+      console.error('Error exporting report:', error);
+      alert('Error exporting report. Please try again.');
+    }
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount);
+  const generateReportContent = () => {
+    const currentDate = new Date().toLocaleDateString();
+    const currentTime = new Date().toLocaleTimeString();
+    
+    return `
+╔══════════════════════════════════════════════════════════════╗
+║                    BIZZBUDDY ANNUAL REPORT                   ║
+║                         ${selectedYear}                                ║
+╚══════════════════════════════════════════════════════════════╝
+
+Generated on: ${currentDate} at ${currentTime}
+User: ${user?.name || 'Business Owner'}
+Report Period: January 1, ${selectedYear} - December 31, ${selectedYear}
+
+═══════════════════════════════════════════════════════════════
+📊 EXECUTIVE SUMMARY
+═══════════════════════════════════════════════════════════════
+
+Total Revenue:        ${formatCurrency(reportData.totalRevenue, false)}
+Total Expenses:       ${formatCurrency(reportData.totalExpenses, false)}
+Net Profit:           ${formatCurrency(reportData.netProfit, false)}
+Profit Margin:        ${reportData.profitMargin.toFixed(1)}%
+
+Business Status:      ${reportData.netProfit >= 0 ? '✅ PROFITABLE' : '⚠️  LOSS-MAKING'}
+Financial Health:     ${reportData.profitMargin > 20 ? 'Excellent' : reportData.profitMargin > 10 ? 'Good' : reportData.profitMargin > 0 ? 'Fair' : 'Needs Improvement'}
+
+═══════════════════════════════════════════════════════════════
+👥 TOP CUSTOMERS (by Revenue)
+═══════════════════════════════════════════════════════════════
+
+${topCustomers.length > 0 ? 
+  topCustomers.map((customer, index) => 
+    `${(index + 1).toString().padStart(2, '0')}. ${customer.name.padEnd(30)} $${customer.revenue.toLocaleString('en-US', {minimumFractionDigits: 2})}`
+  ).join('\n') : 
+  'No customer data available for this period.'
+}
+
+═══════════════════════════════════════════════════════════════
+🏭 TOP SUPPLIERS (by Purchase Volume)
+═══════════════════════════════════════════════════════════════
+
+${topSuppliers.length > 0 ? 
+  topSuppliers.map((supplier, index) => 
+    `${(index + 1).toString().padStart(2, '0')}. ${supplier.name.padEnd(30)} $${supplier.amount.toLocaleString('en-US', {minimumFractionDigits: 2})}`
+  ).join('\n') : 
+  'No supplier data available for this period.'
+}
+
+═══════════════════════════════════════════════════════════════
+📈 MONTHLY PERFORMANCE BREAKDOWN
+═══════════════════════════════════════════════════════════════
+
+Month    Sales Revenue    Purchases       Net Profit
+─────────────────────────────────────────────────────────────
+${monthlyData.map(data => {
+  const monthProfit = data.sales - data.purchases;
+  return `${data.month.padEnd(8)} $${data.sales.toLocaleString('en-US', {minimumFractionDigits: 0}).padStart(12)} $${data.purchases.toLocaleString('en-US', {minimumFractionDigits: 0}).padStart(12)} $${monthProfit.toLocaleString('en-US', {minimumFractionDigits: 0}).padStart(12)}`;
+}).join('\n')}
+
+═══════════════════════════════════════════════════════════════
+💡 BUSINESS INSIGHTS & RECOMMENDATIONS
+═══════════════════════════════════════════════════════════════
+
+Financial Performance:
+• ${reportData.netProfit >= 0 ? 
+    `Your business generated a profit of $${reportData.netProfit.toLocaleString('en-US', {minimumFractionDigits: 2})} this year.` : 
+    `Your business had a loss of $${Math.abs(reportData.netProfit).toLocaleString('en-US', {minimumFractionDigits: 2})} this year.`
+  }
+
+• Profit margin of ${reportData.profitMargin.toFixed(1)}% ${
+    reportData.profitMargin > 15 ? 'is excellent and above industry average.' :
+    reportData.profitMargin > 5 ? 'is healthy but has room for improvement.' :
+    reportData.profitMargin > 0 ? 'is low and needs attention.' :
+    'indicates losses that require immediate action.'
+  }
+
+Customer Analysis:
+• ${topCustomers.length > 0 ? 
+    `Your top customer "${topCustomers[0].name}" contributed $${topCustomers[0].revenue.toLocaleString('en-US', {minimumFractionDigits: 2})} (${((topCustomers[0].revenue / reportData.totalRevenue) * 100).toFixed(1)}% of total revenue).` :
+    'Focus on acquiring and retaining customers to grow your business.'
+  }
+
+Supplier Analysis:
+• ${topSuppliers.length > 0 ? 
+    `Your largest supplier "${topSuppliers[0].name}" accounts for $${topSuppliers[0].amount.toLocaleString('en-US', {minimumFractionDigits: 2})} in purchases.` :
+    'Consider establishing relationships with reliable suppliers.'
+  }
+
+Recommendations:
+${reportData.profitMargin < 10 ? '• Focus on reducing costs and improving operational efficiency.' : ''}
+${reportData.totalRevenue < reportData.totalExpenses ? '• Increase sales efforts and review pricing strategy.' : ''}
+${topCustomers.length < 3 ? '• Diversify your customer base to reduce dependency risk.' : ''}
+• Continue monitoring monthly performance trends.
+• Consider seasonal patterns in your business planning.
+
+═══════════════════════════════════════════════════════════════
+📋 REPORT METADATA
+═══════════════════════════════════════════════════════════════
+
+Report Generated By:  BizzBuddy Business Management System
+Data Source:          Live Database Records
+Report Type:          Annual Financial Summary
+Export Format:        Text Document (.txt)
+File Generated:       ${currentDate} ${currentTime}
+
+For questions about this report, please contact your system administrator.
+
+═══════════════════════════════════════════════════════════════
+End of Report
+═══════════════════════════════════════════════════════════════
+    `.trim();
   };
 
   const formatPercentage = (value) => {
@@ -174,23 +300,39 @@ const AnnualReports = ({ user, onLogout, onNavigate }) => {
 
   return (
     <div className="annual-reports-container">
+      {/* Mobile Menu Toggle */}
+      <button 
+        className="mobile-menu-toggle"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        aria-label="Toggle menu"
+      >
+        ☰
+      </button>
+
+      {/* Mobile Overlay */}
+      <div 
+        className={`mobile-overlay ${isMobileMenuOpen ? 'active' : ''}`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      ></div>
+
       {/* Sidebar */}
-      <div className="sidebar">
+      <div className={`sidebar ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}>
         <div className="logo-section">
           <div className="logo-icon">
-            <span>&lt;/&gt;</span>
+            <BizBuddyLogo size={44} />
           </div>
         </div>
         
         <nav className="nav-menu">
           {menuItems.map((item) => (
             <div
-              key={item.name}
-              className={`menu-item ${activeMenu === item.name ? "active" : ""}`}
+              key={item.key}
+              className={`menu-item ${activeMenu === item.key ? "active" : ""}`}
               onClick={() => {
-                setActiveMenu(item.name);
-                if (item.name !== "Annual Reports") {
-                  onNavigate(item.name);
+                setActiveMenu(item.key);
+                setIsMobileMenuOpen(false);
+                if (item.key !== "Annual Reports") {
+                  onNavigate(item.key);
                 }
               }}
             >
@@ -201,13 +343,19 @@ const AnnualReports = ({ user, onLogout, onNavigate }) => {
         </nav>
 
         <div className="sidebar-bottom">
-          <div className="menu-item" onClick={() => {}}>
+          <div className="menu-item" onClick={() => {
+            setIsMobileMenuOpen(false);
+            onNavigate("Settings");
+          }}>
             <span className="menu-icon">⚙️</span>
-            <span className="menu-text">Settings</span>
+            <span className="menu-text">{getText('settings')}</span>
           </div>
-          <div className="menu-item logout" onClick={onLogout}>
+          <div className="menu-item logout" onClick={() => {
+            setIsMobileMenuOpen(false);
+            onLogout();
+          }}>
             <span className="menu-icon">🚪</span>
-            <span className="menu-text">Logout</span>
+            <span className="menu-text">{getText('logout')}</span>
           </div>
         </div>
       </div>
@@ -238,7 +386,6 @@ const AnnualReports = ({ user, onLogout, onNavigate }) => {
             <button className="export-btn" onClick={handleExportPDF}>
               📄 Export PDF
             </button>
-            <button className="notification-btn">🔔</button>
             <div className="user-menu">
               <button className="user-avatar" onClick={onLogout}>
                 👤

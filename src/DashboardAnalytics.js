@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./DashboardAnalytics.css";
+import BizBuddyLogo from "./BizBuddyLogo";
 
 const DashboardAnalytics = ({ user, onLogout, onNavigate }) => {
   const [activeMenu, setActiveMenu] = useState("Dashboard & Analytics");
@@ -97,7 +98,7 @@ const DashboardAnalytics = ({ user, onLogout, onNavigate }) => {
       <div className="sidebar">
         <div className="logo-section">
           <div className="logo-icon">
-            <span>&lt;/&gt;</span>
+            <BizBuddyLogo size={44} />
           </div>
         </div>
         
@@ -168,7 +169,6 @@ const DashboardAnalytics = ({ user, onLogout, onNavigate }) => {
             <button className="generate-btn" onClick={handleGenerateReport}>
               📄 Generate Report
             </button>
-            <button className="notification-btn">🔔</button>
             <div className="user-menu">
               <button className="user-avatar" onClick={onLogout}>
                 👤

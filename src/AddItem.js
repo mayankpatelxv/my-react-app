@@ -1,8 +1,12 @@
 import { useState } from "react";
 import "./AddItem.css";
 import { addItem } from "./supabaseClient";
+import { useSettings } from "./SettingsContext";
+import BizBuddyLogo from "./BizBuddyLogo";
 
 const AddItem = ({ user, onLogout, onNavigate }) => {
+  const { getText } = useSettings();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     category: "Electronics",
@@ -24,12 +28,12 @@ const AddItem = ({ user, onLogout, onNavigate }) => {
   const [error, setError] = useState("");
 
   const menuItems = [
-    { name: "Dashboard", icon: "📊" },
-    { name: "Party Management", icon: "👥" },
-    { name: "Item Management", icon: "📦" },
-    { name: "Sales", icon: "🛒" },
-    { name: "Purchases", icon: "💰" },
-    { name: "Annual Reports", icon: "📈" }
+    { name: getText('dashboard'), icon: "📊", key: "Dashboard" },
+    { name: getText('parties'), icon: "👥", key: "Party Management" },
+    { name: getText('items'), icon: "📦", key: "Item Management" },
+    { name: getText('sales'), icon: "🛒", key: "Sales" },
+    { name: getText('purchases'), icon: "💰", key: "Purchases" },
+    { name: getText('reports'), icon: "📈", key: "Annual Reports" }
   ];
 
   const categories = [
@@ -123,20 +127,38 @@ const AddItem = ({ user, onLogout, onNavigate }) => {
 
   return (
     <div className="add-item-container">
+      {/* Mobile Menu Toggle */}
+      <button 
+        className="mobile-menu-toggle"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        aria-label="Toggle menu"
+      >
+        ☰
+      </button>
+
+      {/* Mobile Overlay */}
+      <div 
+        className={`mobile-overlay ${isMobileMenuOpen ? 'active' : ''}`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      ></div>
+
       {/* Sidebar */}
-      <div className="sidebar">
+      <div className={`sidebar ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}>
         <div className="logo-section">
           <div className="logo-icon">
-            <span>&lt;/&gt;</span>
+            <BizBuddyLogo size={44} />
           </div>
         </div>
         
         <nav className="nav-menu">
           {menuItems.map((item) => (
             <div
-              key={item.name}
-              className={`menu-item ${item.name === "Item Management" ? "active" : ""}`}
-              onClick={() => onNavigate(item.name)}
+              key={item.key}
+              className={`menu-item ${item.key === "Item Management" ? "active" : ""}`}
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                onNavigate(item.key);
+              }}
             >
               <span className="menu-icon">{item.icon}</span>
               <span className="menu-text">{item.name}</span>
@@ -145,13 +167,19 @@ const AddItem = ({ user, onLogout, onNavigate }) => {
         </nav>
 
         <div className="sidebar-bottom">
-          <div className="menu-item" onClick={() => onNavigate("Settings")}>
+          <div className="menu-item" onClick={() => {
+            setIsMobileMenuOpen(false);
+            onNavigate("Settings");
+          }}>
             <span className="menu-icon">⚙️</span>
-            <span className="menu-text">Settings</span>
+            <span className="menu-text">{getText('settings')}</span>
           </div>
-          <div className="menu-item logout" onClick={onLogout}>
+          <div className="menu-item logout" onClick={() => {
+            setIsMobileMenuOpen(false);
+            onLogout();
+          }}>
             <span className="menu-icon">🚪</span>
-            <span className="menu-text">Logout</span>
+            <span className="menu-text">{getText('logout')}</span>
           </div>
         </div>
       </div>
@@ -168,7 +196,6 @@ const AddItem = ({ user, onLogout, onNavigate }) => {
             <p>Create a new inventory item for your business</p>
           </div>
           <div className="header-actions">
-            <button className="notification-btn">🔔</button>
             <div className="user-menu">
               <button className="user-avatar" onClick={onLogout}>
                 👤

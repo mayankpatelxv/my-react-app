@@ -1,22 +1,76 @@
+/* Mobile-first base styles */
 .add-party-container {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background-color: #f8f9fa;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
-/* Sidebar - reusing from other pages */
+/* Mobile menu toggle */
+.mobile-menu-toggle {
+  display: block;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: #1f2937;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 101;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  min-height: 48px;
+  min-width: 48px;
+}
+
+/* Mobile overlay */
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
+/* Mobile Sidebar Styles */
 .sidebar {
-  width: 250px;
+  width: 100%;
   background-color: white;
-  border-right: 1px solid #e5e7eb;
-  padding: 20px 0;
-  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 0;
+  display: none;
   flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.sidebar.mobile-menu-open {
+  display: flex;
+  transform: translateX(0);
 }
 
 .logo-section {
-  padding: 0 20px 30px;
+  padding: 0 1rem 1.5rem;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -35,17 +89,18 @@
 }
 
 .nav-menu {
-  padding-top: 20px;
+  padding-top: 1rem;
   flex: 1;
 }
 
 .menu-item {
   display: flex;
   align-items: center;
-  padding: 12px 20px;
+  padding: 0.75rem 1rem;
   cursor: pointer;
   transition: background-color 0.2s;
   color: #6b7280;
+  min-height: 48px;
 }
 
 .menu-item:hover {
@@ -67,38 +122,39 @@
 }
 
 .menu-icon {
-  margin-right: 12px;
-  font-size: 18px;
+  margin-right: 0.75rem;
+  font-size: 1.125rem;
 }
 
 .menu-text {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
 }
 
 .sidebar-bottom {
   border-top: 1px solid #e5e7eb;
-  padding-top: 20px;
+  padding-top: 1rem;
 }
 
 /* Main Content */
 .main-content {
   flex: 1;
-  padding: 30px;
+  padding: 1rem;
   overflow-y: auto;
+  width: 100%;
 }
 
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 30px;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .header-left {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .back-btn {
@@ -107,9 +163,10 @@
   border: none;
   color: #4a9eff;
   cursor: pointer;
-  font-size: 14px;
-  padding: 4px 0;
+  font-size: 0.875rem;
+  padding: 0.5rem 0;
   transition: color 0.2s;
+  min-height: 48px;
 }
 
 .back-btn:hover {
@@ -118,14 +175,14 @@
 }
 
 .header-left h1 {
-  font-size: 28px;
+  font-size: 1.5rem;
   font-weight: 600;
   color: #1f2937;
   margin: 0;
 }
 
 .header-left p {
-  font-size: 16px;
+  font-size: 0.875rem;
   color: #6b7280;
   margin: 0;
 }
@@ -133,17 +190,19 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 0.75rem;
 }
 
 .notification-btn, .user-avatar {
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  padding: 10px;
+  padding: 0.75rem;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 1rem;
   transition: background-color 0.2s;
+  min-height: 48px;
+  min-width: 48px;
 }
 
 .notification-btn:hover, .user-avatar:hover {
@@ -159,49 +218,50 @@
 .party-form {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 1.5rem;
 }
 
 /* Form Sections */
 .form-section {
   background: white;
   border-radius: 12px;
-  padding: 24px;
+  padding: 1.5rem;
   border: 1px solid #e5e7eb;
+  animation: slideIn 0.3s ease-out;
 }
 
 .section-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
   border-bottom: 1px solid #f3f4f6;
 }
 
 .section-header h2 {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 600;
   color: #1f2937;
   margin: 0;
 }
 
 .section-icon {
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #6b7280;
 }
 
 /* Form Grid */
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .form-group.full-width {
@@ -209,7 +269,7 @@
 }
 
 .form-group label {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   color: #374151;
 }
@@ -217,13 +277,15 @@
 .form-group input,
 .form-group select,
 .form-group textarea {
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 0.875rem;
   background: white;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
+  min-height: 48px;
+  box-sizing: border-box;
 }
 
 .form-group input:focus,
@@ -250,22 +312,24 @@
 /* Form Actions */
 .form-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding: 24px;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem;
   background: white;
   border-radius: 12px;
   border: 1px solid #e5e7eb;
 }
 
 .cancel-btn, .save-btn {
-  padding: 12px 24px;
+  padding: 0.75rem 1.5rem;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
   border: none;
+  min-height: 48px;
+  width: 100%;
 }
 
 .cancel-btn {
@@ -297,61 +361,6 @@
   box-shadow: none;
 }
 
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .form-container {
-    max-width: none;
-  }
-}
-
-@media (max-width: 768px) {
-  .add-party-container {
-    flex-direction: column;
-  }
-  
-  .sidebar {
-    width: 100%;
-    height: auto;
-  }
-  
-  .nav-menu {
-    display: flex;
-    overflow-x: auto;
-    padding: 10px 0;
-  }
-  
-  .menu-item {
-    flex-shrink: 0;
-    padding: 8px 16px;
-  }
-  
-  .main-content {
-    padding: 20px;
-  }
-  
-  .header {
-    flex-direction: column;
-    gap: 20px;
-    align-items: stretch;
-  }
-  
-  .header-actions {
-    justify-content: space-between;
-  }
-  
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .form-actions {
-    flex-direction: column;
-  }
-  
-  .cancel-btn, .save-btn {
-    width: 100%;
-  }
-}
-
 /* Success/Error States */
 .form-group.error input,
 .form-group.error select,
@@ -373,10 +382,6 @@
 }
 
 /* Animations */
-.form-section {
-  animation: slideIn 0.3s ease-out;
-}
-
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -385,5 +390,87 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Tablet Styles */
+@media (min-width: 768px) {
+  .add-party-container {
+    flex-direction: row;
+  }
+
+  .sidebar {
+    width: 250px;
+    display: flex;
+    position: fixed;
+    transform: translateX(0);
+    border-right: 1px solid #e5e7eb;
+    border-bottom: none;
+    height: 100vh;
+  }
+
+  .mobile-menu-toggle {
+    display: none;
+  }
+
+  .main-content {
+    margin-left: 250px;
+    padding: 1.5rem;
+  }
+
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.875rem;
+  }
+
+  .header-left h1 {
+    font-size: 1.75rem;
+  }
+
+  .header-left p {
+    font-size: 1rem;
+  }
+
+  .header-actions {
+    gap: 0.9375rem;
+  }
+
+  .section-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .section-header h2 {
+    font-size: 1.125rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .form-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+
+  .cancel-btn, .save-btn {
+    width: auto;
+  }
+}
+
+/* Desktop Styles */
+@media (min-width: 1024px) {
+  .main-content {
+    padding: 1.875rem;
+  }
+
+  .form-container {
+    max-width: none;
   }
 }

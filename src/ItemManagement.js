@@ -1,21 +1,25 @@
 import { useState, useEffect } from "react";
 import "./ItemManagement.css";
 import { getItems, deleteItem } from "./supabaseClient";
+import { useSettings } from "./SettingsContext";
+import BizBuddyLogo from "./BizBuddyLogo";
 
 const ItemManagement = ({ user, onLogout, onNavigate }) => {
+  const { formatCurrency, getText } = useSettings();
   const [searchTerm, setSearchTerm] = useState("");
   const [activeMenu, setActiveMenu] = useState("Item Management");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const menuItems = [
-    { name: "Dashboard", icon: "📊" },
-    { name: "Party Management", icon: "👥" },
-    { name: "Item Management", icon: "📦" },
-    { name: "Sales", icon: "🛒" },
-    { name: "Purchases", icon: "💰" },
-    { name: "Annual Reports", icon: "📈" }
+    { name: getText('dashboard'), icon: "📊", key: "Dashboard" },
+    { name: getText('parties'), icon: "👥", key: "Party Management" },
+    { name: getText('items'), icon: "📦", key: "Item Management" },
+    { name: getText('sales'), icon: "🛒", key: "Sales" },
+    { name: getText('purchases'), icon: "💰", key: "Purchases" },
+    { name: getText('reports'), icon: "📈", key: "Annual Reports" }
   ];
 
   useEffect(() => {
@@ -82,23 +86,39 @@ const ItemManagement = ({ user, onLogout, onNavigate }) => {
 
   return (
     <div className="item-management-container">
+      {/* Mobile Menu Toggle */}
+      <button 
+        className="mobile-menu-toggle"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        aria-label="Toggle menu"
+      >
+        ☰
+      </button>
+
+      {/* Mobile Overlay */}
+      <div 
+        className={`mobile-overlay ${isMobileMenuOpen ? 'active' : ''}`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      ></div>
+
       {/* Sidebar */}
-      <div className="sidebar">
+      <div className={`sidebar ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}>
         <div className="logo-section">
           <div className="logo-icon">
-            <span>&lt;/&gt;</span>
+            <BizBuddyLogo size={44} />
           </div>
         </div>
         
         <nav className="nav-menu">
           {menuItems.map((item) => (
             <div
-              key={item.name}
-              className={`menu-item ${activeMenu === item.name ? "active" : ""}`}
+              key={item.key}
+              className={`menu-item ${activeMenu === item.key ? "active" : ""}`}
               onClick={() => {
-                setActiveMenu(item.name);
-                if (item.name !== "Item Management") {
-                  onNavigate(item.name);
+                setActiveMenu(item.key);
+                setIsMobileMenuOpen(false);
+                if (item.key !== "Item Management") {
+                  onNavigate(item.key);
                 }
               }}
             >
@@ -109,13 +129,19 @@ const ItemManagement = ({ user, onLogout, onNavigate }) => {
         </nav>
 
         <div className="sidebar-bottom">
-          <div className="menu-item" onClick={() => onNavigate("Settings")}>
+          <div className="menu-item" onClick={() => {
+            setIsMobileMenuOpen(false);
+            onNavigate("Settings");
+          }}>
             <span className="menu-icon">⚙️</span>
-            <span className="menu-text">Settings</span>
+            <span className="menu-text">{getText('settings')}</span>
           </div>
-          <div className="menu-item logout" onClick={onLogout}>
+          <div className="menu-item logout" onClick={() => {
+            setIsMobileMenuOpen(false);
+            onLogout();
+          }}>
             <span className="menu-icon">🚪</span>
-            <span className="menu-text">Logout</span>
+            <span className="menu-text">{getText('logout')}</span>
           </div>
         </div>
       </div>
@@ -128,7 +154,6 @@ const ItemManagement = ({ user, onLogout, onNavigate }) => {
             <h1>Item Management</h1>
           </div>
           <div className="header-actions">
-            <button className="notification-btn">🔔</button>
             <div className="user-menu">
               <button className="user-avatar" onClick={onLogout}>
                 👤
@@ -147,7 +172,6 @@ const ItemManagement = ({ user, onLogout, onNavigate }) => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
             />
-            <span className="search-icon">🔍</span>
           </div>
           <button className="add-item-btn" onClick={() => onNavigate("Add Item")}>
             <span className="add-icon">➕</span>
@@ -195,7 +219,7 @@ const ItemManagement = ({ user, onLogout, onNavigate }) => {
                       <td className="item-name">{item.name}</td>
                       <td className="category">{item.category}</td>
                       <td className="unit">{item.unit}</td>
-                      <td className="price">${item.price}</td>
+                      <td className="price">{formatCurrency(item.price)}</td>
                       <td className="stock-level">
                         <span className={`stock-badge ${getStockStatus(item.stock_level)}`}>
                           {item.stock_level}

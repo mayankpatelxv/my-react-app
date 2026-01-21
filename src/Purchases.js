@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import "./Purchases.css";
 import { getItems, getParties, createPurchaseWithItems, uploadPurchaseDocument } from "./supabaseClient";
+import { useSettings } from "./SettingsContext";
+import BizBuddyLogo from "./BizBuddyLogo";
 import PurchasesList from "./PurchasesList";
 
 const Purchases = ({ user, onLogout, onNavigate }) => {
+  const { formatCurrency, getText, formatDate } = useSettings();
   const [activeMenu, setActiveMenu] = useState("Purchases");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState("");
   const [selectedSupplierId, setSelectedSupplierId] = useState(null);
   const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString().split('T')[0]);
@@ -23,12 +27,12 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
   const [items, setItems] = useState([]);
 
   const menuItems = [
-    { name: "Dashboard", icon: "📊" },
-    { name: "Party Management", icon: "👥" },
-    { name: "Item Management", icon: "📦" },
-    { name: "Sales", icon: "🛒" },
-    { name: "Purchases", icon: "💰" },
-    { name: "Annual Reports", icon: "📈" }
+    { name: getText('dashboard'), icon: "📊", key: "Dashboard" },
+    { name: getText('parties'), icon: "👥", key: "Party Management" },
+    { name: getText('items'), icon: "📦", key: "Item Management" },
+    { name: getText('sales'), icon: "🛒", key: "Sales" },
+    { name: getText('purchases'), icon: "💰", key: "Purchases" },
+    { name: getText('reports'), icon: "📈", key: "Annual Reports" }
   ];
 
   // Fetch data on component mount
@@ -270,23 +274,39 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
 
   return (
     <div className="purchases-container">
+      {/* Mobile Menu Toggle */}
+      <button 
+        className="mobile-menu-toggle"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        aria-label="Toggle menu"
+      >
+        ☰
+      </button>
+
+      {/* Mobile Overlay */}
+      <div 
+        className={`mobile-overlay ${isMobileMenuOpen ? 'active' : ''}`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      ></div>
+
       {/* Sidebar */}
-      <div className="sidebar">
+      <div className={`sidebar ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}>
         <div className="logo-section">
           <div className="logo-icon">
-            <span>&lt;/&gt;</span>
+            <BizBuddyLogo size={44} />
           </div>
         </div>
         
         <nav className="nav-menu">
           {menuItems.map((item) => (
             <div
-              key={item.name}
-              className={`menu-item ${activeMenu === item.name ? "active" : ""}`}
+              key={item.key}
+              className={`menu-item ${activeMenu === item.key ? "active" : ""}`}
               onClick={() => {
-                setActiveMenu(item.name);
-                if (item.name !== "Purchases") {
-                  onNavigate(item.name);
+                setActiveMenu(item.key);
+                setIsMobileMenuOpen(false);
+                if (item.key !== "Purchases") {
+                  onNavigate(item.key);
                 }
               }}
             >
@@ -297,13 +317,19 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
         </nav>
 
         <div className="sidebar-bottom">
-          <div className="menu-item" onClick={() => {}}>
+          <div className="menu-item" onClick={() => {
+            setIsMobileMenuOpen(false);
+            onNavigate("Settings");
+          }}>
             <span className="menu-icon">⚙️</span>
-            <span className="menu-text">Settings</span>
+            <span className="menu-text">{getText('settings')}</span>
           </div>
-          <div className="menu-item logout" onClick={onLogout}>
+          <div className="menu-item logout" onClick={() => {
+            setIsMobileMenuOpen(false);
+            onLogout();
+          }}>
             <span className="menu-icon">🚪</span>
-            <span className="menu-text">Logout</span>
+            <span className="menu-text">{getText('logout')}</span>
           </div>
         </div>
       </div>
@@ -322,7 +348,6 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
             >
               📋 View Purchase History
             </button>
-            <button className="notification-btn">🔔</button>
             <div className="user-menu">
               <button className="user-avatar" onClick={onLogout}>
                 👤
@@ -495,7 +520,7 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
                             />
                           </td>
                           <td className="total-cell">
-                            <span className="total-amount">${item.total.toFixed(2)}</span>
+                            <span className="total-amount">{formatCurrency(item.total)}</span>
                           </td>
                           <td className="actions-cell">
                             <button
@@ -534,7 +559,7 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
                   </div>
                   <div className="summary-row total-row">
                     <span className="summary-label">Grand Total:</span>
-                    <span className="summary-value">${calculateGrandTotal().toFixed(2)}</span>
+                    <span className="summary-value">{formatCurrency(calculateGrandTotal())}</span>
                   </div>
                 </div>
 

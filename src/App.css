@@ -1,7 +1,12 @@
+/* Mobile-first App Styles */
 .App {
-  text-align: center;
+  width: 100%;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  overflow-x: hidden;
 }
 
+/* Remove default styles that might interfere */
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -16,18 +21,21 @@
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
+  min-height: -webkit-fill-available;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  padding: 1rem;
 }
 
 .App-link {
   color: #61dafb;
 }
 
+/* Animations */
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -44,4 +52,21 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Responsive font sizes */
+@media (max-width: 768px) {
+  .App-header {
+    font-size: calc(8px + 2vmin);
+  }
+}
+
+/* Ensure proper viewport handling */
+html {
+  height: -webkit-fill-available;
+}
+
+body {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
 }

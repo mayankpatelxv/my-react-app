@@ -1,34 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./Settings.css";
+import { useSettings } from "./SettingsContext";
+import BizBuddyLogo from "./BizBuddyLogo";
 
-const Settings = ({ onBack }) => {
-  const [settings, setSettings] = useState({
-    theme: localStorage.getItem('theme') || 'light',
-    language: localStorage.getItem('language') || 'english',
-    currency: localStorage.getItem('currency') || 'EUR',
-    notifications: JSON.parse(localStorage.getItem('notifications') || 'true'),
-    autoSave: JSON.parse(localStorage.getItem('autoSave') || 'true'),
-    compactView: JSON.parse(localStorage.getItem('compactView') || 'false'),
-    dateFormat: localStorage.getItem('dateFormat') || 'DD/MM/YYYY',
-    timeFormat: localStorage.getItem('timeFormat') || '24h'
-  });
-
+const Settings = ({ onBack, user, onLogout, onNavigate }) => {
+  const { settings, updateSetting, getText } = useSettings();
   const [activeSection, setActiveSection] = useState('general');
-
-  useEffect(() => {
-    // Apply theme to document
-    document.documentElement.setAttribute('data-theme', settings.theme);
-  }, [settings.theme]);
-
-  const handleSettingChange = (key, value) => {
-    const newSettings = { ...settings, [key]: value };
-    setSettings(newSettings);
-    localStorage.setItem(key, typeof value === 'boolean' ? JSON.stringify(value) : value);
-    
-    if (key === 'theme') {
-      document.documentElement.setAttribute('data-theme', value);
-    }
-  };
 
   const settingSections = [
     { id: 'general', name: 'General', icon: '⚙️' },
@@ -46,7 +23,7 @@ const Settings = ({ onBack }) => {
         <label className="setting-label">Language</label>
         <select 
           value={settings.language} 
-          onChange={(e) => handleSettingChange('language', e.target.value)}
+          onChange={(e) => updateSetting('language', e.target.value)}
           className="setting-select"
         >
           <option value="english">English</option>
@@ -61,7 +38,7 @@ const Settings = ({ onBack }) => {
         <label className="setting-label">Default Currency</label>
         <select 
           value={settings.currency} 
-          onChange={(e) => handleSettingChange('currency', e.target.value)}
+          onChange={(e) => updateSetting('currency', e.target.value)}
           className="setting-select"
         >
           <option value="EUR">EUR (€)</option>
@@ -76,7 +53,7 @@ const Settings = ({ onBack }) => {
         <label className="setting-label">Date Format</label>
         <select 
           value={settings.dateFormat} 
-          onChange={(e) => handleSettingChange('dateFormat', e.target.value)}
+          onChange={(e) => updateSetting('dateFormat', e.target.value)}
           className="setting-select"
         >
           <option value="DD/MM/YYYY">DD/MM/YYYY</option>
@@ -89,7 +66,7 @@ const Settings = ({ onBack }) => {
         <label className="setting-label">Time Format</label>
         <select 
           value={settings.timeFormat} 
-          onChange={(e) => handleSettingChange('timeFormat', e.target.value)}
+          onChange={(e) => updateSetting('timeFormat', e.target.value)}
           className="setting-select"
         >
           <option value="24h">24 Hour</option>
@@ -104,7 +81,7 @@ const Settings = ({ onBack }) => {
             <input 
               type="checkbox" 
               checked={settings.autoSave}
-              onChange={(e) => handleSettingChange('autoSave', e.target.checked)}
+              onChange={(e) => updateSetting('autoSave', e.target.checked)}
             />
             <span className="toggle-slider"></span>
           </div>
@@ -123,7 +100,7 @@ const Settings = ({ onBack }) => {
         <div className="theme-options">
           <div 
             className={`theme-option ${settings.theme === 'light' ? 'active' : ''}`}
-            onClick={() => handleSettingChange('theme', 'light')}
+            onClick={() => updateSetting('theme', 'light')}
           >
             <div className="theme-preview light-preview">
               <div className="preview-header"></div>
@@ -133,7 +110,7 @@ const Settings = ({ onBack }) => {
           </div>
           <div 
             className={`theme-option ${settings.theme === 'dark' ? 'active' : ''}`}
-            onClick={() => handleSettingChange('theme', 'dark')}
+            onClick={() => updateSetting('theme', 'dark')}
           >
             <div className="theme-preview dark-preview">
               <div className="preview-header"></div>
@@ -143,7 +120,7 @@ const Settings = ({ onBack }) => {
           </div>
           <div 
             className={`theme-option ${settings.theme === 'auto' ? 'active' : ''}`}
-            onClick={() => handleSettingChange('theme', 'auto')}
+            onClick={() => updateSetting('theme', 'auto')}
           >
             <div className="theme-preview auto-preview">
               <div className="preview-header"></div>
@@ -161,7 +138,7 @@ const Settings = ({ onBack }) => {
             <input 
               type="checkbox" 
               checked={settings.compactView}
-              onChange={(e) => handleSettingChange('compactView', e.target.checked)}
+              onChange={(e) => updateSetting('compactView', e.target.checked)}
             />
             <span className="toggle-slider"></span>
           </div>
@@ -182,7 +159,7 @@ const Settings = ({ onBack }) => {
             <input 
               type="checkbox" 
               checked={settings.notifications}
-              onChange={(e) => handleSettingChange('notifications', e.target.checked)}
+              onChange={(e) => updateSetting('notifications', e.target.checked)}
             />
             <span className="toggle-slider"></span>
           </div>
@@ -263,7 +240,7 @@ const Settings = ({ onBack }) => {
       
       <div className="about-info">
         <div className="app-logo">
-          <span>&lt;/&gt;</span>
+          <BizBuddyLogo size={60} />
         </div>
         <h2>bizBuddy</h2>
         <p className="version">Version 1.0.0</p>

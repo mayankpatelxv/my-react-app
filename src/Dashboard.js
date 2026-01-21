@@ -2,8 +2,11 @@ import { useState, useEffect } from "react";
 import "./Dashboard.css";
 import AIChatbot from "./AIChatbot";
 import { getItems, getParties, getSales, getPurchases } from "./supabaseClient";
+import { useSettings } from "./SettingsContext";
+import BizBuddyLogo from "./BizBuddyLogo";
 
 const Dashboard = ({ user, onLogout, onNavigate }) => {
+  const { formatCurrency, getText } = useSettings();
   const [activeMenu, setActiveMenu] = useState("Dashboard");
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -69,28 +72,28 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
 
   const stats = [
     {
-      title: "Total Sales",
-      value: dashboardData.loading ? "Loading..." : `$${dashboardData.totalSales.toFixed(2)}`,
+      title: getText('totalSales'),
+      value: dashboardData.loading ? "Loading..." : formatCurrency(dashboardData.totalSales),
       change: dashboardData.totalSales > 0 ? "Active sales recorded" : "No sales yet",
       icon: "🛒",
       color: "blue"
     },
     {
-      title: "Total Purchases",
-      value: dashboardData.loading ? "Loading..." : `$${dashboardData.totalPurchases.toFixed(2)}`,
+      title: getText('totalPurchases'),
+      value: dashboardData.loading ? "Loading..." : formatCurrency(dashboardData.totalPurchases),
       change: dashboardData.totalPurchases > 0 ? "Active purchases recorded" : "No purchases yet",
       icon: "💰",
       color: "orange"
     },
     {
-      title: "Total Items",
+      title: getText('totalItems'),
       value: dashboardData.loading ? "Loading..." : dashboardData.totalItems.toString(),
       change: dashboardData.totalItems > 0 ? `${dashboardData.totalItems} items in inventory` : "No items yet",
       icon: "📦",
       color: "green"
     },
     {
-      title: "Total Parties",
+      title: getText('totalParties'),
       value: dashboardData.loading ? "Loading..." : dashboardData.totalParties.toString(),
       change: dashboardData.totalParties > 0 ? `${dashboardData.totalParties} customers & suppliers` : "No parties yet",
       icon: "👥",
@@ -125,7 +128,7 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
       <div className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
         <div className="logo-section">
           <div className="logo-icon">
-            <span>&lt;/&gt;</span>
+            <BizBuddyLogo size={44} />
           </div>
         </div>
         
@@ -170,9 +173,8 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
       <div className="main-content">
         {/* Header */}
         <div className="header">
-          <h1>Welcome back, {user?.name || "User"}!</h1>
+          <h1>{getText('welcome')}, {user?.name || "User"}!</h1>
           <div className="header-actions">
-            <button className="notification-btn">🔔</button>
             <div className="user-menu">
               <button className="user-avatar" onClick={onLogout}>
                 👤
@@ -197,79 +199,111 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
 
         {/* Quick Actions */}
         <div className="quick-actions">
-          <h2>Quick Actions</h2>
-          <div className="actions-grid">
-            {quickActions.map((action, index) => (
-              <button 
-                key={index} 
-                className={`action-btn ${action.color}`}
-                onClick={() => {
-                  if (action.name === "Create New Invoice") {
-                    onNavigate("Create Invoice");
-                  } else if (action.name === "Add New Party") {
-                    onNavigate("Add Party");
-                  } else if (action.name === "Add New Item") {
-                    onNavigate("Add Item");
-                  } else if (action.name === "AI Assistant") {
-                    setIsChatbotOpen(true);
-                  }
-                }}
-              >
-                <span className="action-icon">{action.icon}</span>
-                <span className="action-text">{action.name}</span>
-              </button>
-            ))}
+          <h2>{getText('quickActions')}</h2>
+          <div className="action-cards-row">
+            <div className="action-card" onClick={() => onNavigate("Sales")}>
+              <div className="action-card-icon">🛒</div>
+              <div className="action-card-content">
+                <h4>Record Sale</h4>
+                <p>Add new sales transactions</p>
+              </div>
+              <div className="action-arrow">→</div>
+            </div>
+            
+            <div className="action-card" onClick={() => onNavigate("Purchases")}>
+              <div className="action-card-icon">💰</div>
+              <div className="action-card-content">
+                <h4>Record Purchase</h4>
+                <p>Track your expenses</p>
+              </div>
+              <div className="action-arrow">→</div>
+            </div>
+            
+            <div className="action-card" onClick={() => setIsChatbotOpen(true)}>
+              <div className="action-card-icon">🤖</div>
+              <div className="action-card-content">
+                <h4>AI Assistant</h4>
+                <p>Get business insights</p>
+              </div>
+              <div className="action-arrow">→</div>
+            </div>
           </div>
         </div>
 
-        {/* Chart Section */}
-        <div className="chart-section">
-          <h2>Sales & Purchases Overview</h2>
-          <div className="chart-container">
-            {dashboardData.loading ? (
-              <div className="loading-chart">
-                <div className="loading-icon">⏳</div>
-                <h3>Loading Chart Data...</h3>
-                <p>Please wait while we fetch your data.</p>
+        {/* Recent Activity Section */}
+        <div className="recent-activity-section">
+          <div className="activity-header">
+            <h2>📋 {getText('recentActivity')}</h2>
+            <button 
+              className="view-all-btn"
+              onClick={() => onNavigate("Annual Reports")}
+            >
+              View All Reports
+            </button>
+          </div>
+          
+          <div className="activity-grid">
+            {/* Business Insights Card */}
+            <div className="activity-card insights-card">
+              <div className="card-header">
+                <h3>💡 Business Insights</h3>
+                <span className="insight-badge">AI Powered</span>
               </div>
-            ) : dashboardData.totalSales === 0 && dashboardData.totalPurchases === 0 ? (
-              <div className="empty-chart">
-                <div className="empty-icon">📊</div>
-                <h3>No Data Available</h3>
-                <p>Start adding sales and purchases to see your overview chart here.</p>
-              </div>
-            ) : (
-              <div className="simple-chart">
-                <div className="chart-bars">
-                  <div className="chart-bar">
-                    <div className="bar-label">Sales</div>
-                    <div className="bar-container">
-                      <div 
-                        className="bar sales-bar" 
-                        style={{ 
-                          height: `${Math.max(20, (dashboardData.totalSales / Math.max(dashboardData.totalSales, dashboardData.totalPurchases)) * 100)}%` 
-                        }}
-                      ></div>
-                    </div>
-                    <div className="bar-value">${dashboardData.totalSales.toFixed(2)}</div>
+              <div className="insights-content">
+                <div className="insight-item">
+                  <div className="insight-icon">📈</div>
+                  <div className="insight-text">
+                    <strong>Growth Trend:</strong> Your business is showing positive momentum with {dashboardData.totalSales > dashboardData.totalPurchases ? 'profitable' : 'developing'} operations.
                   </div>
-                  <div className="chart-bar">
-                    <div className="bar-label">Purchases</div>
-                    <div className="bar-container">
-                      <div 
-                        className="bar purchases-bar" 
-                        style={{ 
-                          height: `${Math.max(20, (dashboardData.totalPurchases / Math.max(dashboardData.totalSales, dashboardData.totalPurchases)) * 100)}%` 
-                        }}
-                      ></div>
-                    </div>
-                    <div className="bar-value">${dashboardData.totalPurchases.toFixed(2)}</div>
+                </div>
+                <div className="insight-item">
+                  <div className="insight-icon">🎯</div>
+                  <div className="insight-text">
+                    <strong>Next Steps:</strong> {dashboardData.totalItems === 0 ? 'Add your first items to inventory' : dashboardData.totalParties === 0 ? 'Add customers and suppliers' : 'Consider expanding your product range'}
+                  </div>
+                </div>
+                <div className="insight-item">
+                  <div className="insight-icon">💰</div>
+                  <div className="insight-text">
+                    <strong>Financial Health:</strong> {dashboardData.totalSales > 0 ? `Revenue of $${dashboardData.totalSales.toFixed(2)} recorded` : 'Ready to record your first sale'}
                   </div>
                 </div>
               </div>
-            )}
+            </div>
+
+            {/* Quick Stats Card */}
+            <div className="activity-card stats-card">
+              <div className="card-header">
+                <h3>⚡ Quick Overview</h3>
+                <span className="stats-badge">Live Data</span>
+              </div>
+              <div className="quick-stats-grid">
+                <div className="quick-stat-item">
+                  <div className="stat-number">{dashboardData.totalItems}</div>
+                  <div className="stat-label">Items</div>
+                  <div className="stat-icon">📦</div>
+                </div>
+                <div className="quick-stat-item">
+                  <div className="stat-number">{dashboardData.totalParties}</div>
+                  <div className="stat-label">Parties</div>
+                  <div className="stat-icon">👥</div>
+                </div>
+                <div className="quick-stat-item">
+                  <div className="stat-number">${(dashboardData.totalSales - dashboardData.totalPurchases).toFixed(0)}</div>
+                  <div className="stat-label">Net Profit</div>
+                  <div className="stat-icon">💎</div>
+                </div>
+                <div className="quick-stat-item">
+                  <div className="stat-number">{dashboardData.totalSales > 0 ? (((dashboardData.totalSales - dashboardData.totalPurchases) / dashboardData.totalSales) * 100).toFixed(0) : 0}%</div>
+                  <div className="stat-label">Margin</div>
+                  <div className="stat-icon">📊</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
+
       </div>
 
       {/* AI Chatbot */}

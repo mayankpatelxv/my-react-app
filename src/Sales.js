@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import "./Sales.css";
 import { getItems, getParties, createSaleWithItems } from "./supabaseClient";
+import { useSettings } from "./SettingsContext";
+import BizBuddyLogo from "./BizBuddyLogo";
 import jsPDF from 'jspdf';
 
 const Sales = ({ user, onLogout, onNavigate }) => {
+  const { formatCurrency, getText, formatDate } = useSettings();
   const [activeMenu, setActiveMenu] = useState("Sales");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const [taxRate, setTaxRate] = useState(10);
@@ -20,12 +24,12 @@ const Sales = ({ user, onLogout, onNavigate }) => {
   const [items, setItems] = useState([]);
 
   const menuItems = [
-    { name: "Dashboard", icon: "📊" },
-    { name: "Party Management", icon: "👥" },
-    { name: "Item Management", icon: "📦" },
-    { name: "Sales", icon: "🛒" },
-    { name: "Purchases", icon: "💰" },
-    { name: "Annual Reports", icon: "📈" }
+    { name: getText('dashboard'), icon: "📊", key: "Dashboard" },
+    { name: getText('parties'), icon: "👥", key: "Party Management" },
+    { name: getText('items'), icon: "📦", key: "Item Management" },
+    { name: getText('sales'), icon: "🛒", key: "Sales" },
+    { name: getText('purchases'), icon: "💰", key: "Purchases" },
+    { name: getText('reports'), icon: "📈", key: "Annual Reports" }
   ];
 
   // Fetch data on component mount
@@ -491,23 +495,39 @@ const Sales = ({ user, onLogout, onNavigate }) => {
 
   return (
     <div className="sales-container">
+      {/* Mobile Menu Toggle */}
+      <button 
+        className="mobile-menu-toggle"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        aria-label="Toggle menu"
+      >
+        ☰
+      </button>
+
+      {/* Mobile Overlay */}
+      <div 
+        className={`mobile-overlay ${isMobileMenuOpen ? 'active' : ''}`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      ></div>
+
       {/* Sidebar */}
-      <div className="sidebar">
+      <div className={`sidebar ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}>
         <div className="logo-section">
           <div className="logo-icon">
-            <span>&lt;/&gt;</span>
+            <BizBuddyLogo size={44} />
           </div>
         </div>
         
         <nav className="nav-menu">
           {menuItems.map((item) => (
             <div
-              key={item.name}
-              className={`menu-item ${activeMenu === item.name ? "active" : ""}`}
+              key={item.key}
+              className={`menu-item ${activeMenu === item.key ? "active" : ""}`}
               onClick={() => {
-                setActiveMenu(item.name);
-                if (item.name !== "Sales") {
-                  onNavigate(item.name);
+                setActiveMenu(item.key);
+                setIsMobileMenuOpen(false);
+                if (item.key !== "Sales") {
+                  onNavigate(item.key);
                 }
               }}
             >
@@ -518,13 +538,19 @@ const Sales = ({ user, onLogout, onNavigate }) => {
         </nav>
 
         <div className="sidebar-bottom">
-          <div className="menu-item" onClick={() => {}}>
+          <div className="menu-item" onClick={() => {
+            setIsMobileMenuOpen(false);
+            onNavigate("Settings");
+          }}>
             <span className="menu-icon">⚙️</span>
-            <span className="menu-text">Settings</span>
+            <span className="menu-text">{getText('settings')}</span>
           </div>
-          <div className="menu-item logout" onClick={onLogout}>
+          <div className="menu-item logout" onClick={() => {
+            setIsMobileMenuOpen(false);
+            onLogout();
+          }}>
             <span className="menu-icon">🚪</span>
-            <span className="menu-text">Logout</span>
+            <span className="menu-text">{getText('logout')}</span>
           </div>
         </div>
       </div>
@@ -537,7 +563,6 @@ const Sales = ({ user, onLogout, onNavigate }) => {
             <h1>Create New Invoice</h1>
           </div>
           <div className="header-actions">
-            <button className="notification-btn">🔔</button>
             <div className="user-menu">
               <button className="user-avatar" onClick={onLogout}>
                 👤
@@ -646,7 +671,7 @@ const Sales = ({ user, onLogout, onNavigate }) => {
                               />
                             </td>
                             <td className="item-total">
-                              ${(item.price * item.quantity).toFixed(2)}
+                              {formatCurrency(item.price * item.quantity)}
                             </td>
                             <td className="item-actions">
                               <button 
@@ -727,19 +752,19 @@ const Sales = ({ user, onLogout, onNavigate }) => {
               <div className="summary-details">
                 <div className="summary-row">
                   <span className="summary-label">Subtotal:</span>
-                  <span className="summary-value">${calculateSubtotal().toFixed(2)}</span>
+                  <span className="summary-value">{formatCurrency(calculateSubtotal())}</span>
                 </div>
                 <div className="summary-row discount">
                   <span className="summary-label">Total Item Discount:</span>
-                  <span className="summary-value">-${calculateDiscount().toFixed(2)}</span>
+                  <span className="summary-value">-{formatCurrency(calculateDiscount())}</span>
                 </div>
                 <div className="summary-row">
                   <span className="summary-label">Tax ({taxRate}%):</span>
-                  <span className="summary-value">${calculateTax().toFixed(2)}</span>
+                  <span className="summary-value">{formatCurrency(calculateTax())}</span>
                 </div>
                 <div className="summary-row total">
                   <span className="summary-label">Grand Total:</span>
-                  <span className="summary-value">${calculateGrandTotal().toFixed(2)}</span>
+                  <span className="summary-value">{formatCurrency(calculateGrandTotal())}</span>
                 </div>
               </div>
 

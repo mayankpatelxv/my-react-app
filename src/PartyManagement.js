@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 import "./PartyManagement.css";
+import { useSettings } from "./SettingsContext";
+import BizBuddyLogo from "./BizBuddyLogo";
 
 const PartyManagement = ({ user, onLogout, onNavigate }) => {
+  const { formatCurrency, getText, formatDate } = useSettings();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("All");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [parties, setParties] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,12 +39,12 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
   };
 
   const menuItems = [
-    { name: "Dashboard", icon: "📊" },
-    { name: "Party Management", icon: "👥" },
-    { name: "Item Management", icon: "📦" },
-    { name: "Sales", icon: "🛒" },
-    { name: "Purchases", icon: "💰" },
-    { name: "Annual Reports", icon: "📈" }
+    { name: getText('dashboard'), icon: "📊", key: "Dashboard" },
+    { name: getText('parties'), icon: "👥", key: "Party Management" },
+    { name: getText('items'), icon: "📦", key: "Item Management" },
+    { name: getText('sales'), icon: "🛒", key: "Sales" },
+    { name: getText('purchases'), icon: "💰", key: "Purchases" },
+    { name: getText('reports'), icon: "📈", key: "Annual Reports" }
   ];
 
   const filteredParties = parties.filter(party => {
@@ -73,20 +77,38 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
 
   return (
     <div className="party-management-container">
+      {/* Mobile Menu Toggle */}
+      <button 
+        className="mobile-menu-toggle"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        aria-label="Toggle menu"
+      >
+        ☰
+      </button>
+
+      {/* Mobile Overlay */}
+      <div 
+        className={`mobile-overlay ${isMobileMenuOpen ? 'active' : ''}`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      ></div>
+
       {/* Sidebar */}
-      <div className="sidebar">
+      <div className={`sidebar ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}>
         <div className="logo-section">
           <div className="logo-icon">
-            <span>&lt;/&gt;</span>
+            <BizBuddyLogo size={44} />
           </div>
         </div>
         
         <nav className="nav-menu">
           {menuItems.map((item) => (
             <div
-              key={item.name}
-              className={`menu-item ${item.name === "Party Management" ? "active" : ""}`}
-              onClick={() => onNavigate(item.name)}
+              key={item.key}
+              className={`menu-item ${item.key === "Party Management" ? "active" : ""}`}
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                onNavigate(item.key);
+              }}
             >
               <span className="menu-icon">{item.icon}</span>
               <span className="menu-text">{item.name}</span>
@@ -95,13 +117,19 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
         </nav>
 
         <div className="sidebar-bottom">
-          <div className="menu-item" onClick={() => {}}>
+          <div className="menu-item" onClick={() => {
+            setIsMobileMenuOpen(false);
+            onNavigate("Settings");
+          }}>
             <span className="menu-icon">⚙️</span>
-            <span className="menu-text">Settings</span>
+            <span className="menu-text">{getText('settings')}</span>
           </div>
-          <div className="menu-item logout" onClick={onLogout}>
+          <div className="menu-item logout" onClick={() => {
+            setIsMobileMenuOpen(false);
+            onLogout();
+          }}>
             <span className="menu-icon">🚪</span>
-            <span className="menu-text">Logout</span>
+            <span className="menu-text">{getText('logout')}</span>
           </div>
         </div>
       </div>
@@ -115,7 +143,6 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
             <p>Manage your customers and suppliers efficiently.</p>
           </div>
           <div className="header-actions">
-            <button className="notification-btn">🔔</button>
             <button className="add-party-btn" onClick={() => onNavigate("Add Party")}>
               <span>+</span>
               Add New Party
@@ -131,7 +158,6 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
         {/* Search and Filter */}
         <div className="controls">
           <div className="search-box">
-            <span className="search-icon">🔍</span>
             <input
               type="text"
               placeholder="Search parties by name or contact"
@@ -196,10 +222,10 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
                     <td className="party-name">{party.name}</td>
                     <td className="party-contact">{party.email}</td>
                     <td className="party-balance">
-                      ${party.credit_limit ? party.credit_limit.toFixed(2) : '0.00'}
+                      {formatCurrency(party.credit_limit || 0)}
                     </td>
                     <td className="party-activity">
-                      {new Date(party.created_at).toLocaleDateString()}
+                      {formatDate(party.created_at)}
                     </td>
                     <td>
                       <span className={`type-badge ${party.party_type.toLowerCase()}`}>

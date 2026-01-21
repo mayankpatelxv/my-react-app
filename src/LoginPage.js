@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./LoginPage.css";
 import { loginUser } from "./supabaseClient";
+import BizBuddyLogo from "./BizBuddyLogo";
 
 const LoginPage = ({ onSwitchToRegister, onLoginSuccess }) => {
   const [email, setEmail] = useState("");
@@ -107,7 +108,7 @@ const LoginPage = ({ onSwitchToRegister, onLoginSuccess }) => {
       <div className="login-card">
         <div className="logo">
           <div className="logo-icon">
-            <span>&lt;/&gt;</span>
+            <BizBuddyLogo size={50} />
           </div>
         </div>
 
