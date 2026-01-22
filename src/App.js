@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import './App.css';
 import { SettingsProvider } from './SettingsContext';
 import LandingPage from './LandingPage';
@@ -18,61 +18,18 @@ import AnnualReports from './AnnualReports';
 import Settings from './Settings';
 
 // Protected Route Component
-function ProtectedRoute({ children }) {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAuth = () => {
-      try {
-        const savedUser = localStorage.getItem('bizBuddy_user');
-        if (savedUser && savedUser !== 'null' && savedUser !== 'undefined') {
-          const userData = JSON.parse(savedUser);
-          if (userData && userData.id && userData.email) {
-            setUser(userData);
-          }
-        }
-      } catch (error) {
-        console.error('Error checking auth:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    checkAuth();
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        color: 'white',
-        fontSize: '18px',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>⏳</div>
-          <div>Loading BizBuddy...</div>
-        </div>
-      </div>
-    );
-  }
-
+function ProtectedRoute({ children, user }) {
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-
   return children;
 }
 
 // App Content Component (handles navigation logic)
 function AppContent() {
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  const location = useLocation();
 
   // Check authentication on mount
   useEffect(() => {
@@ -82,11 +39,14 @@ function AppContent() {
         if (savedUser && savedUser !== 'null' && savedUser !== 'undefined') {
           const userData = JSON.parse(savedUser);
           if (userData && userData.id && userData.email) {
+            console.log('✅ User authenticated:', userData.email);
             setUser(userData);
           }
         }
       } catch (error) {
         console.error('Error checking auth:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
     checkAuth();
@@ -157,6 +117,27 @@ function AppContent() {
     navigate(route);
   };
 
+  // Show loading screen while checking authentication
+  if (isLoading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white',
+        fontSize: '18px',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>⏳</div>
+          <div>Loading BizBuddy...</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Routes>
       {/* Public Routes */}
@@ -189,7 +170,7 @@ function AppContent() {
       <Route 
         path="/dashboard" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <Dashboard user={user} onLogout={handleLogout} onNavigate={handleNavigation} />
           </ProtectedRoute>
         } 
@@ -197,7 +178,7 @@ function AppContent() {
       <Route 
         path="/dashboard-analytics" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <DashboardAnalytics user={user} onLogout={handleLogout} onNavigate={handleNavigation} />
           </ProtectedRoute>
         } 
@@ -205,7 +186,7 @@ function AppContent() {
       <Route 
         path="/party-management" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <PartyManagement user={user} onLogout={handleLogout} onNavigate={handleNavigation} />
           </ProtectedRoute>
         } 
@@ -213,7 +194,7 @@ function AppContent() {
       <Route 
         path="/create-invoice" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <CreateInvoice user={user} onLogout={handleLogout} onNavigate={handleNavigation} />
           </ProtectedRoute>
         } 
@@ -221,7 +202,7 @@ function AppContent() {
       <Route 
         path="/add-party" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <AddParty user={user} onLogout={handleLogout} onNavigate={handleNavigation} />
           </ProtectedRoute>
         } 
@@ -229,7 +210,7 @@ function AppContent() {
       <Route 
         path="/item-management" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <ItemManagement user={user} onLogout={handleLogout} onNavigate={handleNavigation} />
           </ProtectedRoute>
         } 
@@ -237,7 +218,7 @@ function AppContent() {
       <Route 
         path="/add-item" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <AddItem user={user} onLogout={handleLogout} onNavigate={handleNavigation} />
           </ProtectedRoute>
         } 
@@ -245,7 +226,7 @@ function AppContent() {
       <Route 
         path="/sales" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <Sales user={user} onLogout={handleLogout} onNavigate={handleNavigation} />
           </ProtectedRoute>
         } 
@@ -253,7 +234,7 @@ function AppContent() {
       <Route 
         path="/purchases" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <Purchases user={user} onLogout={handleLogout} onNavigate={handleNavigation} />
           </ProtectedRoute>
         } 
@@ -261,7 +242,7 @@ function AppContent() {
       <Route 
         path="/annual-reports" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <AnnualReports user={user} onLogout={handleLogout} onNavigate={handleNavigation} />
           </ProtectedRoute>
         } 
@@ -269,7 +250,7 @@ function AppContent() {
       <Route 
         path="/settings" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <Settings 
               user={user}
               onLogout={handleLogout}
