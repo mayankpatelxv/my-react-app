@@ -94,6 +94,29 @@
 
 .sidebar.mobile-open {
   transform: translateX(0);
+  /* Ensure sidebar content is clickable */
+  pointer-events: auto;
+}
+
+/* Ensure menu items are clickable on mobile */
+.sidebar.mobile-open .menu-item {
+  pointer-events: auto;
+  position: relative;
+  z-index: 1001;
+}
+
+/* Ensure nav menu is visible and clickable */
+.sidebar.mobile-open .nav-menu {
+  pointer-events: auto;
+  position: relative;
+  z-index: 1001;
+}
+
+/* Ensure sidebar bottom items are clickable */
+.sidebar.mobile-open .sidebar-bottom {
+  pointer-events: auto;
+  position: relative;
+  z-index: 1001;
 }
 
 .logo-section {

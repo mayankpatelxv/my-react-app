@@ -900,12 +900,29 @@
     /* Better scrolling on Android */
     -webkit-overflow-scrolling: touch;
     overflow-y: auto;
+    background: white;
+    /* Ensure sidebar content is clickable */
+    pointer-events: auto;
   }
   
   .sidebar.mobile-open {
     left: 0;
     /* Add shadow when open */
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Ensure menu items are clickable on mobile */
+  .sidebar.mobile-open .menu-item {
+    pointer-events: auto;
+    position: relative;
+    z-index: 1001;
+  }
+  
+  /* Ensure nav menu is visible and clickable */
+  .sidebar.mobile-open .nav-menu {
+    pointer-events: auto;
+    position: relative;
+    z-index: 1001;
   }
   
   .main-content {
@@ -930,6 +947,17 @@
   
   .mobile-overlay.active {
     display: block;
+  }
+  
+  /* Ensure sidebar bottom items are clickable */
+  .sidebar-bottom {
+    pointer-events: auto;
+    position: relative;
+    z-index: 1001;
+  }
+  
+  .sidebar-bottom .menu-item {
+    pointer-events: auto;
   }
 }
 
@@ -1084,10 +1112,27 @@
     min-height: 56px;
     /* Better touch feedback */
     -webkit-tap-highlight-color: rgba(102, 126, 234, 0.1);
+    /* Ensure clickable */
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    /* Prevent text selection on touch */
+    -webkit-user-select: none;
+    user-select: none;
+    /* Better touch handling */
+    touch-action: manipulation;
   }
   
   .menu-item:active {
     background: rgba(102, 126, 234, 0.2);
+  }
+  
+  /* Ensure menu text and icons are visible */
+  .menu-item .menu-text,
+  .menu-item .menu-icon {
+    pointer-events: none;
+    position: relative;
+    z-index: 1;
   }
 }
 
