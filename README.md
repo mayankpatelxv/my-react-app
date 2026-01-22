@@ -89,9 +89,6 @@ The application is deployed and accessible at:
 
 - [Mobile Fix Summary](./MOBILE_FIX_SUMMARY.md) - Mobile responsiveness fixes
 - [Android Testing Guide](./ANDROID_TESTING_GUIDE.md) - How to test on Android
-- [Routing Fix](./ROUTING_FIX.md) - React Router configuration
-- [Sales Setup](./SALES_SETUP.md) - Sales feature documentation
-- [Purchases Setup](./PURCHASES_SETUP.md) - Purchases feature documentation
 
 ## 🔧 Configuration
 
