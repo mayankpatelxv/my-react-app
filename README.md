@@ -1,8 +1,38 @@
-# Getting Started with Create React App
+# bizBuddy - Smart Business Support System
+
+🚀 **Live Website**: [https://mayankpatelxv.github.io/my-react-app](https://mayankpatelxv.github.io/my-react-app)
+
+A comprehensive business management application built with React for managing sales, purchases, inventory, parties, and generating business reports with AI-powered insights.
+
+## ✨ Features
+
+- 📊 **Dashboard** - Real-time business overview with key metrics
+- 👥 **Party Management** - Manage customers and suppliers
+- 📦 **Item Management** - Track inventory and products
+- 🛒 **Sales** - Record and manage sales transactions
+- 💰 **Purchases** - Track purchase orders and expenses
+- 📈 **Annual Reports** - Comprehensive business analytics
+- 🤖 **AI Chatbot** - Get business insights powered by Gemini AI
+- 🌍 **Multi-language Support** - English, Spanish, French, German, Hindi
+- 💱 **Multi-currency** - USD, EUR, GBP, INR, JPY
+- 🎨 **Theme Support** - Light, Dark, and Auto modes
+- 📱 **Fully Responsive** - Optimized for mobile, tablet, and desktop
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React, React Router
+- **Backend**: Supabase (PostgreSQL, Authentication, Storage)
+- **AI**: Google Gemini API
+- **Styling**: Pure CSS (no frameworks)
+- **Deployment**: GitHub Pages
+
+## 🚀 Getting Started
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## 📱 Available Scripts
+
+### Development
 
 In the project directory, you can run:
 
@@ -38,6 +68,76 @@ If you aren't satisfied with the build tool and configuration choices, you can `
 Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
 You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+
+### `npm run deploy`
+
+Deploys the app to GitHub Pages.\
+Make sure you have built the app first with `npm run build`.
+
+## 🌐 Live Deployment
+
+The application is deployed and accessible at:
+**[https://mayankpatelxv.github.io/my-react-app](https://mayankpatelxv.github.io/my-react-app)**
+
+### Deployment Process
+
+1. Build the production version: `npm run build`
+2. Deploy to GitHub Pages: `npm run deploy`
+3. The site will be live at the URL above
+
+## 📖 Documentation
+
+- [Mobile Fix Summary](./MOBILE_FIX_SUMMARY.md) - Mobile responsiveness fixes
+- [Android Testing Guide](./ANDROID_TESTING_GUIDE.md) - How to test on Android
+- [Routing Fix](./ROUTING_FIX.md) - React Router configuration
+- [Sales Setup](./SALES_SETUP.md) - Sales feature documentation
+- [Purchases Setup](./PURCHASES_SETUP.md) - Purchases feature documentation
+
+## 🔧 Configuration
+
+### Environment Variables
+
+Create a `.env.local` file in the root directory:
+
+```env
+REACT_APP_SUPABASE_URL=your_supabase_url
+REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key
+REACT_APP_GEMINI_API_KEY=your_gemini_api_key
+```
+
+### Supabase Setup
+
+1. Create a Supabase project
+2. Run the SQL migrations in the `supabase/migrations` folder
+3. Configure authentication settings
+4. Set up storage buckets for file uploads
+
+## 📱 Mobile Support
+
+The application is fully responsive and optimized for:
+- 📱 Mobile devices (< 768px)
+- 📱 Tablets (768px - 1024px)
+- 💻 Desktop (> 1024px)
+
+Special optimizations for Android devices including:
+- Touch-friendly buttons (48px minimum)
+- Hardware acceleration
+- Smooth animations
+- Proper viewport handling
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is open source and available under the MIT License.
+
+## 👨‍💻 Author
+
+Mayank Patel
+- GitHub: [@mayankpatelxv](https://github.com/mayankpatelxv)
+- Website: [https://mayankpatelxv.github.io/my-react-app](https://mayankpatelxv.github.io/my-react-app)
 
 ## Learn More
 
