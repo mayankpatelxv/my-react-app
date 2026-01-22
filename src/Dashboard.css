@@ -10,34 +10,6 @@
   overflow-x: hidden;
 }
 
-/* Mobile Menu Button - Only visible on mobile */
-.mobile-menu-btn {
-  position: fixed;
-  top: 1rem;
-  left: 1rem;
-  z-index: 1000;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(229, 231, 235, 0.8);
-  border-radius: 0.5rem;
-  padding: 0.75rem;
-  font-size: 1.25rem;
-  color: #4a9eff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-height: 48px;
-  min-width: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.mobile-menu-btn:hover {
-  background: rgba(74, 158, 255, 0.1);
-  transform: scale(1.05);
-}
-
 /* Mobile Overlay */
 .mobile-overlay {
   position: fixed;
@@ -1018,7 +990,7 @@
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
 }
 
-/* Mobile menu button - hidden on desktop */
+/* Mobile menu button - hidden on desktop, shown on mobile */
 .mobile-menu-btn {
   display: none;
 }
@@ -1026,7 +998,7 @@
 /* Mobile Responsive - Enhanced for Android */
 @media (max-width: 1024px) {
   .mobile-menu-btn {
-    display: block;
+    display: flex !important;
     position: fixed;
     top: 15px;
     left: 15px;
@@ -1039,10 +1011,10 @@
     cursor: pointer;
     font-size: 18px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    color: #4a9eff;
     /* Better touch target for Android */
     min-width: 48px;
     min-height: 48px;
-    display: flex;
     align-items: center;
     justify-content: center;
     /* Prevent text selection */
