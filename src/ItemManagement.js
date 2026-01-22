@@ -3,6 +3,7 @@ import "./ItemManagement.css";
 import { getItems, deleteItem } from "./supabaseClient";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
+import UserMenu from "./UserMenu";
 
 const ItemManagement = ({ user, onLogout, onNavigate }) => {
   const { formatCurrency, getText } = useSettings();
@@ -154,11 +155,7 @@ const ItemManagement = ({ user, onLogout, onNavigate }) => {
             <h1>Item Management</h1>
           </div>
           <div className="header-actions">
-            <div className="user-menu">
-              <button className="user-avatar" onClick={onLogout}>
-                👤
-              </button>
-            </div>
+            <UserMenu user={user} onLogout={onLogout} onNavigate={onNavigate} />
           </div>
         </div>
 

@@ -3,6 +3,7 @@ import "./Sales.css";
 import { getItems, getParties, createSaleWithItems } from "./supabaseClient";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
+import UserMenu from "./UserMenu";
 import jsPDF from 'jspdf';
 
 const Sales = ({ user, onLogout, onNavigate }) => {
@@ -563,11 +564,7 @@ const Sales = ({ user, onLogout, onNavigate }) => {
             <h1>Create New Invoice</h1>
           </div>
           <div className="header-actions">
-            <div className="user-menu">
-              <button className="user-avatar" onClick={onLogout}>
-                👤
-              </button>
-            </div>
+            <UserMenu user={user} onLogout={onLogout} onNavigate={onNavigate} />
           </div>
         </div>
 

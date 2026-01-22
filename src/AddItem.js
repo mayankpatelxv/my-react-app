@@ -3,6 +3,7 @@ import "./AddItem.css";
 import { addItem } from "./supabaseClient";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
+import UserMenu from "./UserMenu";
 
 const AddItem = ({ user, onLogout, onNavigate }) => {
   const { getText } = useSettings();
@@ -196,11 +197,7 @@ const AddItem = ({ user, onLogout, onNavigate }) => {
             <p>Create a new inventory item for your business</p>
           </div>
           <div className="header-actions">
-            <div className="user-menu">
-              <button className="user-avatar" onClick={onLogout}>
-                👤
-              </button>
-            </div>
+            <UserMenu user={user} onLogout={onLogout} onNavigate={onNavigate} />
           </div>
         </div>
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./AddParty.css";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
+import UserMenu from "./UserMenu";
 
 const AddParty = ({ user, onLogout, onNavigate }) => {
   const { getText } = useSettings();
@@ -172,11 +173,7 @@ const AddParty = ({ user, onLogout, onNavigate }) => {
             <p>Create a new customer or supplier profile</p>
           </div>
           <div className="header-actions">
-            <div className="user-menu">
-              <button className="user-avatar" onClick={onLogout}>
-                👤
-              </button>
-            </div>
+            <UserMenu user={user} onLogout={onLogout} onNavigate={onNavigate} />
           </div>
         </div>
 
