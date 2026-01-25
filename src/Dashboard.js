@@ -68,8 +68,7 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
     { name: "Item Management", icon: "📦" },
     { name: "Sales", icon: "🛒" },
     { name: "Purchases", icon: "💰" },
-    { name: "Annual Reports", icon: "📈" },
-    { name: "Demand Forecasting", icon: "🔮" }
+    { name: "Annual Reports", icon: "📈" }
   ];
 
   const stats = [
