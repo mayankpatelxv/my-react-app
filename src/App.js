@@ -15,6 +15,7 @@ import AddItem from './AddItem';
 import Sales from './Sales';
 import Purchases from './Purchases';
 import AnnualReports from './AnnualReports';
+import DemandForecasting from './DemandForecasting';
 import Settings from './Settings';
 
 // Protected Route Component
@@ -110,6 +111,7 @@ function AppContent() {
       'Sales': '/sales',
       'Purchases': '/purchases',
       'Annual Reports': '/annual-reports',
+      'Demand Forecasting': '/demand-forecasting',
       'Settings': '/settings'
     };
     
@@ -244,6 +246,14 @@ function AppContent() {
         element={
           <ProtectedRoute user={user}>
             <AnnualReports user={user} onLogout={handleLogout} onNavigate={handleNavigation} />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/demand-forecasting" 
+        element={
+          <ProtectedRoute user={user}>
+            <DemandForecasting user={user} onLogout={handleLogout} onNavigate={handleNavigation} />
           </ProtectedRoute>
         } 
       />

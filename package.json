@@ -6,6 +6,7 @@
   "homepage": "https://mayankpatelxv.github.io/my-react-app",
   "dependencies": {
     "@supabase/supabase-js": "^2.89.0",
+    "@tensorflow/tfjs": "^4.22.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
