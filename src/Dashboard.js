@@ -9,7 +9,7 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
   const { formatCurrency, getText } = useSettings();
   const [activeMenu, setActiveMenu] = useState("Dashboard");
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Changed: unified state for all screens
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [dashboardData, setDashboardData] = useState({
     totalSales: 0,
@@ -111,22 +111,23 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
 
   return (
     <div className="dashboard-container">
-      {/* Mobile Menu Button */}
+      {/* Hamburger Menu Button - Works on all screens */}
       <button 
-        className="mobile-menu-btn"
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="hamburger-menu-btn"
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        aria-label="Toggle sidebar"
       >
         ☰
       </button>
 
-      {/* Mobile Overlay */}
+      {/* Overlay - Only on mobile when sidebar is open */}
       <div 
-        className={`mobile-overlay ${isMobileMenuOpen ? 'active' : ''}`}
-        onClick={() => setIsMobileMenuOpen(false)}
+        className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`}
+        onClick={() => setIsSidebarOpen(false)}
       ></div>
 
-      {/* Sidebar */}
-      <div className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+      {/* Sidebar - Toggleable on all screens */}
+      <div className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
         <div className="logo-section">
           <div className="logo-icon">
             <BizBuddyLogo size={44} />
@@ -140,7 +141,10 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
               className={`menu-item ${activeMenu === item.name ? "active" : ""}`}
               onClick={() => {
                 setActiveMenu(item.name);
-                setIsMobileMenuOpen(false);
+                // On mobile, close sidebar after navigation
+                if (window.innerWidth < 768) {
+                  setIsSidebarOpen(false);
+                }
                 if (item.name !== "Dashboard") {
                   onNavigate(item.name);
                 }
@@ -154,14 +158,18 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
 
         <div className="sidebar-bottom">
           <div className="menu-item" onClick={() => {
-            setIsMobileMenuOpen(false);
+            if (window.innerWidth < 768) {
+              setIsSidebarOpen(false);
+            }
             onNavigate("Settings");
           }}>
             <span className="menu-icon">⚙️</span>
             <span className="menu-text">Settings</span>
           </div>
           <div className="menu-item logout" onClick={() => {
-            setIsMobileMenuOpen(false);
+            if (window.innerWidth < 768) {
+              setIsSidebarOpen(false);
+            }
             onLogout();
           }}>
             <span className="menu-icon">🚪</span>
@@ -171,7 +179,7 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
       </div>
 
       {/* Main Content */}
-      <div className="main-content">
+      <div className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         {/* Header */}
         <div className="header">
           <h1>{getText('welcome')}, {user?.name || "User"}!</h1>

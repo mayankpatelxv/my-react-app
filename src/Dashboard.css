@@ -1,6 +1,6 @@
 @import './animations.css';
 
-/* Mobile-first responsive design */
+/* Dashboard Container */
 .dashboard-container {
   display: flex;
   min-height: 100vh;
@@ -10,33 +10,63 @@
   overflow-x: hidden;
 }
 
-/* Mobile Overlay - Hidden on desktop */
-.mobile-overlay {
+/* Hamburger Menu Button - Visible on all screens */
+.hamburger-menu-btn {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1001;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(229, 231, 235, 0.8);
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  font-size: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  color: #4a9eff;
+  min-width: 48px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.hamburger-menu-btn:hover {
+  background: rgba(74, 158, 255, 0.1);
+  transform: scale(1.05);
+}
+
+.hamburger-menu-btn:active {
+  transform: scale(0.95);
+}
+
+/* Sidebar Overlay - Only visible on mobile when sidebar is open */
+.sidebar-overlay {
   display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
 }
 
 @media (max-width: 767px) {
-  .mobile-overlay {
+  .sidebar-overlay.active {
     display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 998;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-  }
-
-  .mobile-overlay.active {
     opacity: 1;
     visibility: visible;
   }
 }
 
-/* Sidebar - Desktop First */
+/* Sidebar - Collapsible on all screens */
 .sidebar {
   width: 250px;
   background: rgba(255, 255, 255, 0.98);
@@ -50,22 +80,35 @@
   z-index: 999;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Mobile: hide sidebar by default */
+/* Desktop: Sidebar toggleable */
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar.closed {
+  transform: translateX(-250px);
+}
+
+/* Mobile: Sidebar hidden by default, overlay entire screen when open */
 @media (max-width: 767px) {
   .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
     width: 280px;
-    max-width: 280px;
+    transform: translateX(-100%);
   }
   
-  .sidebar.mobile-open {
+  .sidebar.open {
     transform: translateX(0);
+  }
+  
+  .sidebar.closed {
+    transform: translateX(-100%);
   }
 }
 
@@ -139,7 +182,7 @@
   background-color: rgba(239, 68, 68, 0.1);
 }
 
-/* Main Content - Desktop First */
+/* Main Content - Adjusts based on sidebar state */
 .main-content {
   flex: 1;
   margin-left: 250px;
@@ -149,6 +192,13 @@
   z-index: 1;
   width: calc(100% - 250px);
   min-width: 0;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* When sidebar is closed on desktop */
+.main-content.sidebar-closed {
+  margin-left: 0;
+  width: 100%;
 }
 
 /* Mobile: full width, add top padding for menu button */
@@ -158,6 +208,13 @@
     width: 100%;
     padding: 1rem;
     padding-top: 5rem;
+  }
+  
+  /* On mobile, sidebar state doesn't affect main content width */
+  .main-content.sidebar-open,
+  .main-content.sidebar-closed {
+    margin-left: 0;
+    width: 100%;
   }
 }
 
@@ -1017,34 +1074,6 @@
 
 .chart-section:hover {
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-}
-
-/* Mobile menu button - hidden on desktop */
-.mobile-menu-btn {
-  display: none;
-}
-
-@media (max-width: 767px) {
-  .mobile-menu-btn {
-    display: flex;
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 1001;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(229, 231, 235, 0.8);
-    border-radius: 12px;
-    padding: 12px;
-    cursor: pointer;
-    font-size: 18px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    color: #4a9eff;
-    min-width: 48px;
-    min-height: 48px;
-    align-items: center;
-    justify-content: center;
-  }
 }
 
 /* Chart Styles */
