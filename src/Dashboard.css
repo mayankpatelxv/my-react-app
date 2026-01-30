@@ -41,6 +41,13 @@
   transform: scale(0.95);
 }
 
+/* Hide hamburger button on mobile for Dashboard */
+@media (max-width: 767px) {
+  .hamburger-menu-btn {
+    display: none;
+  }
+}
+
 /* ========== OVERLAY (MOBILE ONLY) ========== */
 .sidebar-overlay {
   position: fixed;
@@ -84,14 +91,10 @@
   transform: translateX(-100%);
 }
 
-/* Mobile: Start closed by default */
+/* Mobile: Hide sidebar completely on Dashboard */
 @media (max-width: 767px) {
   .sidebar {
-    transform: translateX(-100%);
-  }
-  
-  .sidebar.open {
-    transform: translateX(0);
+    display: none;
   }
 }
 
@@ -131,7 +134,7 @@
 @media (max-width: 767px) {
   .main-content {
     padding: 1rem;
-    padding-top: 5rem;
+    padding-top: 1rem; /* No extra padding since no hamburger button */
     margin-left: 0; /* Always 0 on mobile */
   }
   
