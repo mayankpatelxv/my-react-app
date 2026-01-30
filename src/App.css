@@ -55,11 +55,7 @@
 }
 
 /* Responsive font sizes */
-@media (max-width: 768px) {
-  .App-header {
-    font-size: calc(8px + 2vmin);
-  }
-}
+
 
 /* Ensure proper viewport handling */
 html {

@@ -9,11 +9,7 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
   const { formatCurrency, getText } = useSettings();
   const [activeMenu, setActiveMenu] = useState("Dashboard");
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
-  // Initialize sidebar state based on screen size
-  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    // On mobile (< 768px), start closed; on desktop, start open
-    return window.innerWidth >= 768;
-  });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [dashboardData, setDashboardData] = useState({
     totalSales: 0,
@@ -23,20 +19,7 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
     loading: true
   });
 
-  // Handle window resize to manage sidebar state
-  useEffect(() => {
-    const handleResize = () => {
-      // On desktop, ensure sidebar is open by default
-      if (window.innerWidth >= 768 && !isSidebarOpen) {
-        setIsSidebarOpen(true);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isSidebarOpen]);
-
-  // Fetch dashboard data
+// Fetch dashboard data
   useEffect(() => {
     fetchDashboardData();
   }, [user]);
@@ -158,10 +141,6 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
               className={`menu-item ${activeMenu === item.name ? "active" : ""}`}
               onClick={() => {
                 setActiveMenu(item.name);
-                // On mobile, close sidebar after navigation
-                if (window.innerWidth < 768) {
-                  setIsSidebarOpen(false);
-                }
                 if (item.name !== "Dashboard") {
                   onNavigate(item.name);
                 }
@@ -175,18 +154,12 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
 
         <div className="sidebar-bottom">
           <div className="menu-item" onClick={() => {
-            if (window.innerWidth < 768) {
-              setIsSidebarOpen(false);
-            }
             onNavigate("Settings");
           }}>
             <span className="menu-icon">⚙️</span>
             <span className="menu-text">Settings</span>
           </div>
           <div className="menu-item logout" onClick={() => {
-            if (window.innerWidth < 768) {
-              setIsSidebarOpen(false);
-            }
             onLogout();
           }}>
             <span className="menu-icon">🚪</span>

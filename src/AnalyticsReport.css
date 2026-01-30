@@ -400,34 +400,5 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
-  .charts-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .data-tables {
-    grid-template-columns: 1fr;
-  }
-}
 
-@media (max-width: 768px) {
-  .analytics-header {
-    flex-direction: column;
-    gap: 15px;
-    align-items: stretch;
-  }
-  
-  .header-controls {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .metrics-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .donut-chart {
-    flex-direction: column;
-    align-items: center;
-  }
-}
+

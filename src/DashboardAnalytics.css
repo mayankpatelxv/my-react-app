@@ -603,46 +603,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
-  .charts-row {
-    grid-template-columns: 1fr;
-  }
-  
-  .bottom-row {
-    grid-template-columns: 1fr;
-  }
-}
 
-@media (max-width: 768px) {
-  .sidebar {
-    width: 200px;
-  }
-  
-  .main-content {
-    margin-left: 200px;
-  }
-  
-  .metrics-row {
-    grid-template-columns: 1fr;
-  }
-  
-  .header-actions {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-}
 
-@media (max-width: 640px) {
-  .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-  }
-  
-  .main-content {
-    margin-left: 0;
-  }
-  
-  .analytics-content {
-    padding: 20px;
-  }
-}
+
+

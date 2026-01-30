@@ -7,10 +7,11 @@ html {
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   touch-action: manipulation;
-  /* Better font rendering on Android */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  /* Force desktop width on all devices */
+  min-width: 1280px;
 }
 
 body {
@@ -20,20 +21,25 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow-x: auto;
   min-height: 100vh;
-  /* Prevent bounce scrolling on mobile */
   overscroll-behavior: none;
-  /* Better touch scrolling */
   -webkit-overflow-scrolling: touch;
+  /* Force desktop width on all devices */
+  min-width: 1280px;
 }
 
 /* Prevent zoom on input focus on iOS and Android */
 input, select, textarea, button {
   font-size: 16px !important;
-  /* Prevent zoom on Android */
   -webkit-user-select: text;
   user-select: text;
+}
+
+/* Force desktop layout on all devices */
+#root {
+  min-width: 1280px;
+  width: 100%;
 }
 
 /* Improve touch targets for Android */
