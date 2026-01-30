@@ -10,32 +10,30 @@
   overflow-x: hidden;
 }
 
-/* Hamburger Menu Button - Visible on all screens */
+/* ========== HAMBURGER BUTTON ========== */
 .hamburger-menu-btn {
   position: fixed;
-  top: 1rem;
-  left: 1rem;
-  z-index: 1001;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(229, 231, 235, 0.8);
-  border-radius: 12px;
-  padding: 12px;
+  top: 16px;
+  left: 16px;
+  font-size: 24px;
+  background: #ffffff;
+  border: none;
   cursor: pointer;
-  font-size: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  z-index: 2000;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   color: #4a9eff;
   min-width: 48px;
   min-height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  border: none;
+  transition: all 0.2s ease;
 }
 
 .hamburger-menu-btn:hover {
-  background: rgba(74, 158, 255, 0.1);
+  background: #f0f7ff;
   transform: scale(1.05);
 }
 
@@ -43,72 +41,90 @@
   transform: scale(0.95);
 }
 
-/* Sidebar Overlay - Only visible on mobile when sidebar is open */
+/* ========== OVERLAY (MOBILE ONLY) ========== */
 .sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 900;
   display: none;
+}
+
+.sidebar-overlay.active {
+  display: block;
+}
+
+/* ========== SIDEBAR ========== */
+.sidebar {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 998;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-}
-
-@media (max-width: 767px) {
-  .sidebar-overlay.active {
-    display: block;
-    opacity: 1;
-    visibility: visible;
-  }
-}
-
-/* Sidebar - Collapsible on all screens */
-.sidebar {
-  width: 250px;
+  width: 260px;
+  height: 100vh;
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20px);
-  border-right: 1px solid rgba(229, 231, 235, 0.8);
-  padding: 1rem 0;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  z-index: 999;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+  z-index: 1000;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 1rem 0;
 }
 
-/* Desktop: Sidebar toggleable */
 .sidebar.open {
   transform: translateX(0);
 }
 
 .sidebar.closed {
-  transform: translateX(-250px);
+  transform: translateX(-100%);
 }
 
-/* Mobile: Sidebar hidden by default, overlay entire screen when open */
-@media (max-width: 767px) {
-  .sidebar {
-    width: 280px;
-    transform: translateX(-100%);
-  }
-  
-  .sidebar.open {
-    transform: translateX(0);
+/* ========== MAIN CONTENT ========== */
+.main-content {
+  flex: 1;
+  padding: 2.5rem;
+  overflow-y: auto;
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  transition: margin-left 0.3s ease;
+}
+
+.main-content.sidebar-open {
+  margin-left: 260px;
+}
+
+.main-content.sidebar-closed {
+  margin-left: 0;
+}
+
+/* ========== DESKTOP FIX (IMPORTANT) ========== */
+@media (min-width: 768px) {
+  .sidebar-overlay {
+    display: none !important;
   }
   
   .sidebar.closed {
     transform: translateX(-100%);
+  }
+}
+
+/* ========== MOBILE FIX ========== */
+@media (max-width: 767px) {
+  .main-content {
+    padding: 1rem;
+    padding-top: 5rem;
+  }
+  
+  .main-content.sidebar-open {
+    margin-left: 0;
+  }
+  
+  .main-content.sidebar-closed {
+    margin-left: 0;
   }
 }
 
@@ -180,42 +196,6 @@
 
 .menu-item.logout:hover {
   background-color: rgba(239, 68, 68, 0.1);
-}
-
-/* Main Content - Adjusts based on sidebar state */
-.main-content {
-  flex: 1;
-  margin-left: 250px;
-  padding: 2.5rem;
-  overflow-y: auto;
-  position: relative;
-  z-index: 1;
-  width: calc(100% - 250px);
-  min-width: 0;
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* When sidebar is closed on desktop */
-.main-content.sidebar-closed {
-  margin-left: 0;
-  width: 100%;
-}
-
-/* Mobile: full width, add top padding for menu button */
-@media (max-width: 767px) {
-  .main-content {
-    margin-left: 0;
-    width: 100%;
-    padding: 1rem;
-    padding-top: 5rem;
-  }
-  
-  /* On mobile, sidebar state doesn't affect main content width */
-  .main-content.sidebar-open,
-  .main-content.sidebar-closed {
-    margin-left: 0;
-    width: 100%;
-  }
 }
 
 .header {
