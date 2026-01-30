@@ -9,7 +9,11 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
   const { formatCurrency, getText } = useSettings();
   const [activeMenu, setActiveMenu] = useState("Dashboard");
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Changed: unified state for all screens
+  // Initialize sidebar state based on screen size
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    // On mobile (< 768px), start closed; on desktop, start open
+    return window.innerWidth >= 768;
+  });
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [dashboardData, setDashboardData] = useState({
     totalSales: 0,
@@ -18,6 +22,19 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
     totalParties: 0,
     loading: true
   });
+
+  // Handle window resize to manage sidebar state
+  useEffect(() => {
+    const handleResize = () => {
+      // On desktop, ensure sidebar is open by default
+      if (window.innerWidth >= 768 && !isSidebarOpen) {
+        setIsSidebarOpen(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isSidebarOpen]);
 
   // Fetch dashboard data
   useEffect(() => {
