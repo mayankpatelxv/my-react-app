@@ -146,7 +146,7 @@ const AnnualReports = ({ user, onLogout, onNavigate }) => {
     { name: getText('reports'), icon: "📈", key: "Annual Reports" }
   ];
 
-  const years = ["2024", "2023", "2022", "2021", "2020"];
+  const years = ["2026", "2025", "2024", "2023", "2022", "2021", "2020"];
 
   // Remove the sample data - now using real data from state
 

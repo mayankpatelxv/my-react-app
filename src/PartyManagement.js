@@ -11,6 +11,15 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [parties, setParties] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [editingParty, setEditingParty] = useState(null);
+  const [editFormData, setEditFormData] = useState({
+    name: "",
+    party_type: "Customer",
+    email: "",
+    phone: "",
+    address: "",
+    credit_limit: 0
+  });
 
   // Fetch parties when component mounts
   useEffect(() => {
@@ -74,6 +83,55 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
       console.error("Error deleting party:", error);
       alert("Error deleting party: " + error.message);
     }
+  };
+
+  const handleEditParty = (party) => {
+    setEditingParty(party);
+    setEditFormData({
+      name: party.name || "",
+      party_type: party.party_type || "Customer",
+      email: party.email || "",
+      phone: party.phone || "",
+      address: party.address || "",
+      credit_limit: party.credit_limit || 0
+    });
+  };
+
+  const handleUpdateParty = async (e) => {
+    e.preventDefault();
+    
+    if (!editFormData.name.trim()) {
+      alert("Party name is required");
+      return;
+    }
+
+    try {
+      const { updateParty } = await import('./supabaseClient');
+      const result = await updateParty(editingParty.id, editFormData, user.id);
+      
+      if (result.success) {
+        alert("Party updated successfully!");
+        setEditingParty(null);
+        fetchParties(); // Refresh the list
+      } else {
+        alert("Error updating party: " + result.error);
+      }
+    } catch (error) {
+      console.error("Error updating party:", error);
+      alert("Error updating party: " + error.message);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingParty(null);
+    setEditFormData({
+      name: "",
+      party_type: "Customer",
+      email: "",
+      phone: "",
+      address: "",
+      credit_limit: 0
+    });
   };
 
   return (
@@ -232,7 +290,7 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
                     <td className="party-actions">
                       <button 
                         className="action-btn edit-btn"
-                        onClick={() => {/* TODO: Implement edit functionality */}}
+                        onClick={() => handleEditParty(party)}
                         title="Edit Party"
                       >
                         ✏️
@@ -257,6 +315,101 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
           © 2025 Smart Business Management. All rights reserved.
         </footer>
       </div>
+
+      {/* Edit Party Modal */}
+      {editingParty && (
+        <div className="modal-overlay" onClick={handleCancelEdit}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>✏️ Edit Party</h2>
+              <button className="modal-close" onClick={handleCancelEdit}>×</button>
+            </div>
+            
+            <form onSubmit={handleUpdateParty} className="edit-form">
+              <div className="form-group">
+                <label htmlFor="edit-name">Party Name *</label>
+                <input
+                  id="edit-name"
+                  type="text"
+                  value={editFormData.name}
+                  onChange={(e) => setEditFormData({...editFormData, name: e.target.value})}
+                  required
+                  placeholder="Enter party name"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-type">Party Type *</label>
+                <select
+                  id="edit-type"
+                  value={editFormData.party_type}
+                  onChange={(e) => setEditFormData({...editFormData, party_type: e.target.value})}
+                  required
+                >
+                  <option value="Customer">Customer</option>
+                  <option value="Supplier">Supplier</option>
+                  <option value="Both">Both</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-email">Email</label>
+                <input
+                  id="edit-email"
+                  type="email"
+                  value={editFormData.email}
+                  onChange={(e) => setEditFormData({...editFormData, email: e.target.value})}
+                  placeholder="Enter email address"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-phone">Phone</label>
+                <input
+                  id="edit-phone"
+                  type="tel"
+                  value={editFormData.phone}
+                  onChange={(e) => setEditFormData({...editFormData, phone: e.target.value})}
+                  placeholder="Enter phone number"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-address">Address</label>
+                <textarea
+                  id="edit-address"
+                  value={editFormData.address}
+                  onChange={(e) => setEditFormData({...editFormData, address: e.target.value})}
+                  placeholder="Enter address"
+                  rows="3"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-credit">Credit Limit</label>
+                <input
+                  id="edit-credit"
+                  type="number"
+                  value={editFormData.credit_limit}
+                  onChange={(e) => setEditFormData({...editFormData, credit_limit: parseFloat(e.target.value) || 0})}
+                  placeholder="Enter credit limit"
+                  step="0.01"
+                  min="0"
+                />
+              </div>
+
+              <div className="modal-actions">
+                <button type="button" className="btn-cancel" onClick={handleCancelEdit}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn-save">
+                  💾 Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
