@@ -677,6 +677,33 @@
 
 
 
+/* ========== MOBILE ONLY (max-width: 1023px) ========== */
+@media (max-width: 1023px) {
+  .login-container {
+    padding: 1rem;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+
+  .login-card {
+    padding: 1.5rem;
+    max-width: 100%;
+    margin: 0 0.5rem;
+  }
+
+  .login-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .copyright,
+  .login-footer {
+    padding: 0 1rem;
+    position: relative;
+    bottom: auto;
+    margin-top: 1.5rem;
+  }
+}
+
 /* Android-specific optimizations */
 @media screen and (-webkit-min-device-pixel-ratio: 1.5) {
   .login-card {

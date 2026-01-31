@@ -567,3 +567,34 @@
   content: "●";
   font-size: 1.2em;
 }
+
+/* ========== MOBILE ONLY (max-width: 1023px) ========== */
+@media (max-width: 1023px) {
+  .chatbot-container {
+    width: 95%;
+    height: 85vh;
+    max-height: -webkit-fill-available;
+    border-radius: 16px;
+  }
+
+  .chatbot-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .chatbot-title h3 {
+    font-size: 1rem;
+  }
+
+  .ai-icon {
+    font-size: 1.5rem;
+  }
+
+  .chat-input-area {
+    padding: 0.75rem;
+  }
+
+  .chat-input {
+    min-height: 48px;
+    font-size: 16px;
+  }
+}

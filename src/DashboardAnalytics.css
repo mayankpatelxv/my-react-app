@@ -602,6 +602,81 @@
   height: 200px;
 }
 
+/* ========== MOBILE ONLY (max-width: 1023px) ========== */
+@media (max-width: 1023px) {
+  .dashboard-analytics-container {
+    overflow-x: hidden;
+    flex-direction: column;
+  }
+
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0.5rem;
+    border-right: none;
+    border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+  }
+
+  .logo-section {
+    padding: 0.5rem 0.75rem;
+    border-bottom: none;
+    margin-top: 0;
+  }
+
+  .nav-menu {
+    flex: 1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0.5rem 0;
+    gap: 0.25rem;
+  }
+
+  .menu-item {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+
+  .sidebar-bottom {
+    flex-direction: row;
+    border-top: none;
+    padding: 0.5rem 0;
+    margin-top: 0;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 1rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .header {
+    flex-wrap: wrap;
+    padding: 1rem;
+  }
+
+  .header h1,
+  .header-left h1 {
+    font-size: 1.25rem;
+  }
+
+  .analytics-content {
+    padding: 1rem;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .top-lists {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Responsive Design */
 
 

@@ -611,3 +611,32 @@ input:checked + .toggle-slider:before {
     padding: 1.875rem;
   }
 }
+
+/* ========== MOBILE ONLY (max-width: 1023px) ========== */
+@media (max-width: 1023px) {
+  .settings-container {
+    padding: 0.75rem;
+  }
+
+  .settings-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .settings-layout {
+    gap: 0.75rem;
+  }
+
+  .settings-main,
+  .settings-sidebar {
+    padding: 1rem;
+  }
+
+  .settings-content h3 {
+    font-size: 1.125rem;
+  }
+
+  .setting-select {
+    min-height: 48px;
+    font-size: 16px;
+  }
+}

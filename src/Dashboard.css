@@ -1572,3 +1572,137 @@
 .compact-view .stats-grid {
   gap: 16px;
 }
+
+/* ========== MOBILE ONLY (max-width: 1023px) – no desktop changes ========== */
+@media (max-width: 1023px) {
+  .dashboard-container {
+    overflow-x: hidden;
+  }
+
+  .sidebar-overlay.active {
+    display: block !important;
+  }
+
+  .main-content,
+  .main-content.sidebar-open,
+  .main-content.sidebar-closed {
+    margin-left: 0;
+    padding: 1rem;
+    padding-top: 4.5rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .header {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .header h1 {
+    font-size: 1.375rem;
+    text-align: left;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+  }
+
+  .stat-title {
+    font-size: 0.8125rem;
+  }
+
+  .action-cards-row,
+  .actions-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .action-card {
+    padding: 1rem;
+  }
+
+  .action-card-content h4 {
+    font-size: 0.9375rem;
+  }
+
+  .quick-actions h2,
+  .activity-header h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .activity-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .activity-card {
+    padding: 1.25rem;
+  }
+
+  .card-header h3 {
+    font-size: 0.9375rem;
+  }
+
+  .quick-stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .quick-stat-item {
+    padding: 0.75rem;
+  }
+
+  .stat-number {
+    font-size: 1.125rem;
+  }
+
+  .chart-section {
+    padding: 1rem;
+  }
+
+  .chart-header {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .chart-header h2 {
+    font-size: 1rem;
+  }
+
+  .chart-summary {
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .summary-value {
+    font-size: 1rem;
+  }
+
+  .bar-info {
+    min-width: 80px;
+  }
+
+  .bar-title {
+    font-size: 0.75rem;
+  }
+
+  .bar-amount {
+    font-size: 0.875rem;
+  }
+}

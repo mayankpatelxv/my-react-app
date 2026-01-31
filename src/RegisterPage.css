@@ -422,10 +422,45 @@
   80%, 100% { text-shadow: 0.25em 0 0 white, 0.5em 0 0 white; }
 }
 
+/* ========== MOBILE ONLY (max-width: 1023px) ========== */
+@media (max-width: 1023px) {
+  .register-container {
+    padding: 1rem;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+
+  .register-card {
+    padding: 1.5rem;
+    max-width: 100%;
+    margin: 0 0.5rem;
+  }
+
+  .register-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .name-row {
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group.half-width {
+    margin-bottom: 1.5rem;
+  }
+
+  .register-footer {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    margin-top: 1.5rem;
+    padding: 0 1rem;
+  }
+}
+
 /* Enhanced Mobile Responsive Design for Android */
-
-
-
 
 
 

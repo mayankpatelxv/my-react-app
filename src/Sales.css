@@ -1021,61 +1021,74 @@
   font-family: 'SF Mono', Monaco, monospace;
 }
 
-/* Action Buttons */
-.action-buttons {
+/* Action Buttons - Invoice Summary */
+.summary-section .action-buttons {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: 0;
+  width: 100%;
 }
 
-.save-invoice-btn,
-.print-invoice-btn,
-.download-pdf-btn {
+.summary-section .save-invoice-btn,
+.summary-section .print-invoice-btn,
+.summary-section .download-pdf-btn {
   width: 100%;
-  padding: 16px;
+  min-width: 0;
+  min-height: 48px;
+  padding: 14px 20px;
   border: none;
   border-radius: 12px;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.save-invoice-btn {
+.summary-section .save-invoice-btn {
   background: linear-gradient(135deg, #4a9eff 0%, #667eea 100%);
   color: white;
-  box-shadow: 0 8px 25px rgba(74, 158, 255, 0.3);
+  box-shadow: 0 4px 14px rgba(74, 158, 255, 0.35);
 }
 
-.save-invoice-btn:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 15px 35px rgba(74, 158, 255, 0.4);
-}
-
-.print-invoice-btn {
-  background: rgba(255, 255, 255, 0.9);
-  color: #6b7280;
-  border: 2px solid #e5e7eb;
-}
-
-.print-invoice-btn:hover {
-  background: rgba(248, 250, 252, 1);
-  border-color: #d1d5db;
+.summary-section .save-invoice-btn:hover:not(:disabled) {
   transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(74, 158, 255, 0.4);
 }
 
-.download-pdf-btn {
-  background: rgba(255, 255, 255, 0.9);
-  color: #6b7280;
-  border: 2px solid #e5e7eb;
+.summary-section .save-invoice-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
 }
 
-.download-pdf-btn:hover {
-  background: rgba(248, 250, 252, 1);
-  border-color: #d1d5db;
+.summary-section .print-invoice-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+}
+
+.summary-section .print-invoice-btn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+}
+
+.summary-section .download-pdf-btn {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
+}
+
+.summary-section .download-pdf-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
 }
 
 /* Responsive Design */
@@ -1165,4 +1178,105 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* ========== MOBILE ONLY (max-width: 1023px) ========== */
+@media (max-width: 1023px) {
+  .sales-container {
+    overflow-x: hidden;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 1rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px;
+    max-width: 85vw;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.mobile-menu-open {
+    transform: translateX(0);
+  }
+
+  .mobile-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1001;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem;
+    min-width: 48px;
+    min-height: 48px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .mobile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 999;
+  }
+
+  .mobile-overlay.active {
+    display: block;
+  }
+
+  .header {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .header-left h1 {
+    font-size: 1.25rem;
+  }
+
+  .invoice-details-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .section {
+    padding: 1rem;
+  }
+
+  .section h2 {
+    font-size: 1.125rem;
+  }
+
+  .summary-section {
+    padding: 1.25rem;
+  }
+
+  .summary-section h2 {
+    font-size: 1.125rem;
+  }
+
+  .items-table-container {
+    margin: 0 -1rem;
+    border-radius: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .items-table th,
+  .items-table td {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
 }

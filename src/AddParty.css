@@ -497,3 +497,33 @@
     max-width: none;
   }
 }
+
+/* ========== MOBILE ONLY (max-width: 1023px) ========== */
+@media (max-width: 1023px) {
+  .add-party-container {
+    overflow-x: hidden;
+  }
+
+  .main-content {
+    padding: 1rem;
+    padding-top: 4rem;
+  }
+
+  .header h1 {
+    font-size: 1.25rem;
+  }
+
+  .form-container {
+    padding: 1rem;
+  }
+
+  .form-container input,
+  .form-container select {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .cancel-btn, .save-btn {
+    width: 100%;
+  }
+}

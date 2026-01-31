@@ -576,6 +576,33 @@
   }
 }
 
+/* ========== MOBILE ONLY (max-width: 1023px) ========== */
+@media (max-width: 1023px) {
+  .party-management-container {
+    overflow-x: hidden;
+  }
+
+  .main-content {
+    padding: 1rem;
+    padding-top: 4rem;
+  }
+
+  .header-left h1 {
+    font-size: 1.25rem;
+  }
+
+  .party-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .party-table th,
+  .party-table td {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
+
 /* Edit Modal Styles */
 .modal-overlay {
   position: fixed;

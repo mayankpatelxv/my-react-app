@@ -422,21 +422,7 @@
   cursor: pointer;
 }
 
-/* Invoice Summary */
-.invoice-summary {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  border: 1px solid #e5e7eb;
-}
-
-.invoice-summary h2 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0 0 1.25rem 0;
-}
-
+/* Invoice Summary - Now styled as a section */
 .summary-row {
   display: flex;
   justify-content: space-between;
@@ -461,39 +447,86 @@
 .action-buttons {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
+  gap: 12px;
+  margin-top: 32px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.save-btn, .print-btn, .download-btn {
-  padding: 0.75rem 1rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  min-height: 48px;
+.action-buttons button {
   width: 100%;
+  min-width: 0;
+  padding: 12px 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 48px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  outline: none;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+@media (min-width: 768px) {
+  .action-buttons {
+    flex-direction: row;
+    gap: 12px;
+  }
+  
+  .action-buttons button {
+    flex: 1;
+  }
+}
+
+.action-buttons button:hover {
+  transform: translateY(-1px);
 }
 
 .save-btn {
-  background-color: #4a9eff;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
 }
 
 .save-btn:hover {
-  background-color: #3a8eef;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
 }
 
-.print-btn, .download-btn {
-  background-color: #f3f4f6;
-  color: #374151;
-  border: 1px solid #e5e7eb;
+.print-btn {
+  background: linear-gradient(135deg, #4a9eff 0%, #667eea 100%);
+  color: white;
 }
 
-.print-btn:hover, .download-btn:hover {
-  background-color: #e5e7eb;
+.print-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(74, 158, 255, 0.3);
+}
+
+.download-btn {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+}
+
+.download-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
+}
+
+.action-buttons button:active {
+  transform: translateY(0);
+}
+
+.action-buttons button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* Tablet Styles */
@@ -566,13 +599,224 @@
   }
 
   .invoice-content {
-    display: grid;
-    grid-template-columns: 1fr 350px;
+    display: flex;
+    flex-direction: column;
     gap: 1.875rem;
   }
 
-  .right-column {
-    position: sticky;
-    top: 1.875rem;
+  .left-column {
+    max-width: 800px;
   }
+
+  .right-column {
+    display: none; /* Hide empty right column */
+  }
+}
+
+/* ========== MOBILE ONLY (max-width: 1023px) ========== */
+@media (max-width: 1023px) {
+  .create-invoice-container {
+    overflow-x: hidden;
+  }
+
+  .main-content {
+    padding: 1rem;
+    padding-top: 4rem;
+  }
+
+  .header {
+    flex-wrap: wrap;
+  }
+
+  .header-left h1 {
+    font-size: 1.25rem;
+  }
+
+  .section {
+    padding: 1rem;
+  }
+
+  .section h2 {
+    font-size: 1.125rem;
+  }
+
+  .invoice-content {
+    gap: 1rem;
+  }
+
+  .customer-select select,
+  .form-group input {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .items-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Success Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.success-modal {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 90%;
+  animation: slideUp 0.3s ease;
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #4a9eff 0%, #667eea 100%);
+  color: white;
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  margin: 0 auto 1rem;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.modal-header h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.modal-header p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 1rem;
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+.invoice-info-box {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 500;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.info-value {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 1rem;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0 2rem 2rem 2rem;
+}
+
+.modal-btn {
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.modal-btn.download-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.modal-btn.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.modal-btn.print-btn {
+  background: linear-gradient(135deg, #4a9eff 0%, #667eea 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
+}
+
+.modal-btn.print-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(74, 158, 255, 0.4);
+}
+
+.modal-btn.close-btn {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.modal-btn.close-btn:hover {
+  background: #e5e7eb;
+  color: #1f2937;
 }

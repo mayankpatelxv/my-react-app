@@ -721,3 +721,35 @@
     font-size: 0.75rem;
   }
 }
+
+/* ========== MOBILE ONLY (max-width: 1023px) ========== */
+@media (max-width: 1023px) {
+  .item-management-container {
+    overflow-x: hidden;
+  }
+
+  .main-content {
+    padding: 1rem;
+    padding-top: 4rem;
+  }
+
+  .header h1 {
+    font-size: 1.25rem;
+  }
+
+  .controls-section,
+  .items-section {
+    padding: 1rem;
+  }
+
+  .items-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .items-table th,
+  .items-table td {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
