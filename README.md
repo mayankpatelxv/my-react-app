@@ -2,6 +2,8 @@
 
 🚀 **Live Website**: [https://mayankpatelxv.github.io/my-react-app](https://mayankpatelxv.github.io/my-react-app)
 
+🔧 **Development Server**: [http://localhost:3000/my-react-app](http://localhost:3000/my-react-app)
+
 A comprehensive business management application built with React for managing sales, purchases, inventory, parties, and generating business reports with AI-powered insights.
 
 ## ✨ Features
