@@ -4,7 +4,6 @@ import AnalyticsReport from "./AnalyticsReport";
 import { getSales, getPurchases } from "./supabaseClient";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
-import UserMenu from "./UserMenu";
 
 const AnnualReports = ({ user, onLogout, onNavigate }) => {
   const { formatCurrency, getText, formatDate } = useSettings();
@@ -387,7 +386,6 @@ End of Report
             <button className="export-btn" onClick={handleExportPDF}>
               📄 Export PDF
             </button>
-            <UserMenu user={user} onLogout={onLogout} onNavigate={onNavigate} />
           </div>
         </div>
 

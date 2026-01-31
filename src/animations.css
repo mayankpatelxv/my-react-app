@@ -33,11 +33,11 @@ input:focus, textarea:focus, select:focus {
 }
 
 /* Icon hover effects */
-.logo-icon, .notification-btn, .user-avatar {
+.logo-icon, .notification-btn {
   transition: box-shadow 0.2s ease;
 }
 
-.logo-icon:hover, .notification-btn:hover, .user-avatar:hover {
+.logo-icon:hover, .notification-btn:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 

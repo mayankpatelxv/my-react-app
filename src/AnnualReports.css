@@ -336,7 +336,7 @@
   box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
 }
 
-.notification-btn, .user-avatar {
+.notification-btn {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(229, 231, 235, 0.8);
@@ -351,7 +351,7 @@
   min-width: 48px;
 }
 
-.notification-btn:hover, .user-avatar:hover {
+.notification-btn:hover {
   background: rgba(255, 255, 255, 1);
   transform: translateY(-3px) scale(1.05);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);

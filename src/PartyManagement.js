@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import "./PartyManagement.css";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
-import UserMenu from "./UserMenu";
-
 const PartyManagement = ({ user, onLogout, onNavigate }) => {
   const { formatCurrency, getText, formatDate } = useSettings();
   const [searchTerm, setSearchTerm] = useState("");
@@ -206,7 +204,6 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
               <span>+</span>
               Add New Party
             </button>
-            <UserMenu user={user} onLogout={onLogout} onNavigate={onNavigate} />
           </div>
         </div>
 

@@ -172,27 +172,6 @@
   justify-content: flex-end;
 }
 
-.user-avatar {
-  background: linear-gradient(135deg, #4a9eff 0%, #667eea 100%);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 2.5rem;
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.125rem;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  min-height: 48px;
-  min-width: 48px;
-}
-
-.user-avatar:hover {
-  transform: scale(1.05);
-}
-
 /* Invoice Content - Mobile First */
 .invoice-content {
   display: flex;

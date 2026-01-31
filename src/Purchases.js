@@ -3,7 +3,6 @@ import "./Purchases.css";
 import { getItems, getParties, createPurchaseWithItems, uploadPurchaseDocument } from "./supabaseClient";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
-import UserMenu from "./UserMenu";
 import PurchasesList from "./PurchasesList";
 
 const Purchases = ({ user, onLogout, onNavigate }) => {
@@ -349,7 +348,6 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
             >
               📋 View Purchase History
             </button>
-            <UserMenu user={user} onLogout={onLogout} onNavigate={onNavigate} />
           </div>
         </div>
 

@@ -1,8 +1,6 @@
 import { useState } from "react";
 import "./DashboardAnalytics.css";
 import BizBuddyLogo from "./BizBuddyLogo";
-import UserMenu from "./UserMenu";
-
 const DashboardAnalytics = ({ user, onLogout, onNavigate }) => {
   const [activeMenu, setActiveMenu] = useState("Dashboard & Analytics");
   const [dateRange, setDateRange] = useState("Last 7 Days");
@@ -170,7 +168,6 @@ const DashboardAnalytics = ({ user, onLogout, onNavigate }) => {
             <button className="generate-btn" onClick={handleGenerateReport}>
               📄 Generate Report
             </button>
-            <UserMenu user={user} onLogout={onLogout} onNavigate={onNavigate} />
           </div>
         </div>
 
