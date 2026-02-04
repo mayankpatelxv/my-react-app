@@ -112,66 +112,12 @@ const LandingPage = ({ onGetStarted }) => {
             </div>
           </div>
           <div className="hero-visual">
-            <div className="dashboard-mockup">
-              <div className="mockup-header">
-                <div className="mockup-controls">
-                  <span className="control red"></span>
-                  <span className="control yellow"></span>
-                  <span className="control green"></span>
-                </div>
-                <div className="mockup-title">BizzBuddy Dashboard</div>
-              </div>
-              <div className="mockup-content">
-                <div className="mockup-sidebar">
-                  <div className="sidebar-item active">
-                    <span className="sidebar-icon">📊</span>
-                    Dashboard
-                  </div>
-                  <div className="sidebar-item">
-                    <span className="sidebar-icon">💰</span>
-                    Sales
-                  </div>
-                  <div className="sidebar-item">
-                    <span className="sidebar-icon">📦</span>
-                    Inventory
-                  </div>
-                  <div className="sidebar-item">
-                    <span className="sidebar-icon">👥</span>
-                    Customers
-                  </div>
-                </div>
-                <div className="mockup-main">
-                  <div className="stats-cards">
-                    <div className="stat-card">
-                      <div className="stat-header">
-                        <span className="stat-title">Total Revenue</span>
-                        <span className="stat-icon">💰</span>
-                      </div>
-                      <div className="stat-value">$124,500</div>
-                      <div className="stat-change positive">+12.5%</div>
-                    </div>
-                    <div className="stat-card">
-                      <div className="stat-header">
-                        <span className="stat-title">Orders</span>
-                        <span className="stat-icon">📋</span>
-                      </div>
-                      <div className="stat-value">1,247</div>
-                      <div className="stat-change positive">+8.2%</div>
-                    </div>
-                  </div>
-                  <div className="chart-area">
-                    <div className="chart-header">Sales Overview</div>
-                    <div className="chart">
-                      <div className="chart-bar" style={{height: '60%'}}></div>
-                      <div className="chart-bar" style={{height: '80%'}}></div>
-                      <div className="chart-bar" style={{height: '45%'}}></div>
-                      <div className="chart-bar" style={{height: '90%'}}></div>
-                      <div className="chart-bar" style={{height: '70%'}}></div>
-                      <div className="chart-bar" style={{height: '85%'}}></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="dashboard-screenshot">
+              <img 
+                src={`${process.env.PUBLIC_URL}/dashboard-screenshot.png`} 
+                alt="BizzBuddy Dashboard" 
+                className="screenshot-image"
+              />
             </div>
           </div>
         </div>
