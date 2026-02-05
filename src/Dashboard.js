@@ -9,7 +9,6 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
   const { formatCurrency, getText } = useSettings();
   const [activeMenu, setActiveMenu] = useState("Dashboard");
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [dashboardData, setDashboardData] = useState({
     totalSales: 0,
     totalPurchases: 0,
@@ -110,68 +109,15 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
 
   return (
     <div className="dashboard-container">
-      {/* Hamburger Menu Button - Works on all screens */}
-      <button 
-        className="hamburger-menu-btn"
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        aria-label="Toggle sidebar"
-      >
-        ☰
-      </button>
-
-      {/* Overlay - Only on mobile when sidebar is open */}
-      <div 
-        className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`}
-        onClick={() => setIsSidebarOpen(false)}
-      ></div>
-
-      {/* Sidebar - Toggleable on all screens */}
-      <div className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
-        <div className="logo-section">
-          <div className="logo-icon">
-            <BizBuddyLogo size={44} />
-          </div>
-        </div>
-        
-        <nav className="nav-menu">
-          {menuItems.map((item) => (
-            <div
-              key={item.name}
-              className={`menu-item ${activeMenu === item.name ? "active" : ""}`}
-              onClick={() => {
-                setActiveMenu(item.name);
-                if (item.name !== "Dashboard") {
-                  onNavigate(item.name);
-                }
-              }}
-            >
-              <span className="menu-icon">{item.icon}</span>
-              <span className="menu-text">{item.name}</span>
-            </div>
-          ))}
-        </nav>
-
-        <div className="sidebar-bottom">
-          <div className="menu-item" onClick={() => {
-            onNavigate("Settings");
-          }}>
-            <span className="menu-icon">⚙️</span>
-            <span className="menu-text">Settings</span>
-          </div>
-          <div className="menu-item logout" onClick={() => {
-            onLogout();
-          }}>
-            <span className="menu-icon">🚪</span>
-            <span className="menu-text">Logout</span>
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
-      <div className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <div className="main-content">
         {/* Header */}
         <div className="header">
           <h1>{getText('welcome')}, {user?.name || "User"}!</h1>
+          <button className="settings-btn" onClick={() => onNavigate("Settings")}>
+            <span className="settings-icon">⚙️</span>
+            Settings
+          </button>
         </div>
 
         {/* Stats Cards */}
@@ -206,6 +152,33 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
               <div className="action-card-content">
                 <h4>Record Purchase</h4>
                 <p>Track your expenses</p>
+              </div>
+              <div className="action-arrow">→</div>
+            </div>
+            
+            <div className="action-card" onClick={() => onNavigate("Party Management")}>
+              <div className="action-card-icon">👥</div>
+              <div className="action-card-content">
+                <h4>Party Management</h4>
+                <p>Manage customers & suppliers</p>
+              </div>
+              <div className="action-arrow">→</div>
+            </div>
+
+            <div className="action-card" onClick={() => onNavigate("Item Management")}>
+              <div className="action-card-icon">📦</div>
+              <div className="action-card-content">
+                <h4>Item Management</h4>
+                <p>Manage your inventory</p>
+              </div>
+              <div className="action-arrow">→</div>
+            </div>
+
+            <div className="action-card" onClick={() => onNavigate("Annual Reports")}>
+              <div className="action-card-icon">📈</div>
+              <div className="action-card-content">
+                <h4>Annual Reports</h4>
+                <p>View business analytics</p>
               </div>
               <div className="action-arrow">→</div>
             </div>

@@ -195,6 +195,10 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
       <div className="main-content">
         {/* Header */}
         <div className="header">
+          <button className="dashboard-btn" onClick={() => onNavigate("Dashboard")}>
+            <span className="dashboard-icon">←</span>
+            Back to Dashboard
+          </button>
           <div className="header-left">
             <h1>Party Management</h1>
             <p>Manage your customers and suppliers efficiently.</p>

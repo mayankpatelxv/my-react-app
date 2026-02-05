@@ -281,6 +281,10 @@ const Settings = ({ onBack, user, onLogout, onNavigate }) => {
           ← Back to Dashboard
         </button>
         <h1>Settings</h1>
+        <button className="logout-btn" onClick={onLogout}>
+          <span className="logout-icon">🚪</span>
+          Logout
+        </button>
       </div>
 
       <div className="settings-layout">

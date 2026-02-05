@@ -364,6 +364,10 @@ End of Report
       <div className="main-content">
         {/* Header */}
         <div className="header">
+          <button className="dashboard-btn" onClick={() => onNavigate("Dashboard")}>
+            <span className="dashboard-icon">←</span>
+            Back to Dashboard
+          </button>
           <div className="header-left">
             <h1>Annual Reports</h1>
           </div>

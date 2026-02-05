@@ -8,13 +8,16 @@
 
 .register-container {
   min-height: 100vh;
+  height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   position: relative;
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  padding: 1rem;
 }
 
 .register-container::before {
@@ -268,10 +271,10 @@
 }
 
 .register-footer {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  position: absolute;
+  bottom: 1rem;
+  left: 0;
+  right: 0;
   color: rgba(255, 255, 255, 0.8);
   font-size: 12px;
   text-align: center;
@@ -427,13 +430,16 @@
   .register-container {
     padding: 1rem;
     min-height: 100vh;
-    min-height: -webkit-fill-available;
+    height: 100vh;
+    overflow: hidden;
   }
 
   .register-card {
     padding: 1.5rem;
     max-width: 100%;
     margin: 0 0.5rem;
+    max-height: calc(100vh - 6rem);
+    overflow-y: auto;
   }
 
   .register-header h1 {
@@ -451,12 +457,8 @@
   }
 
   .register-footer {
-    position: relative;
-    bottom: auto;
-    left: auto;
-    transform: none;
-    margin-top: 1.5rem;
-    padding: 0 1rem;
+    position: absolute;
+    bottom: 1rem;
   }
 }
 

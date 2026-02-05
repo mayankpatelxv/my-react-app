@@ -1,5 +1,13 @@
 @import './animations.css';
 
+/* HIDE SIDEBAR AND MENU */
+.sidebar,
+.mobile-menu-toggle,
+.mobile-overlay,
+.hamburger-menu-btn {
+  display: none !important;
+}
+
 /* Desktop-first Sales Page Styles */
 .sales-container {
   display: flex;
@@ -129,21 +137,18 @@
 /* Main Content - Desktop First */
 .main-content {
   flex: 1;
-  margin-left: 250px;
+  margin-left: 0;
   padding: 2rem;
   overflow-y: auto;
+  width: 100%;
   position: relative;
   z-index: 1;
-  width: calc(100% - 250px);
-  min-width: 0;
 }
-
-
 
 .header {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
@@ -154,7 +159,40 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
+.dashboard-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #4a9eff 0%, #667eea 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3);
+  min-height: 48px;
+  white-space: nowrap;
+}
 
+.dashboard-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 158, 255, 0.4);
+}
+
+.dashboard-btn:active {
+  transform: translateY(0);
+}
+
+.dashboard-icon {
+  font-size: 1.25rem;
+}
+
+.header-left {
+  flex: 1;
+}
 
 .header-left h1 {
   font-size: 2rem;
