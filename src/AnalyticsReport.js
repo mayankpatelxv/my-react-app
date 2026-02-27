@@ -57,7 +57,7 @@ const AnalyticsReport = ({ onBack, user }) => {
           .slice(0, 5)
           .map(customer => ({
             ...customer,
-            revenue: formatCurrency(customer.revenue),
+            revenue: customer.revenue, // Keep as number for calculations
             growth: '+0.0%' // Would need historical data to calculate real growth
           }));
 
@@ -91,7 +91,7 @@ const AnalyticsReport = ({ onBack, user }) => {
           { month: 'Dec', sales: 0, revenue: 0 }
         ],
         topCustomers: topCustomers.length > 0 ? topCustomers : [
-          { name: 'No customers yet', revenue: '$0.00', growth: '+0.0%', positive: true }
+          { name: 'No customers yet', revenue: 0, growth: '+0.0%', positive: true }
         ],
         totalSales,
         totalPurchases,
@@ -102,6 +102,119 @@ const AnalyticsReport = ({ onBack, user }) => {
       console.error("Error fetching analytics data:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExportData = () => {
+    try {
+      // Create CSV data
+      const csvData = [
+        ['Metric', 'Value'],
+        ['Total Sales', analyticsData.totalSales],
+        ['Total Expenses', analyticsData.totalPurchases],
+        ['Net Profit', analyticsData.totalSales - analyticsData.totalPurchases],
+        ['Total Items', analyticsData.totalItems],
+        ['Total Parties', analyticsData.totalParties],
+        [''],
+        ['Monthly Sales Data'],
+        ['Month', 'Sales', 'Revenue'],
+        ...analyticsData.salesData.map(item => [item.month, item.sales, item.revenue]),
+        [''],
+        ['Top Customers'],
+        ['Rank', 'Customer Name', 'Revenue'],
+        ...analyticsData.topCustomers.map((customer, index) => [index + 1, customer.name, customer.revenue])
+      ];
+
+      const csvContent = csvData.map(row => row.join(',')).join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Analytics_Data_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      alert('📥 Analytics data exported successfully!');
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      alert('Error exporting data. Please try again.');
+    }
+  };
+
+  const handleGenerateReport = () => {
+    try {
+      const reportContent = `
+BIZBUDDY ANALYTICS REPORT
+Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}
+Date Range: ${dateRange}
+Location: ${location}
+
+═══════════════════════════════════════════════════════════════
+📊 KEY METRICS SUMMARY
+═══════════════════════════════════════════════════════════════
+
+Total Sales:          ${formatCurrency(analyticsData.totalSales)}
+Total Expenses:       ${formatCurrency(analyticsData.totalPurchases)}
+Net Profit:           ${formatCurrency(analyticsData.totalSales - analyticsData.totalPurchases)}
+Profit Margin:        ${analyticsData.totalSales > 0 ? (((analyticsData.totalSales - analyticsData.totalPurchases) / analyticsData.totalSales) * 100).toFixed(2) : 0}%
+
+Business Metrics:
+- Total Items:        ${analyticsData.totalItems}
+- Total Parties:      ${analyticsData.totalParties}
+- Active Customers:   ${analyticsData.topCustomers.filter(c => c.name !== 'No customers yet').length}
+
+═══════════════════════════════════════════════════════════════
+📈 MONTHLY SALES BREAKDOWN
+═══════════════════════════════════════════════════════════════
+
+${analyticsData.salesData.map(item => 
+  `${item.month.padEnd(8)} Sales: ${item.sales.toLocaleString().padStart(10)} Revenue: ${item.revenue.toLocaleString().padStart(10)}`
+).join('\n')}
+
+═══════════════════════════════════════════════════════════════
+👥 TOP CUSTOMERS ANALYSIS
+═══════════════════════════════════════════════════════════════
+
+${analyticsData.topCustomers.map((customer, index) => 
+  `${(index + 1).toString().padStart(2)}. ${customer.name.padEnd(25)} ${customer.revenue.padStart(15)} (${customer.growth})`
+).join('\n')}
+
+═══════════════════════════════════════════════════════════════
+💡 BUSINESS INSIGHTS
+═══════════════════════════════════════════════════════════════
+
+Financial Health: ${analyticsData.totalSales > analyticsData.totalPurchases ? 'Profitable' : 'Needs Attention'}
+Growth Trend: ${analyticsData.totalSales > 0 ? 'Active Business' : 'Getting Started'}
+Customer Base: ${analyticsData.totalParties > 0 ? 'Established' : 'Building'}
+
+Recommendations:
+${analyticsData.totalSales === 0 ? '• Focus on generating your first sales' : ''}
+${analyticsData.totalParties < 5 ? '• Expand your customer and supplier network' : ''}
+${analyticsData.totalItems < 10 ? '• Consider adding more products to your inventory' : ''}
+• Monitor monthly trends for better planning
+• Focus on top-performing customers for growth
+
+═══════════════════════════════════════════════════════════════
+End of Report - Generated by BizBuddy Analytics
+═══════════════════════════════════════════════════════════════
+      `.trim();
+
+      const blob = new Blob([reportContent], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Analytics_Report_${new Date().toISOString().split('T')[0]}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      alert('📊 Analytics report generated successfully!');
+    } catch (error) {
+      console.error('Error generating report:', error);
+      alert('Error generating report. Please try again.');
     }
   };
 
@@ -205,8 +318,8 @@ const AnalyticsReport = ({ onBack, user }) => {
             <option>Chicago</option>
           </select>
           
-          <button className="export-btn">📥 Export Data</button>
-          <button className="generate-btn">📊 Generate Report</button>
+          <button className="export-btn" onClick={handleExportData}>📥 Export Data</button>
+          <button className="generate-btn" onClick={handleGenerateReport}>📊 Generate Report</button>
         </div>
       </div>
 
@@ -216,7 +329,7 @@ const AnalyticsReport = ({ onBack, user }) => {
             <span className="metric-label">Total Sales</span>
             <span className="metric-icon">💰</span>
           </div>
-          <div className="metric-value">$45,231.89</div>
+          <div className="metric-value">{formatCurrency(analyticsData.totalSales)}</div>
           <div className="metric-change positive">📈 +20.1% from last month</div>
         </div>
         
@@ -225,7 +338,7 @@ const AnalyticsReport = ({ onBack, user }) => {
             <span className="metric-label">Total Expenses</span>
             <span className="metric-icon">💸</span>
           </div>
-          <div className="metric-value">$15,100.00</div>
+          <div className="metric-value">{formatCurrency(analyticsData.totalPurchases)}</div>
           <div className="metric-change negative">📉 -3.2% from last month</div>
         </div>
         
@@ -234,7 +347,7 @@ const AnalyticsReport = ({ onBack, user }) => {
             <span className="metric-label">Net Profit</span>
             <span className="metric-icon">⚡</span>
           </div>
-          <div className="metric-value">$30,131.89</div>
+          <div className="metric-value">{formatCurrency(analyticsData.totalSales - analyticsData.totalPurchases)}</div>
           <div className="metric-change positive">📈 +18.8% from last month</div>
         </div>
       </div>
@@ -345,7 +458,7 @@ const AnalyticsReport = ({ onBack, user }) => {
                 <div className="customer-rank">#{index + 1}</div>
                 <div className="customer-info">
                   <div className="customer-name">{customer.name}</div>
-                  <div className="customer-revenue">{customer.revenue}</div>
+                  <div className="customer-revenue">{formatCurrency(customer.revenue)}</div>
                 </div>
                 <div className={`customer-growth ${customer.positive ? 'positive' : 'negative'}`}>
                   {customer.growth}

@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BizBuddy - UML Diagrams</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6}
+.container{max-width:1600px;margin:0 auto;padding:2rem}
+.header{text-align:center;margin-bottom:3rem;padding:2rem;background:linear-gradient(135deg,#4a9eff 0%,#667eea 100%);color:white;border-radius:16px;box-shadow:0 8px 32px rgba(74,158,255,0.3)}
+.header h1{font-size:2.5rem;font-weight:700;margin-bottom:0.5rem}
+.header p{font-size:1.1rem;opacity:0.9}
+.diagram-nav{display:flex;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;justify-content:center}
+.nav-btn{padding:0.75rem 1.5rem;background:white;border:2px solid #e2e8f0;border-radius:8px;color:#64748b;font-weight:500;transition:all 0.2s ease;cursor:pointer}
+.nav-btn:hover,.nav-btn.active{background:#4a9eff;color:white;border-color:#4a9eff;transform:translateY(-2px)}
+.diagram-section{background:white;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.08);margin-bottom:2rem;overflow:hidden;display:none}
+.diagram-section.active{display:block}
+.diagram-header{background:linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);padding:1.5rem 2rem;border-bottom:2px solid #e2e8f0}
+.diagram-title{font-size:1.5rem;font-weight:700;color:#1e293b;margin-bottom:0.5rem}
+.diagram-description{color:#64748b;font-size:0.95rem}
+.diagram-content{padding:2rem;overflow-x:auto}
+.svg-container{min-width:800px;margin:0 auto}
+svg{width:100%;height:auto;display:block}
+.class-box{fill:#fff;stroke:#4a9eff;stroke-width:2}
+.class-header{fill:#4a9eff}
+.class-text{fill:#1e293b;font-family:'SF Mono',Monaco,monospace;font-size:14px}
+.class-header-text{fill:#fff;font-weight:600}
+.relationship{stroke:#64748b;stroke-width:2;fill:none}
+.arrow{fill:#64748b}
+.state-box{fill:#fff;stroke:#667eea;stroke-width:2;rx:8}
+.state-text{fill:#1e293b;font-size:14px;font-weight:500}
+.transition{stroke:#64748b;stroke-width:2;fill:none;marker-end:url(#arrowhead)}
+.activity-box{fill:#fff;stroke:#10b981;stroke-width:2;rx:12}
+.decision-box{fill:#fef3c7;stroke:#f59e0b;stroke-width:2}
+.sequence-actor{fill:#e0e7ff;stroke:#4338ca;stroke-width:2}
+.sequence-lifeline{stroke:#cbd5e1;stroke-width:2;stroke-dasharray:5,5}
+.sequence-message{stroke:#4a9eff;stroke-width:2;marker-end:url(#arrowhead)}
+.sequence-return{stroke:#94a3b8;stroke-width:1.5;stroke-dasharray:5,3;marker-end:url(#arrowhead-light)}
+.label-text{fill:#64748b;font-size:12px}
+.note-box{fill:#fef9c3;stroke:#eab308;stroke-width:1.5}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>BizBuddy UML Diagrams</h1>
+<p>Class, Activity, State Chart, and Sequence Diagrams</p>
+</div>
+
+<div class="diagram-nav">
+<button class="nav-btn active" onclick="showDiagram('class')">Class Diagram</button>
+<button class="nav-btn" onclick="showDiagram('activity')">Activity Diagram</button>
+<button class="nav-btn" onclick="showDiagram('state')">State Chart</button>
+<button class="nav-btn" onclick="showDiagram('sequence')">Sequence Diagram</button>
+</div>
+
+<!-- CLASS DIAGRAM -->
+<div id="class" class="diagram-section active">
+<div class="diagram-header">
+<h2 class="diagram-title">Class Diagram</h2>
+<p class="diagram-description">System architecture and relationships between entities</p>
+</div>
+<div class="diagram-content">
+<svg viewBox="0 0 1400 1000" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" class="arrow"/>
+</marker>
+</defs>
+
+<!-- User Class -->
+<g transform="translate(50,50)">
+<rect class="class-box" width="200" height="180"/>
+<rect class="class-header" width="200" height="35"/>
+<text class="class-header-text" x="100" y="22" text-anchor="middle">User</text>
+<text class="class-text" x="10" y="55">+ id: UUID</text>
+<text class="class-text" x="10" y="75">+ name: String</text>
+<text class="class-text" x="10" y="95">+ email: String</text>
+<text class="class-text" x="10" y="115">+ auth_token: String</text>
+<line x1="0" y1="125" x2="200" y2="125" stroke="#e2e8f0" stroke-width="1"/>
+<text class="class-text" x="10" y="145">+ login()</text>
+<text class="class-text" x="10" y="165">+ register()</text>
+</g>
+
+<!-- Party Class -->
+<g transform="translate(350,50)">
+<rect class="class-box" width="220" height="220"/>
+<rect class="class-header" width="220" height="35"/>
+<text class="class-header-text" x="110" y="22" text-anchor="middle">Party</text>
+<text class="class-text" x="10" y="55">+ id: UUID</text>
+<text class="class-text" x="10" y="75">+ user_id: UUID</text>
+<text class="class-text" x="10" y="95">+ name: String</text>
+<text class="class-text" x="10" y="115">+ email: String</text>
+<text class="class-text" x="10" y="135">+ party_type: String</text>
+<text class="class-text" x="10" y="155">+ credit_limit: Decimal</text>
+<line x1="0" y1="165" x2="220" y2="165" stroke="#e2e8f0" stroke-width="1"/>
+<text class="class-text" x="10" y="185">+ create()</text>
+<text class="class-text" x="10" y="205">+ update()</text>
+</g>
+
+<!-- Item Class -->
+<g transform="translate(650,50)">
+<rect class="class-box" width="220" height="220"/>
+<rect class="class-header" width="220" height="35"/>
+<text class="class-header-text" x="110" y="22" text-anchor="middle">Item</text>
+<text class="class-text" x="10" y="55">+ id: BigInt</text>
+<text class="class-text" x="10" y="75">+ user_id: UUID</text>
+<text class="class-text" x="10" y="95">+ name: String</text>
+<text class="class-text" x="10" y="115">+ category: String</text>
+<text class="class-text" x="10" y="135">+ price: Decimal</text>
+<text class="class-text" x="10" y="155">+ stock_level: Integer</text>
+<line x1="0" y1="165" x2="220" y2="165" stroke="#e2e8f0" stroke-width="1"/>
+<text class="class-text" x="10" y="185">+ updateStock()</text>
+<text class="class-text" x="10" y="205">+ checkLowStock()</text>
+</g>
+
+<!-- Sale Class -->
+<g transform="translate(950,50)">
+<rect class="class-box" width="220" height="240"/>
+<rect class="class-header" width="220" height="35"/>
+<text class="class-header-text" x="110" y="22" text-anchor="middle">Sale</text>
+<text class="class-text" x="10" y="55">+ id: BigInt</text>
+<text class="class-text" x="10" y="75">+ user_id: UUID</text>
+<text class="class-text" x="10" y="95">+ customer_id: UUID</text>
+<text class="class-text" x="10" y="115">+ invoice_number: String</text>
+<text class="class-text" x="10" y="135">+ total_amount: Decimal</text>
+<text class="class-text" x="10" y="155">+ status: String</text>
+<text class="class-text" x="10" y="175">+ invoice_date: Date</text>
+<line x1="0" y1="185" x2="220" y2="185" stroke="#e2e8f0" stroke-width="1"/>
+<text class="class-text" x="10" y="205">+ createInvoice()</text>
+<text class="class-text" x="10" y="225">+ calculateTotal()</text>
+</g>
+
+<!-- Purchase Class -->
+<g transform="translate(350,350)">
+<rect class="class-box" width="220" height="240"/>
+<rect class="class-header" width="220" height="35"/>
+<text class="class-header-text" x="110" y="22" text-anchor="middle">Purchase</text>
+<text class="class-text" x="10" y="55">+ id: BigInt</text>
+<text class="class-text" x="10" y="75">+ user_id: UUID</text>
+<text class="class-text" x="10" y="95">+ supplier_id: UUID</text>
+<text class="class-text" x="10" y="115">+ bill_number: String</text>
+<text class="class-text" x="10" y="135">+ total_amount: Decimal</text>
+<text class="class-text" x="10" y="155">+ status: String</text>
+<text class="class-text" x="10" y="175">+ purchase_date: Date</text>
+<line x1="0" y1="185" x2="220" y2="185" stroke="#e2e8f0" stroke-width="1"/>
+<text class="class-text" x="10" y="205">+ recordPurchase()</text>
+<text class="class-text" x="10" y="225">+ uploadDocument()</text>
+</g>
+
+<!-- SaleItem Class -->
+<g transform="translate(950,350)">
+<rect class="class-box" width="200" height="180"/>
+<rect class="class-header" width="200" height="35"/>
+<text class="class-header-text" x="100" y="22" text-anchor="middle">SaleItem</text>
+<text class="class-text" x="10" y="55">+ id: BigInt</text>
+<text class="class-text" x="10" y="75">+ sale_id: BigInt</text>
+<text class="class-text" x="10" y="95">+ item_id: BigInt</text>
+<text class="class-text" x="10" y="115">+ quantity: Integer</text>
+<text class="class-text" x="10" y="135">+ line_total: Decimal</text>
+<line x1="0" y1="145" x2="200" y2="145" stroke="#e2e8f0" stroke-width="1"/>
+<text class="class-text" x="10" y="165">+ calculateLine()</text>
+</g>
+
+<!-- PurchaseItem Class -->
+<g transform="translate(650,350)">
+<rect class="class-box" width="200" height="180"/>
+<rect class="class-header" width="200" height="35"/>
+<text class="class-header-text" x="100" y="22" text-anchor="middle">PurchaseItem</text>
+<text class="class-text" x="10" y="55">+ id: BigInt</text>
+<text class="class-text" x="10" y="75">+ purchase_id: BigInt</text>
+<text class="class-text" x="10" y="95">+ item_id: BigInt</text>
+<text class="class-text" x="10" y="115">+ quantity: Integer</text>
+<text class="class-text" x="10" y="135">+ line_total: Decimal</text>
+<line x1="0" y1="145" x2="200" y2="145" stroke="#e2e8f0" stroke-width="1"/>
+<text class="class-text" x="10" y="165">+ calculateLine()</text>
+</g>
+
+<!-- Relationships -->
+<!-- User to Party -->
+<path class="relationship" d="M 250 140 L 350 140" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="280" y="130">1</text>
+<text class="label-text" x="330" y="130">*</text>
+
+<!-- User to Item -->
+<path class="relationship" d="M 250 100 L 300 100 L 300 30 L 650 30 L 650 50" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="260" y="90">1</text>
+<text class="label-text" x="640" y="45">*</text>
+
+<!-- User to Sale -->
+<path class="relationship" d="M 250 80 L 320 80 L 320 20 L 950 20 L 950 50" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="260" y="70">1</text>
+<text class="label-text" x="940" y="45">*</text>
+
+<!-- User to Purchase -->
+<path class="relationship" d="M 150 230 L 150 320 L 350 320 L 350 350" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="140" y="240">1</text>
+<text class="label-text" x="340" y="345">*</text>
+
+<!-- Party to Sale -->
+<path class="relationship" d="M 460 270 L 460 310 L 1050 310 L 1050 290" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="450" y="280">1</text>
+<text class="label-text" x="1040" y="305">*</text>
+
+<!-- Party to Purchase -->
+<path class="relationship" d="M 460 270 L 460 350" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="450" y="280">1</text>
+<text class="label-text" x="450" y="345">*</text>
+
+<!-- Sale to SaleItem -->
+<path class="relationship" d="M 1050 290 L 1050 350" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="1040" y="300">1</text>
+<text class="label-text" x="1040" y="345">*</text>
+
+<!-- Purchase to PurchaseItem -->
+<path class="relationship" d="M 570 470 L 650 470" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="580" y="460">1</text>
+<text class="label-text" x="640" y="460">*</text>
+
+<!-- Item to SaleItem -->
+<path class="relationship" d="M 760 270 L 760 300 L 950 300 L 950 350" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="750" y="280">1</text>
+<text class="label-text" x="940" y="345">*</text>
+
+<!-- Item to PurchaseItem -->
+<path class="relationship" d="M 760 270 L 760 350" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="750" y="280">1</text>
+<text class="label-text" x="750" y="345">*</text>
+
+</svg>
+</div>
+</div>
+
+<!-- ACTIVITY DIAGRAM -->
+<div id="activity" class="diagram-section">
+<div class="diagram-header">
+<h2 class="diagram-title">Activity Diagram</h2>
+<p class="diagram-description">Sales invoice creation workflow</p>
+</div>
+<div class="diagram-content">
+<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" class="arrow"/>
+</marker>
+</defs>
+
+<!-- Start -->
+<circle cx="400" cy="30" r="15" fill="#1e293b"/>
+<path class="transition" d="M 400 45 L 400 80" marker-end="url(#arrowhead)"/>
+
+<!-- Login -->
+<rect class="activity-box" x="300" y="80" width="200" height="50" rx="25"/>
+<text class="state-text" x="400" y="110" text-anchor="middle">User Login</text>
+<path class="transition" d="M 400 130 L 400 170" marker-end="url(#arrowhead)"/>
+
+<!-- Navigate to Sales -->
+<rect class="activity-box" x="280" y="170" width="240" height="50" rx="25"/>
+<text class="state-text" x="400" y="200" text-anchor="middle">Navigate to Sales Page</text>
+<path class="transition" d="M 400 220 L 400 260" marker-end="url(#arrowhead)"/>
+
+<!-- Click Create Invoice -->
+<rect class="activity-box" x="280" y="260" width="240" height="50" rx="25"/>
+<text class="state-text" x="400" y="290" text-anchor="middle">Click Create Invoice</text>
+<path class="transition" d="M 400 310 L 400 350" marker-end="url(#arrowhead)"/>
+
+<!-- Select Customer -->
+<rect class="activity-box" x="280" y="350" width="240" height="50" rx="25"/>
+<text class="state-text" x="400" y="380" text-anchor="middle">Select Customer</text>
+<path class="transition" d="M 400 400 L 400 440" marker-end="url(#arrowhead)"/>
+
+<!-- Add Items -->
+<rect class="activity-box" x="280" y="440" width="240" height="50" rx="25"/>
+<text class="state-text" x="400" y="470" text-anchor="middle">Add Items to Invoice</text>
+<path class="transition" d="M 400 490 L 400 530" marker-end="url(#arrowhead)"/>
+
+<!-- Decision: More Items? -->
+<path class="decision-box" d="M 400 530 L 480 580 L 400 630 L 320 580 Z"/>
+<text class="state-text" x="400" y="585" text-anchor="middle">More</text>
+<text class="state-text" x="400" y="600" text-anchor="middle">Items?</text>
+
+<!-- Yes - Loop back -->
+<path class="transition" d="M 480 580 L 600 580 L 600 465 L 520 465" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="550" y="575">Yes</text>
+
+<!-- No - Continue -->
+<path class="transition" d="M 400 630 L 400 670" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="410" y="650">No</text>
+
+<!-- Apply Discount -->
+<rect class="activity-box" x="280" y="670" width="240" height="50" rx="25"/>
+<text class="state-text" x="400" y="700" text-anchor="middle">Apply Discount (Optional)</text>
+<path class="transition" d="M 400 720 L 400 760" marker-end="url(#arrowhead)"/>
+
+<!-- Calculate Total -->
+<rect class="activity-box" x="280" y="760" width="240" height="50" rx="25"/>
+<text class="state-text" x="400" y="790" text-anchor="middle">Calculate Total Amount</text>
+<path class="transition" d="M 400 810 L 400 850" marker-end="url(#arrowhead)"/>
+
+<!-- Review Invoice -->
+<rect class="activity-box" x="280" y="850" width="240" height="50" rx="25"/>
+<text class="state-text" x="400" y="880" text-anchor="middle">Review Invoice Details</text>
+<path class="transition" d="M 400 900 L 400 940" marker-end="url(#arrowhead)"/>
+
+<!-- Decision: Confirm? -->
+<path class="decision-box" d="M 400 940 L 480 990 L 400 1040 L 320 990 Z"/>
+<text class="state-text" x="400" y="995" text-anchor="middle">Confirm?</text>
+
+<!-- No - Edit -->
+<path class="transition" d="M 320 990 L 200 990 L 200 465 L 280 465" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="250" y="985">Edit</text>
+
+<!-- Yes - Save -->
+<path class="transition" d="M 480 990 L 600 990" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="520" y="985">Yes</text>
+
+<!-- Save Invoice -->
+<rect class="activity-box" x="600" y="965" width="150" height="50" rx="25"/>
+<text class="state-text" x="675" y="995" text-anchor="middle">Save Invoice</text>
+<path class="transition" d="M 675 1015 L 675 1055" marker-end="url(#arrowhead)"/>
+
+<!-- Update Stock -->
+<rect class="activity-box" x="600" y="1055" width="150" height="50" rx="25"/>
+<text class="state-text" x="675" y="1085" text-anchor="middle">Update Stock</text>
+<path class="transition" d="M 675 1105 L 675 1145" marker-end="url(#arrowhead)"/>
+
+<!-- End -->
+<circle cx="675" cy="1160" r="15" fill="none" stroke="#1e293b" stroke-width="2"/>
+<circle cx="675" cy="1160" r="10" fill="#1e293b"/>
+
+</svg>
+</div>
+</div>
+
+<!-- STATE CHART DIAGRAM -->
+<div id="state" class="diagram-section">
+<div class="diagram-header">
+<h2 class="diagram-title">State Chart Diagram</h2>
+<p class="diagram-description">Invoice lifecycle states and transitions</p>
+</div>
+<div class="diagram-content">
+<svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" class="arrow"/>
+</marker>
+</defs>
+
+<!-- Initial State -->
+<circle cx="100" cy="100" r="20" fill="#1e293b"/>
+<text class="state-text" x="100" y="145" text-anchor="middle">Start</text>
+<path class="transition" d="M 120 100 L 200 100" marker-end="url(#arrowhead)"/>
+
+<!-- Draft State -->
+<rect class="state-box" x="200" y="50" width="150" height="100"/>
+<text class="state-text" x="275" y="90" text-anchor="middle" font-weight="700">Draft</text>
+<line x1="200" y1="105" x2="350" y2="105" stroke="#cbd5e1" stroke-width="1"/>
+<text class="label-text" x="210" y="125">entry / create invoice</text>
+<text class="label-text" x="210" y="140">do / edit details</text>
+
+<!-- Draft to Pending -->
+<path class="transition" d="M 350 100 L 450 100" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="360" y="90">submit()</text>
+
+<!-- Pending State -->
+<rect class="state-box" x="450" y="50" width="150" height="100"/>
+<text class="state-text" x="525" y="90" text-anchor="middle" font-weight="700">Pending</text>
+<line x1="450" y1="105" x2="600" y2="105" stroke="#cbd5e1" stroke-width="1"/>
+<text class="label-text" x="460" y="125">entry / validate</text>
+<text class="label-text" x="460" y="140">do / await approval</text>
+
+<!-- Pending to Confirmed -->
+<path class="transition" d="M 600 100 L 700 100" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="610" y="90">approve()</text>
+
+<!-- Confirmed State -->
+<rect class="state-box" x="700" y="50" width="150" height="100"/>
+<text class="state-text" x="775" y="90" text-anchor="middle" font-weight="700">Confirmed</text>
+<line x1="700" y1="105" x2="850" y2="105" stroke="#cbd5e1" stroke-width="1"/>
+<text class="label-text" x="710" y="125">entry / lock invoice</text>
+<text class="label-text" x="710" y="140">do / update stock</text>
+
+<!-- Confirmed to Paid -->
+<path class="transition" d="M 775 150 L 775 250" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="785" y="200">payment()</text>
+
+<!-- Paid State -->
+<rect class="state-box" x="700" y="250" width="150" height="100"/>
+<text class="state-text" x="775" y="290" text-anchor="middle" font-weight="700">Paid</text>
+<line x1="700" y1="305" x2="850" y2="305" stroke="#cbd5e1" stroke-width="1"/>
+<text class="label-text" x="710" y="325">entry / record payment</text>
+<text class="label-text" x="710" y="340">do / generate receipt</text>
+
+<!-- Paid to Completed -->
+<path class="transition" d="M 775 350 L 775 450" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="785" y="400">complete()</text>
+
+<!-- Completed State -->
+<rect class="state-box" x="700" y="450" width="150" height="100"/>
+<text class="state-text" x="775" y="490" text-anchor="middle" font-weight="700">Completed</text>
+<line x1="700" y1="505" x2="850" y2="505" stroke="#cbd5e1" stroke-width="1"/>
+<text class="label-text" x="710" y="525">entry / archive</text>
+<text class="label-text" x="710" y="540">do / update reports</text>
+
+<!-- Completed to Final -->
+<path class="transition" d="M 775 550 L 775 600" marker-end="url(#arrowhead)"/>
+
+<!-- Final State -->
+<circle cx="775" cy="620" r="20" fill="none" stroke="#1e293b" stroke-width="3"/>
+<circle cx="775" cy="620" r="15" fill="#1e293b"/>
+
+<!-- Pending to Cancelled -->
+<path class="transition" d="M 525 150 L 525 250" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="535" y="200">cancel()</text>
+
+<!-- Cancelled State -->
+<rect class="state-box" x="450" y="250" width="150" height="100"/>
+<text class="state-text" x="525" y="290" text-anchor="middle" font-weight="700">Cancelled</text>
+<line x1="450" y1="305" x2="600" y2="305" stroke="#cbd5e1" stroke-width="1"/>
+<text class="label-text" x="460" y="325">entry / mark cancelled</text>
+<text class="label-text" x="460" y="340">do / notify user</text>
+
+<!-- Draft to Cancelled -->
+<path class="transition" d="M 275 150 L 275 220 L 450 220 L 450 250" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="285" y="180">discard()</text>
+
+<!-- Confirmed to Refunded -->
+<path class="transition" d="M 700 300 L 300 300" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="500" y="290">refund()</text>
+
+<!-- Refunded State -->
+<rect class="state-box" x="200" y="250" width="150" height="100"/>
+<text class="state-text" x="275" y="290" text-anchor="middle" font-weight="700">Refunded</text>
+<line x1="200" y1="305" x2="350" y2="305" stroke="#cbd5e1" stroke-width="1"/>
+<text class="label-text" x="210" y="325">entry / reverse stock</text>
+<text class="label-text" x="210" y="340">do / process refund</text>
+
+</svg>
+</div>
+</div>
+
+<!-- SEQUENCE DIAGRAM -->
+<div id="sequence" class="diagram-section">
+<div class="diagram-header">
+<h2 class="diagram-title">Sequence Diagram</h2>
+<p class="diagram-description">User authentication and invoice creation flow</p>
+</div>
+<div class="diagram-content">
+<svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" class="arrow"/>
+</marker>
+<marker id="arrowhead-light" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" fill="#94a3b8"/>
+</marker>
+</defs>
+
+<!-- Actors/Objects -->
+<!-- User -->
+<rect class="sequence-actor" x="50" y="20" width="100" height="50" rx="5"/>
+<text class="state-text" x="100" y="50" text-anchor="middle">User</text>
+<line class="sequence-lifeline" x1="100" y1="70" x2="100" y2="850"/>
+
+<!-- UI/Frontend -->
+<rect class="sequence-actor" x="250" y="20" width="100" height="50" rx="5"/>
+<text class="state-text" x="300" y="50" text-anchor="middle">UI/Frontend</text>
+<line class="sequence-lifeline" x1="300" y1="70" x2="300" y2="850"/>
+
+<!-- Auth Service -->
+<rect class="sequence-actor" x="450" y="20" width="120" height="50" rx="5"/>
+<text class="state-text" x="510" y="50" text-anchor="middle">Auth Service</text>
+<line class="sequence-lifeline" x1="510" y1="70" x2="510" y2="850"/>
+
+<!-- API/Backend -->
+<rect class="sequence-actor" x="670" y="20" width="120" height="50" rx="5"/>
+<text class="state-text" x="730" y="50" text-anchor="middle">API/Backend</text>
+<line class="sequence-lifeline" x1="730" y1="70" x2="730" y2="850"/>
+
+<!-- Database -->
+<rect class="sequence-actor" x="890" y="20" width="100" height="50" rx="5"/>
+<text class="state-text" x="940" y="50" text-anchor="middle">Database</text>
+<line class="sequence-lifeline" x1="940" y1="70" x2="940" y2="850"/>
+
+<!-- Interactions -->
+<!-- 1. Login -->
+<path class="sequence-message" d="M 100 100 L 300 100" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="150" y="95">1: login(email, password)</text>
+
+<!-- 2. Authenticate -->
+<path class="sequence-message" d="M 300 130 L 510 130" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="350" y="125">2: authenticate()</text>
+
+<!-- 3. Verify Credentials -->
+<path class="sequence-message" d="M 510 160 L 940 160" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="650" y="155">3: verifyCredentials()</text>
+
+<!-- 4. Return User Data -->
+<path class="sequence-return" d="M 940 190 L 510 190" marker-end="url(#arrowhead-light)"/>
+<text class="label-text" x="650" y="185">4: userData</text>
+
+<!-- 5. Generate Token -->
+<rect class="note-box" x="460" y="200" width="100" height="30" rx="3"/>
+<text class="label-text" x="510" y="220" text-anchor="middle">Generate JWT</text>
+
+<!-- 6. Return Token -->
+<path class="sequence-return" d="M 510 240 L 300 240" marker-end="url(#arrowhead-light)"/>
+<text class="label-text" x="350" y="235">5: authToken</text>
+
+<!-- 7. Show Dashboard -->
+<path class="sequence-return" d="M 300 270 L 100 270" marker-end="url(#arrowhead-light)"/>
+<text class="label-text" x="150" y="265">6: showDashboard()</text>
+
+<!-- Separator -->
+<line x1="50" y1="310" x2="1050" y2="310" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="5,5"/>
+<text class="state-text" x="550" y="330" text-anchor="middle">Create Invoice Flow</text>
+
+<!-- 8. Navigate to Sales -->
+<path class="sequence-message" d="M 100 360 L 300 360" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="150" y="355">7: navigateToSales()</text>
+
+<!-- 9. Click Create Invoice -->
+<path class="sequence-message" d="M 100 390 L 300 390" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="150" y="385">8: clickCreateInvoice()</text>
+
+<!-- 10. Get Customers -->
+<path class="sequence-message" d="M 300 420 L 730 420" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="450" y="415">9: getCustomers()</text>
+
+<!-- 11. Query Parties -->
+<path class="sequence-message" d="M 730 450 L 940 450" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="800" y="445">10: SELECT * FROM parties</text>
+
+<!-- 12. Return Customers -->
+<path class="sequence-return" d="M 940 480 L 730 480" marker-end="url(#arrowhead-light)"/>
+<text class="label-text" x="800" y="475">11: customerList</text>
+
+<!-- 13. Display Customers -->
+<path class="sequence-return" d="M 730 510 L 300 510" marker-end="url(#arrowhead-light)"/>
+<text class="label-text" x="450" y="505">12: customerData</text>
+
+<!-- 14. Select Customer -->
+<path class="sequence-message" d="M 100 540 L 300 540" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="150" y="535">13: selectCustomer(id)</text>
+
+<!-- 15. Get Items -->
+<path class="sequence-message" d="M 300 570 L 730 570" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="450" y="565">14: getItems()</text>
+
+<!-- 16. Query Items -->
+<path class="sequence-message" d="M 730 600 L 940 600" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="800" y="595">15: SELECT * FROM items</text>
+
+<!-- 17. Return Items -->
+<path class="sequence-return" d="M 940 630 L 730 630" marker-end="url(#arrowhead-light)"/>
+<text class="label-text" x="800" y="625">16: itemList</text>
+
+<!-- 18. Display Items -->
+<path class="sequence-return" d="M 730 660 L 300 660" marker-end="url(#arrowhead-light)"/>
+<text class="label-text" x="450" y="655">17: itemData</text>
+
+<!-- 19. Add Items -->
+<path class="sequence-message" d="M 100 690 L 300 690" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="150" y="685">18: addItems(items[])</text>
+
+<!-- 20. Submit Invoice -->
+<path class="sequence-message" d="M 100 720 L 300 720" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="150" y="715">19: submitInvoice()</text>
+
+<!-- 21. Create Sale -->
+<path class="sequence-message" d="M 300 750 L 730 750" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="450" y="745">20: createSale(invoiceData)</text>
+
+<!-- 22. Insert Sale -->
+<path class="sequence-message" d="M 730 780 L 940 780" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="800" y="775">21: INSERT INTO sales</text>
+
+<!-- 23. Confirm -->
+<path class="sequence-return" d="M 940 810 L 730 810" marker-end="url(#arrowhead-light)"/>
+<text class="label-text" x="800" y="805">22: saleId</text>
+
+<!-- 24. Success -->
+<path class="sequence-return" d="M 730 840 L 300 840" marker-end="url(#arrowhead-light)"/>
+<text class="label-text" x="450" y="835">23: success</text>
+
+<!-- 25. Show Confirmation -->
+<path class="sequence-return" d="M 300 870 L 100 870" marker-end="url(#arrowhead-light)"/>
+<text class="label-text" x="150" y="865">24: showConfirmation()</text>
+
+</svg>
+</div>
+</div>
+
+<script>
+function showDiagram(diagramName){
+document.querySelectorAll('.diagram-section').forEach(s=>s.classList.remove('active'));
+document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+document.getElementById(diagramName).classList.add('active');
+event.target.classList.add('active');
+}
+</script>
+
+</div>
+</body>
+</html>

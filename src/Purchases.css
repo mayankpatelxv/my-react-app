@@ -903,6 +903,54 @@
   }
 }
 
+/* ========== COMPACT VIEW STYLES ========== */
+body.compact-view .main-content {
+  padding: 1rem !important;
+}
+
+body.compact-view .header {
+  padding: 0.75rem 1rem !important;
+}
+
+body.compact-view .header-left h1 {
+  font-size: 1.25rem !important;
+}
+
+body.compact-view .purchase-content {
+  padding: 1rem !important;
+  gap: 1rem !important;
+}
+
+body.compact-view .section {
+  padding: 1rem !important;
+  border-radius: 0.75rem !important;
+}
+
+body.compact-view .section h2 {
+  font-size: 1.125rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+body.compact-view .items-table th,
+body.compact-view .items-table td {
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.8125rem !important;
+}
+
+body.compact-view .summary-row {
+  padding: 0.5rem 0 !important;
+}
+
+body.compact-view .action-buttons {
+  gap: 0.5rem !important;
+}
+
+body.compact-view .save-btn,
+body.compact-view .cancel-btn {
+  padding: 0.75rem 1rem !important;
+  font-size: 0.875rem !important;
+}
+
 /* ========== MOBILE ONLY (max-width: 767px) ========== */
 @media (max-width: 767px) {
   .purchases-container {

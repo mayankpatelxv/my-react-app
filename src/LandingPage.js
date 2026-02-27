@@ -35,29 +35,16 @@ const LandingPage = ({ onGetStarted }) => {
     }
   ];
 
-  const testimonials = [
-    {
-      name: 'Sarah Johnson',
-      role: 'Small Business Owner',
-      company: 'Johnson\'s Bakery',
-      quote: 'BizzBuddy transformed how I manage my bakery. The inventory tracking and sales analytics are game-changers!',
-      avatar: '👩‍💼'
-    },
-    {
-      name: 'Michael Chen',
-      role: 'Retail Manager',
-      company: 'Tech Solutions Inc.',
-      quote: 'The AI assistant helps me make quick decisions. Customer management has never been this easy.',
-      avatar: '👨‍💻'
-    },
-    {
-      name: 'Emma Rodriguez',
-      role: 'Restaurant Owner',
-      company: 'Bella Vista Restaurant',
-      quote: 'From inventory to sales tracking, BizzBuddy handles everything. Highly recommended!',
-      avatar: '👩‍🍳'
+  const handleFooterClick = (section) => {
+    // Scroll to features section if it exists
+    if (section === 'features') {
+      const element = document.getElementById('features');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
-  ];
+    // For other sections, you can add more logic or just prevent default
+  };
 
   return (
     <div className="landing-page">
@@ -97,17 +84,18 @@ const LandingPage = ({ onGetStarted }) => {
                 <span className="btn-icon">→</span>
               </button>
             </div>
-            <div className="hero-social-proof">
-              <div className="social-proof-item">
-                <div className="avatars">
-                  <div className="avatar">👨‍💼</div>
-                  <div className="avatar">👩‍💻</div>
-                  <div className="avatar">👨‍🍳</div>
-                  <div className="avatar">👩‍🔬</div>
-                </div>
-                <div className="social-proof-text">
-                  <strong>2,500+</strong> business owners trust BizzBuddy
-                </div>
+            <div className="hero-features-list">
+              <div className="hero-feature-item">
+                <span className="check-icon">✓</span>
+                Easy to use
+              </div>
+              <div className="hero-feature-item">
+                <span className="check-icon">✓</span>
+                Secure & reliable
+              </div>
+              <div className="hero-feature-item">
+                <span className="check-icon">✓</span>
+                24/7 support
               </div>
             </div>
           </div>
@@ -145,90 +133,6 @@ const LandingPage = ({ onGetStarted }) => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="stats">
-        <div className="container">
-          <div className="stats-grid">
-            <div className="stat-item">
-              <div className="stat-number">2,500+</div>
-              <div className="stat-label">Active Users</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-number">$2M+</div>
-              <div className="stat-label">Revenue Managed</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-number">99.9%</div>
-              <div className="stat-label">Uptime</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-number">24/7</div>
-              <div className="stat-label">Support</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="testimonials">
-        <div className="container">
-          <div className="section-header">
-            <div className="section-badge">Testimonials</div>
-            <h2 className="section-title">Loved by business owners worldwide</h2>
-          </div>
-          <div className="testimonials-grid">
-            {testimonials.map((testimonial, index) => (
-              <div key={index} className="testimonial-card">
-                <div className="testimonial-content">
-                  <div className="quote-icon">"</div>
-                  <p className="testimonial-quote">{testimonial.quote}</p>
-                </div>
-                <div className="testimonial-author">
-                  <div className="author-avatar">{testimonial.avatar}</div>
-                  <div className="author-info">
-                    <div className="author-name">{testimonial.name}</div>
-                    <div className="author-role">{testimonial.role}</div>
-                    <div className="author-company">{testimonial.company}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="cta">
-        <div className="container">
-          <div className="cta-content">
-            <h2 className="cta-title">Ready to transform your business?</h2>
-            <p className="cta-subtitle">
-              Join thousands of business owners who trust BizzBuddy to manage and grow their operations.
-            </p>
-            <div className="cta-actions">
-              <button className="btn-primary large" onClick={onGetStarted}>
-                Start Your Free Trial
-                <span className="btn-icon">→</span>
-              </button>
-            </div>
-            <div className="cta-features">
-              <div className="cta-feature">
-                <span className="check-icon">✓</span>
-                14-day free trial
-              </div>
-              <div className="cta-feature">
-                <span className="check-icon">✓</span>
-                No credit card required
-              </div>
-              <div className="cta-feature">
-                <span className="check-icon">✓</span>
-                Cancel anytime
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="footer">
         <div className="container">
@@ -239,40 +143,33 @@ const LandingPage = ({ onGetStarted }) => {
               </div>
               <span className="brand-name">BizzBuddy</span>
               <p className="footer-description">
-                The smart business management platform for modern entrepreneurs.
+                The smart business management platform for modern entrepreneurs. Streamline your operations, 
+                track finances, and grow your business with powerful AI-driven insights.
               </p>
+              <div className="footer-social">
+                <a href="mailto:support@bizzbuddy.com" className="social-link" title="Email">📧</a>
+                <a href="tel:+1234567890" className="social-link" title="Phone">📞</a>
+              </div>
             </div>
             <div className="footer-links">
               <div className="footer-section">
                 <h4>Product</h4>
-                <a href="#features">Features</a>
-                <a href="#pricing">Pricing</a>
-                <a href="#integrations">Integrations</a>
-                <a href="#api">API</a>
+                <a href="#features" onClick={(e) => { e.preventDefault(); handleFooterClick('features'); }}>Features</a>
               </div>
               <div className="footer-section">
                 <h4>Company</h4>
-                <a href="#about">About Us</a>
-                <a href="#careers">Careers</a>
-                <a href="#blog">Blog</a>
-                <a href="#press">Press</a>
+                <a href="#about" onClick={(e) => { e.preventDefault(); alert('About Us\n\nBizzBuddy is a comprehensive business management platform designed to help entrepreneurs and small business owners streamline their operations, manage finances, and grow their business efficiently.'); }}>About Us</a>
               </div>
               <div className="footer-section">
                 <h4>Support</h4>
-                <a href="#help">Help Center</a>
-                <a href="#contact">Contact</a>
-                <a href="#status">Status</a>
-                <a href="#security">Security</a>
+                <a href="#help" onClick={(e) => { e.preventDefault(); alert('Help Center\n\nFor assistance, please contact us at:\nEmail: support@bizzbuddy.com\nPhone: +1234567890\n\nOr use the Login button to access your dashboard.'); }}>Help Center</a>
+                <a href="mailto:support@bizzbuddy.com">Contact Us</a>
               </div>
             </div>
           </div>
           <div className="footer-bottom">
             <div className="footer-copyright">
-              © 2025 BizzBuddy. All rights reserved.
-            </div>
-            <div className="footer-legal">
-              <a href="#privacy">Privacy Policy</a>
-              <a href="#terms">Terms of Service</a>
+              © 2026 BizzBuddy. All rights reserved. Made with ❤️ for entrepreneurs.
             </div>
           </div>
         </div>

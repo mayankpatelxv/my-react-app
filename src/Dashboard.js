@@ -253,7 +253,7 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
                   <div className="stat-icon">👥</div>
                 </div>
                 <div className="quick-stat-item">
-                  <div className="stat-number">${(dashboardData.totalSales - dashboardData.totalPurchases).toFixed(0)}</div>
+                  <div className="stat-number">{formatCurrency(dashboardData.totalSales - dashboardData.totalPurchases)}</div>
                   <div className="stat-label">Net Profit</div>
                   <div className="stat-icon">💎</div>
                 </div>

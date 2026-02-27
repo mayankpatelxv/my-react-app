@@ -35,6 +35,7 @@ export const SettingsProvider = ({ children }) => {
   }, [settings.theme, settings.compactView]);
 
   const updateSetting = (key, value) => {
+    console.log('updateSetting called with:', key, value); // Debug log
     const newSettings = { ...settings, [key]: value };
     setSettings(newSettings);
     localStorage.setItem(key, typeof value === 'boolean' ? JSON.stringify(value) : value);
@@ -45,11 +46,22 @@ export const SettingsProvider = ({ children }) => {
     }
     
     if (key === 'compactView') {
+      console.log('Compact view setting changed to:', value); // Debug log
+      console.log('Current body classes before change:', document.body.className); // Debug log
+      
       if (value) {
         document.body.classList.add('compact-view');
+        console.log('Added compact-view class to body'); // Debug log
       } else {
         document.body.classList.remove('compact-view');
+        console.log('Removed compact-view class from body'); // Debug log
       }
+      
+      // Force a small delay to ensure the class is applied
+      setTimeout(() => {
+        console.log('Body classes after change:', document.body.className); // Debug log
+        console.log('Compact view class present:', document.body.classList.contains('compact-view')); // Debug log
+      }, 100);
     }
   };
 

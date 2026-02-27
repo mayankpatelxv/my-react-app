@@ -443,7 +443,7 @@ End of Report
                 <h3>Profit Margin</h3>
                 <span className="metric-icon">📋</span>
               </div>
-              <div className="metric-value">{reportData.profitMargin}%</div>
+              <div className="metric-value">{reportData.profitMargin.toFixed(2)}%</div>
               <div className="metric-change positive">
                 {formatPercentage(reportData.marginGrowth)} vs last year
               </div>

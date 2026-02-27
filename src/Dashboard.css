@@ -446,34 +446,125 @@
   border-color: rgba(102, 126, 234, 0.5);
 }
 
-/* Compact View Support */
-.compact-view .stat-card {
-  padding: 0.75rem 1rem;
+/* ========== COMPACT VIEW STYLES ========== */
+body.compact-view .main-content {
+  padding: 1.5rem !important;
 }
 
-.compact-view .action-card {
-  padding: 0.75rem 1rem;
+body.compact-view .header {
+  padding: 1rem 0 !important;
+  margin-bottom: 1.5rem !important;
 }
 
-.compact-view .activity-card {
-  padding: 1rem 1.25rem;
+body.compact-view .header h1 {
+  font-size: 1.75rem !important;
 }
 
-.compact-view .sidebar {
-  width: 200px;
+body.compact-view .stats-grid {
+  gap: 1rem !important;
+  margin-bottom: 1.5rem !important;
 }
 
-.compact-view .menu-item {
-  padding: 0.5rem 1rem;
-  font-size: 0.8125rem;
+body.compact-view .stat-card {
+  padding: 1rem !important;
+  border-radius: 0.75rem !important;
 }
 
-.compact-view .header {
-  padding: 1rem 1.5rem;
+body.compact-view .stat-value {
+  font-size: 1.25rem !important;
+  margin-bottom: 0.5rem !important;
 }
 
-.compact-view .stats-grid {
-  gap: 1rem;
+body.compact-view .stat-title {
+  font-size: 0.75rem !important;
+}
+
+body.compact-view .action-cards-row {
+  gap: 0.75rem !important;
+}
+
+body.compact-view .action-card {
+  padding: 0.75rem !important;
+  border-radius: 0.75rem !important;
+  min-height: 50px !important;
+}
+
+body.compact-view .action-card-icon {
+  width: 40px !important;
+  height: 40px !important;
+  font-size: 1.25rem !important;
+}
+
+body.compact-view .action-card-content h4 {
+  font-size: 0.8125rem !important;
+}
+
+body.compact-view .action-card-content p {
+  font-size: 0.6875rem !important;
+}
+
+body.compact-view .activity-grid {
+  gap: 1rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+body.compact-view .activity-card {
+  padding: 1rem !important;
+  border-radius: 0.75rem !important;
+}
+
+body.compact-view .card-header h3 {
+  font-size: 0.9375rem !important;
+}
+
+body.compact-view .quick-stats-grid {
+  gap: 0.5rem !important;
+}
+
+body.compact-view .quick-stat-item {
+  padding: 0.75rem !important;
+}
+
+body.compact-view .stat-number {
+  font-size: 1.125rem !important;
+}
+
+body.compact-view .quick-actions h2,
+body.compact-view .activity-header h2 {
+  font-size: 1.25rem !important;
+  margin-bottom: 1rem !important;
+}
+
+body.compact-view .settings-btn {
+  padding: 0.5rem 1rem !important;
+  font-size: 0.875rem !important;
+}
+
+body.compact-view .view-all-btn {
+  padding: 0.5rem 1rem !important;
+  font-size: 0.8125rem !important;
+}
+
+body.compact-view .insight-item {
+  padding: 0.75rem !important;
+  gap: 0.75rem !important;
+}
+
+body.compact-view .insight-text {
+  font-size: 0.8125rem !important;
+}
+
+body.compact-view .chart-section {
+  padding: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+body.compact-view .chart-header {
+  margin-bottom: 1.5rem !important;
+}
+
+body.compact-view .chart-header h2 {
+  font-size: 1.25rem !important;
 }
 
 .header h1 {
@@ -1132,10 +1223,11 @@
   justify-content: center;
   width: 50px;
   height: 50px;
-  background: linear-gradient(135deg, #4a9eff 0%, #667eea 100%);
+  background: white;
   border-radius: 12px;
-  color: white;
-  box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3);
+  color: #4a9eff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(229, 231, 235, 0.8);
 }
 
 .action-card-content {
@@ -1197,32 +1289,7 @@
   color: var(--text-primary);
 }
 
-/* Compact View */
-.compact-view .stat-card {
-  padding: 16px;
-}
 
-.compact-view .stat-value {
-  font-size: 24px;
-}
-
-.compact-view .activity-card {
-  padding: 16px;
-}
-
-.compact-view .main-content {
-  padding: 20px;
-}
-
-.compact-view .stats-grid {
-  gap: 15px;
-  margin-bottom: 25px;
-}
-
-.compact-view .activity-grid {
-  gap: 15px;
-  margin-bottom: 20px;
-}
 /* Theme Support */
 [data-theme="dark"] .dashboard-container {
   background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
@@ -1257,35 +1324,7 @@
   border-color: rgba(102, 126, 234, 0.5);
 }
 
-/* Compact View Support */
-.compact-view .stat-card {
-  padding: 12px 16px;
-}
 
-.compact-view .action-card {
-  padding: 12px 16px;
-}
-
-.compact-view .activity-card {
-  padding: 16px 20px;
-}
-
-.compact-view .sidebar {
-  width: 200px;
-}
-
-.compact-view .menu-item {
-  padding: 8px 16px;
-  font-size: 13px;
-}
-
-.compact-view .header {
-  padding: 16px 24px;
-}
-
-.compact-view .stats-grid {
-  gap: 16px;
-}
 
 /* ========== MOBILE ONLY (max-width: 1023px) ========== */
 @media (max-width: 1023px) {

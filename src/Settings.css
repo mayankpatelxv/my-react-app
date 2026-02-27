@@ -514,6 +514,73 @@ input:checked + .toggle-slider:before {
   margin: 0;
 }
 
+/* ========== COMPACT VIEW STYLES ========== */
+body.compact-view .settings-container {
+  padding: 0.75rem !important;
+}
+
+body.compact-view .settings-header {
+  gap: 0.75rem !important;
+  margin-bottom: 1.25rem !important;
+}
+
+body.compact-view .settings-header h1 {
+  font-size: 1.25rem !important;
+}
+
+body.compact-view .settings-layout {
+  gap: 1rem !important;
+}
+
+body.compact-view .settings-main,
+body.compact-view .settings-sidebar {
+  padding: 1rem !important;
+}
+
+body.compact-view .settings-content h3 {
+  font-size: 1.125rem !important;
+  margin-bottom: 1rem !important;
+}
+
+body.compact-view .setting-group {
+  margin-bottom: 1rem !important;
+  padding-bottom: 1rem !important;
+}
+
+body.compact-view .setting-label {
+  font-size: 0.8125rem !important;
+}
+
+body.compact-view .setting-description {
+  font-size: 0.6875rem !important;
+}
+
+body.compact-view .theme-option {
+  padding: 0.75rem !important;
+}
+
+body.compact-view .data-action-item {
+  padding: 1rem !important;
+}
+
+body.compact-view .action-info h4 {
+  font-size: 0.9375rem !important;
+}
+
+body.compact-view .action-info p {
+  font-size: 0.8125rem !important;
+}
+
+body.compact-view .about-info h2 {
+  font-size: 1.5rem !important;
+}
+
+body.compact-view .app-logo {
+  width: 50px !important;
+  height: 50px !important;
+  font-size: 1.25rem !important;
+}
+
 /* Dark theme support */
 [data-theme="dark"] .settings-container {
   background: #0f172a;

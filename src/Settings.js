@@ -138,12 +138,18 @@ const Settings = ({ onBack, user, onLogout, onNavigate }) => {
             <input 
               type="checkbox" 
               checked={settings.compactView}
-              onChange={(e) => updateSetting('compactView', e.target.checked)}
+              onChange={(e) => {
+                console.log('Toggle clicked, new value:', e.target.checked); // Debug log
+                updateSetting('compactView', e.target.checked);
+              }}
             />
             <span className="toggle-slider"></span>
           </div>
         </div>
-        <p className="setting-description">Use smaller spacing and compact layouts</p>
+        <p className="setting-description">
+          Use smaller spacing and compact layouts
+          {settings.compactView && <span style={{color: '#10b981', fontWeight: 'bold'}}> (Currently Active)</span>}
+        </p>
       </div>
     </div>
   );

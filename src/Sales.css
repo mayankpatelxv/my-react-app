@@ -1197,6 +1197,59 @@
   100% { transform: rotate(360deg); }
 }
 
+/* ========== COMPACT VIEW STYLES ========== */
+body.compact-view .main-content {
+  padding: 1rem !important;
+}
+
+body.compact-view .header {
+  padding: 0.75rem 1rem !important;
+}
+
+body.compact-view .header-left h1 {
+  font-size: 1.25rem !important;
+}
+
+body.compact-view .invoice-content {
+  padding: 1.5rem !important;
+  gap: 1rem !important;
+}
+
+body.compact-view .section {
+  padding: 1rem !important;
+  border-radius: 0.75rem !important;
+}
+
+body.compact-view .section h2 {
+  font-size: 1.125rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+body.compact-view .items-table th,
+body.compact-view .items-table td {
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.8125rem !important;
+}
+
+body.compact-view .summary-section {
+  padding: 1rem !important;
+}
+
+body.compact-view .summary-row {
+  padding: 0.5rem 0 !important;
+}
+
+body.compact-view .action-buttons {
+  gap: 0.5rem !important;
+}
+
+body.compact-view .save-invoice-btn,
+body.compact-view .print-invoice-btn,
+body.compact-view .download-pdf-btn {
+  padding: 0.75rem 1rem !important;
+  font-size: 0.875rem !important;
+}
+
 /* ========== MOBILE ONLY (max-width: 1023px) ========== */
 @media (max-width: 1023px) {
   .sales-container {
