@@ -255,20 +255,23 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background-color: #4a9eff;
+  background: linear-gradient(135deg, #4a9eff 0%, #667eea 100%);
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1.25rem;
   cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
   min-height: 48px;
-  width: 100%;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(74,158,255,0.3);
 }
 
 .add-party-btn:hover {
-  background-color: #3a8eef;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(74,158,255,0.4);
 }
 
 /* Controls */
@@ -811,3 +814,27 @@
 
 /* Mobile Responsive */
 
+
+.csv-import-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  white-space: nowrap;
+  min-height: 48px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+}
+.csv-import-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16,185,129,0.4);
+}

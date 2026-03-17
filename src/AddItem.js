@@ -3,8 +3,10 @@ import "./AddItem.css";
 import { addItem } from "./supabaseClient";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
+import { useToast } from "./Toast";
 const AddItem = ({ user, onLogout, onNavigate }) => {
   const { getText } = useSettings();
+  const toast = useToast();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -86,7 +88,7 @@ const AddItem = ({ user, onLogout, onNavigate }) => {
       const result = await addItem(formData, user.id);
       
       if (result.success) {
-        alert(`Item "${formData.name}" has been added successfully!`);
+        toast.success(`Item "${formData.name}" added successfully!`);
         
         // Reset form
         setFormData({

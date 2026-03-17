@@ -486,7 +486,8 @@
 
 .save-invoice-btn,
 .print-invoice-btn,
-.download-pdf-btn {
+.download-pdf-btn,
+.whatsapp-share-btn {
   padding: 1rem;
   border: none;
   border-radius: 0.75rem;
@@ -535,6 +536,20 @@
 .download-pdf-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+}
+
+.whatsapp-share-btn {
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.whatsapp-share-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
 }
 
 /* Loading States */
@@ -1049,7 +1064,8 @@
 
 .summary-section .save-invoice-btn,
 .summary-section .print-invoice-btn,
-.summary-section .download-pdf-btn {
+.summary-section .download-pdf-btn,
+.summary-section .whatsapp-share-btn {
   width: 100%;
   min-width: 0;
   min-height: 48px;
@@ -1106,6 +1122,21 @@
 .summary-section .download-pdf-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+}
+
+.summary-section .whatsapp-share-btn {
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  color: white;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.summary-section .whatsapp-share-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
 }
 
 /* Responsive Design */
@@ -1245,7 +1276,8 @@ body.compact-view .action-buttons {
 
 body.compact-view .save-invoice-btn,
 body.compact-view .print-invoice-btn,
-body.compact-view .download-pdf-btn {
+body.compact-view .download-pdf-btn,
+body.compact-view .whatsapp-share-btn {
   padding: 0.75rem 1rem !important;
   font-size: 0.875rem !important;
 }

@@ -3,14 +3,22 @@ import "./ItemManagement.css";
 import { getItems, deleteItem } from "./supabaseClient";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
+import LoadingSkeleton from "./LoadingSkeleton";
+import CSVImport from "./CSVImport";
+import { useToast } from "./Toast";
+import { useConfirm } from "./ConfirmDialog";
+
 const ItemManagement = ({ user, onLogout, onNavigate }) => {
   const { formatCurrency, getText } = useSettings();
+  const toast = useToast();
+  const confirm = useConfirm();
   const [searchTerm, setSearchTerm] = useState("");
   const [activeMenu, setActiveMenu] = useState("Item Management");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showCSVImport, setShowCSVImport] = useState(false);
 
   const menuItems = [
     { name: getText('dashboard'), icon: "📊", key: "Dashboard" },
@@ -64,21 +72,23 @@ const ItemManagement = ({ user, onLogout, onNavigate }) => {
   };
 
   const handleDelete = async (itemId) => {
-    if (!window.confirm("Are you sure you want to delete this item?")) {
-      return;
-    }
+    const ok = await confirm({
+      title: "Delete Item?",
+      message: "This action cannot be undone.",
+      confirmText: "Delete",
+    });
+    if (!ok) return;
 
     try {
       const result = await deleteItem(itemId, user.id);
       if (result.success) {
-        // Remove item from local state
         setItems(items.filter(item => item.id !== itemId));
-        alert("Item deleted successfully!");
+        toast.success("Item deleted successfully!");
       } else {
-        alert("Error deleting item: " + result.error);
+        toast.error("Error deleting item: " + result.error);
       }
     } catch (err) {
-      alert("Error deleting item: " + err.message);
+      toast.error("Error deleting item: " + err.message);
       console.error("Error deleting item:", err);
     }
   };
@@ -173,6 +183,9 @@ const ItemManagement = ({ user, onLogout, onNavigate }) => {
             <span className="add-icon">➕</span>
             Add Item
           </button>
+          <button className="csv-import-btn" onClick={() => setShowCSVImport(true)}>
+            📥 Import CSV
+          </button>
         </div>
 
         {/* Available Items Section */}
@@ -180,9 +193,8 @@ const ItemManagement = ({ user, onLogout, onNavigate }) => {
           <h2>Available Items</h2>
           
           {loading && (
-            <div className="loading-state">
-              <div className="loading-spinner">⏳</div>
-              <p>Loading items...</p>
+            <div className="loading-skeleton-container">
+              <LoadingSkeleton type="table" rows={5} columns={5} />
             </div>
           )}
 
@@ -263,6 +275,15 @@ const ItemManagement = ({ user, onLogout, onNavigate }) => {
           <p>© 2025 Smart Business Management. All rights reserved.</p>
         </div>
       </div>
+
+      {showCSVImport && (
+        <CSVImport
+          type="items"
+          user={user}
+          onClose={() => setShowCSVImport(false)}
+          onSuccess={() => { setShowCSVImport(false); fetchItems(); }}
+        />
+      )}
     </div>
   );
 };

@@ -45,13 +45,13 @@ svg{width:100%;height:auto;display:block}
 <div class="container">
 <div class="header">
 <h1>BizBuddy UML Diagrams</h1>
-<p>Class, Activity, State Chart, and Sequence Diagrams</p>
+<p>Class, Activity, Use Case, and Sequence Diagrams</p>
 </div>
 
 <div class="diagram-nav">
 <button class="nav-btn active" onclick="showDiagram('class')">Class Diagram</button>
 <button class="nav-btn" onclick="showDiagram('activity')">Activity Diagram</button>
-<button class="nav-btn" onclick="showDiagram('state')">State Chart</button>
+<button class="nav-btn" onclick="showDiagram('state')">Use Case Diagram</button>
 <button class="nav-btn" onclick="showDiagram('sequence')">Sequence Diagram</button>
 </div>
 
@@ -333,108 +333,174 @@ svg{width:100%;height:auto;display:block}
 </div>
 </div>
 
-<!-- STATE CHART DIAGRAM -->
+<!-- USE CASE DIAGRAM -->
 <div id="state" class="diagram-section">
 <div class="diagram-header">
-<h2 class="diagram-title">State Chart Diagram</h2>
-<p class="diagram-description">Invoice lifecycle states and transitions</p>
+<h2 class="diagram-title">Use Case Diagram</h2>
+<p class="diagram-description">Complete system functionality showing all actors and their interactions with BizBuddy features</p>
 </div>
 <div class="diagram-content">
-<svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 1400 1100" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
 <polygon points="0 0, 10 3, 0 6" class="arrow"/>
 </marker>
 </defs>
 
-<!-- Initial State -->
-<circle cx="100" cy="100" r="20" fill="#1e293b"/>
-<text class="state-text" x="100" y="145" text-anchor="middle">Start</text>
-<path class="transition" d="M 120 100 L 200 100" marker-end="url(#arrowhead)"/>
+<!-- System Boundary -->
+<rect x="250" y="50" width="700" height="800" fill="none" stroke="#4a9eff" stroke-width="3" rx="20"/>
+<text class="state-text" x="600" y="85" text-anchor="middle" font-size="18" font-weight="700">BizBuddy System</text>
 
-<!-- Draft State -->
-<rect class="state-box" x="200" y="50" width="150" height="100"/>
-<text class="state-text" x="275" y="90" text-anchor="middle" font-weight="700">Draft</text>
-<line x1="200" y1="105" x2="350" y2="105" stroke="#cbd5e1" stroke-width="1"/>
-<text class="label-text" x="210" y="125">entry / create invoice</text>
-<text class="label-text" x="210" y="140">do / edit details</text>
+<!-- Actor: Business Owner -->
+<ellipse cx="120" cy="400" rx="50" ry="80" fill="#e0e7ff" stroke="#4338ca" stroke-width="2"/>
+<circle cx="120" cy="350" r="30" fill="#e0e7ff" stroke="#4338ca" stroke-width="2"/>
+<text class="state-text" x="120" y="520" text-anchor="middle" font-weight="700">Business</text>
+<text class="state-text" x="120" y="540" text-anchor="middle" font-weight="700">Owner</text>
 
-<!-- Draft to Pending -->
-<path class="transition" d="M 350 100 L 450 100" marker-end="url(#arrowhead)"/>
-<text class="label-text" x="360" y="90">submit()</text>
+<!-- Actor: Database System -->
+<rect x="1050" y="350" width="80" height="100" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" rx="5"/>
+<text class="state-text" x="1090" y="405" text-anchor="middle" font-weight="700">Database</text>
+<text class="state-text" x="1090" y="425" text-anchor="middle" font-weight="700">System</text>
 
-<!-- Pending State -->
-<rect class="state-box" x="450" y="50" width="150" height="100"/>
-<text class="state-text" x="525" y="90" text-anchor="middle" font-weight="700">Pending</text>
-<line x1="450" y1="105" x2="600" y2="105" stroke="#cbd5e1" stroke-width="1"/>
-<text class="label-text" x="460" y="125">entry / validate</text>
-<text class="label-text" x="460" y="140">do / await approval</text>
+<!-- Use Cases (Ellipses) -->
+<!-- Row 1 -->
+<ellipse cx="350" cy="150" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="350" y="155" text-anchor="middle">Register/Login</text>
 
-<!-- Pending to Confirmed -->
-<path class="transition" d="M 600 100 L 700 100" marker-end="url(#arrowhead)"/>
-<text class="label-text" x="610" y="90">approve()</text>
+<ellipse cx="550" cy="150" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="550" y="155" text-anchor="middle">Manage</text>
+<text class="state-text" x="550" y="170" text-anchor="middle">Dashboard</text>
 
-<!-- Confirmed State -->
-<rect class="state-box" x="700" y="50" width="150" height="100"/>
-<text class="state-text" x="775" y="90" text-anchor="middle" font-weight="700">Confirmed</text>
-<line x1="700" y1="105" x2="850" y2="105" stroke="#cbd5e1" stroke-width="1"/>
-<text class="label-text" x="710" y="125">entry / lock invoice</text>
-<text class="label-text" x="710" y="140">do / update stock</text>
+<ellipse cx="750" cy="150" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="750" y="155" text-anchor="middle">View</text>
+<text class="state-text" x="750" y="170" text-anchor="middle">Analytics</text>
 
-<!-- Confirmed to Paid -->
-<path class="transition" d="M 775 150 L 775 250" marker-end="url(#arrowhead)"/>
-<text class="label-text" x="785" y="200">payment()</text>
+<!-- Row 2 -->
+<ellipse cx="350" cy="250" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="350" y="255" text-anchor="middle">Create Sales</text>
+<text class="state-text" x="350" y="270" text-anchor="middle">Invoice</text>
 
-<!-- Paid State -->
-<rect class="state-box" x="700" y="250" width="150" height="100"/>
-<text class="state-text" x="775" y="290" text-anchor="middle" font-weight="700">Paid</text>
-<line x1="700" y1="305" x2="850" y2="305" stroke="#cbd5e1" stroke-width="1"/>
-<text class="label-text" x="710" y="325">entry / record payment</text>
-<text class="label-text" x="710" y="340">do / generate receipt</text>
+<ellipse cx="550" cy="250" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="550" y="255" text-anchor="middle">Record</text>
+<text class="state-text" x="550" y="270" text-anchor="middle">Purchase</text>
 
-<!-- Paid to Completed -->
-<path class="transition" d="M 775 350 L 775 450" marker-end="url(#arrowhead)"/>
-<text class="label-text" x="785" y="400">complete()</text>
+<ellipse cx="750" cy="250" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="750" y="255" text-anchor="middle">Manage</text>
+<text class="state-text" x="750" y="270" text-anchor="middle">Inventory</text>
 
-<!-- Completed State -->
-<rect class="state-box" x="700" y="450" width="150" height="100"/>
-<text class="state-text" x="775" y="490" text-anchor="middle" font-weight="700">Completed</text>
-<line x1="700" y1="505" x2="850" y2="505" stroke="#cbd5e1" stroke-width="1"/>
-<text class="label-text" x="710" y="525">entry / archive</text>
-<text class="label-text" x="710" y="540">do / update reports</text>
+<!-- Row 3 -->
+<ellipse cx="350" cy="350" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="350" y="355" text-anchor="middle">Manage</text>
+<text class="state-text" x="350" y="370" text-anchor="middle">Parties</text>
 
-<!-- Completed to Final -->
-<path class="transition" d="M 775 550 L 775 600" marker-end="url(#arrowhead)"/>
+<ellipse cx="550" cy="350" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="550" y="355" text-anchor="middle">Add/Edit</text>
+<text class="state-text" x="550" y="370" text-anchor="middle">Items</text>
 
-<!-- Final State -->
-<circle cx="775" cy="620" r="20" fill="none" stroke="#1e293b" stroke-width="3"/>
-<circle cx="775" cy="620" r="15" fill="#1e293b"/>
+<ellipse cx="750" cy="350" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="750" y="355" text-anchor="middle">Add/Edit</text>
+<text class="state-text" x="750" y="370" text-anchor="middle">Customers</text>
 
-<!-- Pending to Cancelled -->
-<path class="transition" d="M 525 150 L 525 250" marker-end="url(#arrowhead)"/>
-<text class="label-text" x="535" y="200">cancel()</text>
+<!-- Row 4 -->
+<ellipse cx="350" cy="450" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="350" y="455" text-anchor="middle">Generate</text>
+<text class="state-text" x="350" y="470" text-anchor="middle">Reports</text>
 
-<!-- Cancelled State -->
-<rect class="state-box" x="450" y="250" width="150" height="100"/>
-<text class="state-text" x="525" y="290" text-anchor="middle" font-weight="700">Cancelled</text>
-<line x1="450" y1="305" x2="600" y2="305" stroke="#cbd5e1" stroke-width="1"/>
-<text class="label-text" x="460" y="325">entry / mark cancelled</text>
-<text class="label-text" x="460" y="340">do / notify user</text>
+<ellipse cx="550" cy="450" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="550" y="455" text-anchor="middle">Chat with AI</text>
+<text class="state-text" x="550" y="470" text-anchor="middle">Assistant</text>
 
-<!-- Draft to Cancelled -->
-<path class="transition" d="M 275 150 L 275 220 L 450 220 L 450 250" marker-end="url(#arrowhead)"/>
-<text class="label-text" x="285" y="180">discard()</text>
+<ellipse cx="750" cy="450" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="750" y="455" text-anchor="middle">Configure</text>
+<text class="state-text" x="750" y="470" text-anchor="middle">Settings</text>
 
-<!-- Confirmed to Refunded -->
-<path class="transition" d="M 700 300 L 300 300" marker-end="url(#arrowhead)"/>
-<text class="label-text" x="500" y="290">refund()</text>
+<!-- Row 5 -->
+<ellipse cx="350" cy="550" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="350" y="555" text-anchor="middle">Upload</text>
+<text class="state-text" x="350" y="570" text-anchor="middle">Documents</text>
 
-<!-- Refunded State -->
-<rect class="state-box" x="200" y="250" width="150" height="100"/>
-<text class="state-text" x="275" y="290" text-anchor="middle" font-weight="700">Refunded</text>
-<line x1="200" y1="305" x2="350" y2="305" stroke="#cbd5e1" stroke-width="1"/>
-<text class="label-text" x="210" y="325">entry / reverse stock</text>
-<text class="label-text" x="210" y="340">do / process refund</text>
+<ellipse cx="550" cy="550" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="550" y="555" text-anchor="middle">Track Stock</text>
+<text class="state-text" x="550" y="570" text-anchor="middle">Levels</text>
+
+<ellipse cx="750" cy="550" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="750" y="555" text-anchor="middle">Export Data</text>
+<text class="state-text" x="750" y="570" text-anchor="middle">(CSV)</text>
+
+<!-- Row 6 -->
+<ellipse cx="350" cy="650" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="350" y="655" text-anchor="middle">Apply</text>
+<text class="state-text" x="350" y="670" text-anchor="middle">Discounts</text>
+
+<ellipse cx="550" cy="650" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="550" y="655" text-anchor="middle">Calculate</text>
+<text class="state-text" x="550" y="670" text-anchor="middle">Tax</text>
+
+<ellipse cx="750" cy="650" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="750" y="655" text-anchor="middle">View Annual</text>
+<text class="state-text" x="750" y="670" text-anchor="middle">Reports</text>
+
+<!-- Row 7 -->
+<ellipse cx="450" cy="750" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="450" y="755" text-anchor="middle">Manage</text>
+<text class="state-text" x="450" y="770" text-anchor="middle">Payments</text>
+
+<ellipse cx="650" cy="750" rx="80" ry="35" class="activity-box"/>
+<text class="state-text" x="650" y="755" text-anchor="middle">Update</text>
+<text class="state-text" x="650" y="770" text-anchor="middle">Profile</text>
+
+<!-- Associations from Business Owner to Use Cases -->
+<line x1="170" y1="380" x2="270" y2="150" stroke="#64748b" stroke-width="2"/>
+<line x1="170" y1="385" x2="470" y2="150" stroke="#64748b" stroke-width="2"/>
+<line x1="170" y1="390" x2="670" y2="150" stroke="#64748b" stroke-width="2"/>
+
+<line x1="170" y1="395" x2="270" y2="250" stroke="#64748b" stroke-width="2"/>
+<line x1="170" y1="400" x2="470" y2="250" stroke="#64748b" stroke-width="2"/>
+<line x1="170" y1="400" x2="670" y2="250" stroke="#64748b" stroke-width="2"/>
+
+<line x1="170" y1="400" x2="270" y2="350" stroke="#64748b" stroke-width="2"/>
+<line x1="170" y1="400" x2="470" y2="350" stroke="#64748b" stroke-width="2"/>
+<line x1="170" y1="400" x2="670" y2="350" stroke="#64748b" stroke-width="2"/>
+
+<line x1="170" y1="405" x2="270" y2="450" stroke="#64748b" stroke-width="2"/>
+<line x1="170" y1="405" x2="470" y2="450" stroke="#64748b" stroke-width="2"/>
+<line x1="170" y1="405" x2="670" y2="450" stroke="#64748b" stroke-width="2"/>
+
+<line x1="170" y1="410" x2="270" y2="550" stroke="#64748b" stroke-width="2"/>
+<line x1="170" y1="410" x2="470" y2="550" stroke="#64748b" stroke-width="2"/>
+<line x1="170" y1="410" x2="670" y2="550" stroke="#64748b" stroke-width="2"/>
+
+<line x1="170" y1="415" x2="270" y2="650" stroke="#64748b" stroke-width="2"/>
+<line x1="170" y1="415" x2="470" y2="650" stroke="#64748b" stroke-width="2"/>
+<line x1="170" y1="415" x2="670" y2="650" stroke="#64748b" stroke-width="2"/>
+
+<line x1="170" y1="420" x2="370" y2="750" stroke="#64748b" stroke-width="2"/>
+<line x1="170" y1="420" x2="570" y2="750" stroke="#64748b" stroke-width="2"/>
+
+<!-- Associations from Use Cases to Database System -->
+<line x1="830" y1="150" x2="1050" y2="380" stroke="#64748b" stroke-width="2"/>
+<line x1="830" y1="250" x2="1050" y2="390" stroke="#64748b" stroke-width="2"/>
+<line x1="830" y1="350" x2="1050" y2="400" stroke="#64748b" stroke-width="2"/>
+<line x1="830" y1="450" x2="1050" y2="410" stroke="#64748b" stroke-width="2"/>
+<line x1="830" y1="550" x2="1050" y2="420" stroke="#64748b" stroke-width="2"/>
+<line x1="830" y1="650" x2="1050" y2="430" stroke="#64748b" stroke-width="2"/>
+
+<!-- Include/Extend Relationships -->
+<!-- Create Invoice includes Calculate Tax -->
+<path class="transition" d="M 430 250 L 470 650" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+<text class="label-text" x="420" y="450">«include»</text>
+
+<!-- Create Invoice includes Apply Discount -->
+<path class="transition" d="M 350 285 L 350 615" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+<text class="label-text" x="360" y="450">«include»</text>
+
+<!-- Manage Inventory includes Track Stock -->
+<path class="transition" d="M 700 385 L 600 515" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+<text class="label-text" x="620" y="450">«include»</text>
+
+<!-- Generate Reports extends View Annual Reports -->
+<path class="transition" d="M 430 450 L 670 650" marker-end="url(#arrowhead)" stroke-dasharray="8,4"/>
+<text class="label-text" x="520" y="550">«extend»</text>
 
 </svg>
 </div>

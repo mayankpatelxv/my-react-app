@@ -10,6 +10,92 @@ console.log("Supabase Key preview:", supabaseKey?.substring(0, 20) + "...");
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
+// OAuth authentication functions
+export const signInWithGoogle = async () => {
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/my-react-app/dashboard`
+      }
+    });
+
+    if (error) {
+      console.log("Google OAuth Error:", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data };
+  } catch (err) {
+    console.log("Google OAuth Error:", err);
+    return { success: false, error: err.message };
+  }
+};
+
+// Handle OAuth callback and sync with users_data table
+export const handleOAuthCallback = async () => {
+  try {
+    const { data: { session }, error } = await supabase.auth.getSession();
+
+    if (error) {
+      console.log("Session Error:", error);
+      return { success: false, error: error.message };
+    }
+
+    if (!session) {
+      return { success: false, error: "No session found" };
+    }
+
+    const user = session.user;
+    console.log("OAuth User:", user);
+
+    // Check if user exists in users_data table
+    const { data: existingUser, error: fetchError } = await supabase
+      .from("users_data")
+      .select("*")
+      .eq("email", user.email)
+      .single();
+
+    if (fetchError && fetchError.code !== 'PGRST116') {
+      console.log("Fetch User Error:", fetchError);
+      return { success: false, error: fetchError.message };
+    }
+
+    // If user doesn't exist, create them
+    if (!existingUser) {
+      const insertData = {
+        email: user.email,
+        name: user.user_metadata?.full_name || user.email.split('@')[0],
+        first_name: user.user_metadata?.given_name || '',
+        last_name: user.user_metadata?.family_name || '',
+        auth_token: 'OAUTH_USER', // Mark as OAuth user
+        password_hashed: true
+      };
+
+      const { data: newUser, error: insertError } = await supabase
+        .from("users_data")
+        .insert([insertData])
+        .select("id, name, email, first_name, last_name, created_at")
+        .single();
+
+      if (insertError) {
+        console.log("Insert User Error:", insertError);
+        return { success: false, error: insertError.message };
+      }
+
+      return { success: true, data: newUser };
+    }
+
+    // Return existing user data
+    const { auth_token, password_hashed, ...userData } = existingUser;
+    return { success: true, data: userData };
+
+  } catch (err) {
+    console.log("OAuth Callback Error:", err);
+    return { success: false, error: err.message };
+  }
+};
+
 // User management functions (with renamed password column to auth_token)
 export const addUser = async (userData) => {
   try {

@@ -4,9 +4,12 @@ import { getItems, getParties, createPurchaseWithItems, uploadPurchaseDocument }
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
 import PurchasesList from "./PurchasesList";
+import LoadingSkeleton from "./LoadingSkeleton";
+import { useToast } from "./Toast";
 
 const Purchases = ({ user, onLogout, onNavigate }) => {
   const { formatCurrency, getText, formatDate } = useSettings();
+  const toast = useToast();
   const [activeMenu, setActiveMenu] = useState("Purchases");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState("");
@@ -38,6 +41,11 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
   // Fetch data on component mount
   useEffect(() => {
     fetchData();
+    
+    // Request notification permission
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
   }, [user]);
 
   const fetchData = async () => {
@@ -140,7 +148,7 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
 
   const handleAddItem = () => {
     if (availableItems.length === 0) {
-      alert("No items available. Please add items in Item Management first.");
+      toast.warning("No items available. Please add items in Item Management first.");
       return;
     }
     
@@ -150,7 +158,7 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
     );
     
     if (!availableItem) {
-      alert("All available items have been added to the purchase.");
+      toast.info("All available items have been added to the purchase.");
       return;
     }
     
@@ -168,17 +176,17 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
 
   const handleSavePurchase = async () => {
     if (!selectedSupplier) {
-      alert("Please select a supplier.");
+      toast.warning("Please select a supplier.");
       return;
     }
     
     if (items.length === 0) {
-      alert("Please add at least one item to the purchase.");
+      toast.warning("Please add at least one item to the purchase.");
       return;
     }
     
     if (items.some(item => item.quantity <= 0)) {
-      alert("All items must have a quantity greater than 0.");
+      toast.warning("All items must have a quantity greater than 0.");
       return;
     }
 
@@ -201,7 +209,7 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
           console.log("File uploaded successfully, path:", documentPath);
         } else {
           console.error("Upload failed:", uploadResult.error);
-          alert("Failed to upload document: " + uploadResult.error);
+          toast.error("Failed to upload document: " + uploadResult.error);
           setIsSaving(false);
           return;
         }
@@ -228,7 +236,16 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
       const result = await createPurchaseWithItems(purchaseData, items, user.id);
       
       if (result.success) {
-        alert(`Purchase saved successfully! Bill #${result.data.purchase.bill_number}`);
+        const billNum = result.data.purchase.bill_number;
+        toast.success(`Purchase saved! Bill #${billNum}`);
+        
+        // Show browser notification
+        if ("Notification" in window && Notification.permission === "granted") {
+          new Notification("Purchase Created", {
+            body: `Bill #${billNum} for ${selectedSupplier} - ${formatCurrency(calculateGrandTotal())}`,
+            icon: "/logo192.png"
+          });
+        }
         
         // Reset form
         setItems([]);
@@ -239,11 +256,11 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
         // Optionally navigate to a purchases list or dashboard
         // onNavigate("Dashboard");
       } else {
-        alert("Failed to save purchase: " + result.error);
+        toast.error("Failed to save purchase: " + result.error);
       }
     } catch (error) {
       console.error("Error saving purchase:", error);
-      alert("Failed to save purchase. Please try again.");
+      toast.error("Failed to save purchase. Please try again.");
     } finally {
       setIsSaving(false);
       setIsUploading(false);
@@ -256,13 +273,12 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
       // Validate file type
       const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
-        alert("Please upload only PDF, JPEG, PNG, GIF, or WebP files.");
+        toast.warning("Please upload only PDF, JPEG, PNG, GIF, or WebP files.");
         return;
       }
       
-      // Validate file size (10MB limit)
       if (file.size > 10 * 1024 * 1024) {
-        alert("File size must be less than 10MB.");
+        toast.warning("File size must be less than 10MB.");
         return;
       }
       
@@ -358,9 +374,8 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
         {/* Purchase Content */}
         <div className="purchase-content">
           {loadingData ? (
-            <div className="loading-container">
-              <div className="loading-spinner">⏳</div>
-              <p>Loading data...</p>
+            <div className="loading-skeleton-container">
+              <LoadingSkeleton type="form" />
             </div>
           ) : (
             <>

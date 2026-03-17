@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BizBuddy - UML Diagrams</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6}
+.container{max-width:1600px;margin:0 auto;padding:2rem}
+.header{text-align:center;margin-bottom:3rem;padding:2rem;background:linear-gradient(135deg,#4a9eff 0%,#667eea 100%);color:white;border-radius:16px;box-shadow:0 8px 32px rgba(74,158,255,0.3)}
+.header h1{font-size:2.5rem;font-weight:700;margin-bottom:0.5rem}
+.header p{font-size:1.1rem;opacity:0.9}
+.diagram-nav{display:flex;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;justify-content:center}
+.nav-btn{padding:0.75rem 1.5rem;background:white;border:2px solid #e2e8f0;border-radius:8px;color:#64748b;font-weight:500;transition:all 0.2s ease;cursor:pointer}
+.nav-btn:hover,.nav-btn.active{background:#4a9eff;color:white;border-color:#4a9eff;transform:translateY(-2px)}
+.diagram-section{background:white;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.08);margin-bottom:2rem;overflow:hidden;display:none}
+.diagram-section.active{display:block}
+.diagram-header{background:linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);padding:1.5rem 2rem;border-bottom:2px solid #e2e8f0}
+.diagram-title{font-size:1.5rem;font-weight:700;color:#1e293b;margin-bottom:0.5rem}
+.diagram-description{color:#64748b;font-size:0.95rem}
+.diagram-content{padding:2rem;overflow-x:auto}
+.svg-container{min-width:800px;margin:0 auto}
+svg{width:100%;height:auto;display:block}
+.class-box{fill:#fff;stroke:#4a9eff;stroke-width:2}
+.class-header{fill:#4a9eff}
+.class-text{fill:#1e293b;font-family:'SF Mono',Monaco,monospace;font-size:14px}
+.class-header-text{fill:#fff;font-weight:600}
+.relationship{stroke:#2563eb;stroke-width:3;fill:none}
+.arrow{fill:#2563eb}
+.composition-diamond{fill:#dc2626}
+.relationship-label{fill:#1e293b;font-size:13px;font-weight:600;font-family:Arial,sans-serif}
+.state-box{fill:#fff;stroke:#667eea;stroke-width:2;rx:8}
+.state-text{fill:#1e293b;font-size:14px;font-weight:500}
+.transition{stroke:#64748b;stroke-width:2;fill:none;marker-end:url(#arrowhead)}
+.activity-box{fill:#fff;stroke:#10b981;stroke-width:2;rx:12}
+.decision-box{fill:#fef3c7;stroke:#f59e0b;stroke-width:2}
+.sequence-actor{fill:#e0e7ff;stroke:#4338ca;stroke-width:2}
+.sequence-lifeline{stroke:#cbd5e1;stroke-width:2;stroke-dasharray:5,5}
+.sequence-message{stroke:#4a9eff;stroke-width:2;fill:none;marker-end:url(#arrowhead)}
+.sequence-return{stroke:#94a3b8;stroke-width:2;stroke-dasharray:8,4;fill:none;marker-end:url(#arrowhead-light)}
+.label-text{fill:#64748b;font-size:12px}
+.note-box{fill:#fef9c3;stroke:#eab308;stroke-width:1.5}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>BizBuddy UML Diagrams</h1>
+<p>Class, Activity, Use Case, and Sequence Diagrams</p>
+</div>
+
+<div class="diagram-nav">
+<button class="nav-btn active" onclick="showDiagram('class')">Class Diagram</button>
+<button class="nav-btn" onclick="showDiagram('activity')">Activity Diagram</button>
+<button class="nav-btn" onclick="showDiagram('state')">Use Case Diagram</button>
+<button class="nav-btn" onclick="showDiagram('sequence')">Sequence Diagram</button>
+</div>
+
+<!-- CLASS DIAGRAM -->
+<div id="class" class="diagram-section active">
+<div class="diagram-header">
+<h2 class="diagram-title">Class Diagram</h2>
+<p class="diagram-description">System architecture based on actual database schema</p>
+</div>
+<div class="diagram-content">
+<svg viewBox="0 0 3000 1600" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" class="arrow"/>
+</marker>
+</defs>
+
+<!-- users_data Class -->
+<g transform="translate(150,200)">
+<rect class="class-box" width="280" height="220"/>
+<rect class="class-header" width="280" height="35"/>
+<text class="class-header-text" x="140" y="22" text-anchor="middle" font-size="15">users_data</text>
+<text class="class-text" x="10" y="55">- id: UUID</text>
+<text class="class-text" x="10" y="75">+ name: String</text>
+<text class="class-text" x="10" y="95">+ email: String</text>
+<text class="class-text" x="10" y="115">+ first_name: String</text>
+<text class="class-text" x="10" y="135">+ last_name: String</text>
+<text class="class-text" x="10" y="155">- auth_token: String</text>
+<text class="class-text" x="10" y="175">- password_hashed: Boolean</text>
+<text class="class-text" x="10" y="195">+ created_at: Timestamp</text>
+</g>
+
+<!-- parties Class -->
+<g transform="translate(750,200)">
+<rect class="class-box" width="280" height="380"/>
+<rect class="class-header" width="280" height="35"/>
+<text class="class-header-text" x="140" y="22" text-anchor="middle" font-size="15">parties</text>
+<text class="class-text" x="10" y="55">- id: UUID</text>
+<text class="class-text" x="10" y="75">- user_id: UUID</text>
+<text class="class-text" x="10" y="95">+ name: String</text>
+<text class="class-text" x="10" y="115">+ email: String</text>
+<text class="class-text" x="10" y="135">+ phone: String</text>
+<text class="class-text" x="10" y="155">+ party_type: String</text>
+<text class="class-text" x="10" y="175">+ address: String</text>
+<text class="class-text" x="10" y="195">+ city: String</text>
+<text class="class-text" x="10" y="215">+ state: String</text>
+<text class="class-text" x="10" y="235">+ country: String</text>
+<text class="class-text" x="10" y="255">+ zip_code: String</text>
+<text class="class-text" x="10" y="275">+ tax_id: String</text>
+<text class="class-text" x="10" y="295">+ credit_limit: Decimal</text>
+<text class="class-text" x="10" y="315">+ payment_terms: String</text>
+<text class="class-text" x="10" y="335">+ notes: String</text>
+<text class="class-text" x="10" y="355">+ created_at: Timestamp</text>
+<text class="class-text" x="10" y="375">+ updated_at: Timestamp</text>
+</g>
+
+<!-- items Class -->
+<g transform="translate(1400,200)">
+<rect class="class-box" width="280" height="420"/>
+<rect class="class-header" width="280" height="35"/>
+<text class="class-header-text" x="140" y="22" text-anchor="middle" font-size="15">items</text>
+<text class="class-text" x="10" y="55">- id: BigInt</text>
+<text class="class-text" x="10" y="75">- user_id: UUID</text>
+<text class="class-text" x="10" y="95">+ name: String</text>
+<text class="class-text" x="10" y="115">+ category: String</text>
+<text class="class-text" x="10" y="135">+ description: String</text>
+<text class="class-text" x="10" y="155">+ price: Decimal</text>
+<text class="class-text" x="10" y="175">+ stock_level: Integer</text>
+<text class="class-text" x="10" y="195">+ min_stock_level: Integer</text>
+<text class="class-text" x="10" y="215">+ unit: String</text>
+<text class="class-text" x="10" y="235">+ sku: String</text>
+<text class="class-text" x="10" y="255">+ barcode: String</text>
+<text class="class-text" x="10" y="275">+ supplier: String</text>
+<text class="class-text" x="10" y="295">+ location: String</text>
+<text class="class-text" x="10" y="315">+ weight: Decimal</text>
+<text class="class-text" x="10" y="335">+ dimensions: String</text>
+<text class="class-text" x="10" y="355">+ notes: String</text>
+<text class="class-text" x="10" y="375">+ created_at: Timestamp</text>
+<text class="class-text" x="10" y="395">+ updated_at: Timestamp</text>
+</g>
+
+<!-- sales Class -->
+<g transform="translate(2050,200)">
+<rect class="class-box" width="280" height="400"/>
+<rect class="class-header" width="280" height="35"/>
+<text class="class-header-text" x="140" y="22" text-anchor="middle" font-size="15">sales</text>
+<text class="class-text" x="10" y="55">- id: BigInt</text>
+<text class="class-text" x="10" y="75">- user_id: UUID</text>
+<text class="class-text" x="10" y="95">- customer_id: UUID</text>
+<text class="class-text" x="10" y="115">+ customer_name: String</text>
+<text class="class-text" x="10" y="135">+ invoice_number: String</text>
+<text class="class-text" x="10" y="155">+ invoice_date: Date</text>
+<text class="class-text" x="10" y="175">+ due_date: Date</text>
+<text class="class-text" x="10" y="195">+ subtotal: Decimal</text>
+<text class="class-text" x="10" y="215">+ tax_rate: Decimal</text>
+<text class="class-text" x="10" y="235">+ tax_amount: Decimal</text>
+<text class="class-text" x="10" y="255">+ discount_amount: Decimal</text>
+<text class="class-text" x="10" y="275">+ total_amount: Decimal</text>
+<text class="class-text" x="10" y="295">+ status: String</text>
+<text class="class-text" x="10" y="315">+ payment_terms: String</text>
+<text class="class-text" x="10" y="335">+ notes: String</text>
+<text class="class-text" x="10" y="355">+ created_at: Timestamp</text>
+<text class="class-text" x="10" y="375">+ updated_at: Timestamp</text>
+</g>
+
+<!-- purchases Class -->
+<g transform="translate(750,850)">
+<rect class="class-box" width="280" height="400"/>
+<rect class="class-header" width="280" height="35"/>
+<text class="class-header-text" x="140" y="22" text-anchor="middle" font-size="15">purchases</text>
+<text class="class-text" x="10" y="55">- id: BigInt</text>
+<text class="class-text" x="10" y="75">- user_id: UUID</text>
+<text class="class-text" x="10" y="95">- supplier_id: UUID</text>
+<text class="class-text" x="10" y="115">+ supplier_name: String</text>
+<text class="class-text" x="10" y="135">+ bill_number: String</text>
+<text class="class-text" x="10" y="155">+ purchase_date: Date</text>
+<text class="class-text" x="10" y="175">+ due_date: Date</text>
+<text class="class-text" x="10" y="195">+ subtotal: Decimal</text>
+<text class="class-text" x="10" y="215">+ tax_rate: Decimal</text>
+<text class="class-text" x="10" y="235">+ tax_amount: Decimal</text>
+<text class="class-text" x="10" y="255">+ discount_amount: Decimal</text>
+<text class="class-text" x="10" y="275">+ total_amount: Decimal</text>
+<text class="class-text" x="10" y="295">+ status: String</text>
+<text class="class-text" x="10" y="315">+ payment_terms: String</text>
+<text class="class-text" x="10" y="335">+ notes: String</text>
+<text class="class-text" x="10" y="355">+ attached_document: String</text>
+<text class="class-text" x="10" y="375">+ created_at: Timestamp</text>
+</g>
+
+<!-- purchase_items Class -->
+<g transform="translate(1400,850)">
+<rect class="class-box" width="280" height="200"/>
+<rect class="class-header" width="280" height="35"/>
+<text class="class-header-text" x="140" y="22" text-anchor="middle" font-size="15">purchase_items</text>
+<text class="class-text" x="10" y="55">- id: BigInt</text>
+<text class="class-text" x="10" y="75">- purchase_id: BigInt</text>
+<text class="class-text" x="10" y="95">- item_id: BigInt</text>
+<text class="class-text" x="10" y="115">+ item_name: String</text>
+<text class="class-text" x="10" y="135">+ item_description: String</text>
+<text class="class-text" x="10" y="155">+ quantity: Integer</text>
+<text class="class-text" x="10" y="175">+ unit_cost: Decimal</text>
+<text class="class-text" x="10" y="195">+ line_total: Decimal</text>
+</g>
+
+<!-- sales_items Class -->
+<g transform="translate(2050,850)">
+<rect class="class-box" width="280" height="200"/>
+<rect class="class-header" width="280" height="35"/>
+<text class="class-header-text" x="140" y="22" text-anchor="middle" font-size="15">sales_items</text>
+<text class="class-text" x="10" y="55">- id: BigInt</text>
+<text class="class-text" x="10" y="75">- sale_id: BigInt</text>
+<text class="class-text" x="10" y="95">- item_id: BigInt</text>
+<text class="class-text" x="10" y="115">+ item_name: String</text>
+<text class="class-text" x="10" y="135">+ item_description: String</text>
+<text class="class-text" x="10" y="155">+ quantity: Integer</text>
+<text class="class-text" x="10" y="175">+ unit_price: Decimal</text>
+<text class="class-text" x="10" y="195">+ line_total: Decimal</text>
+</g>
+
+<!-- Relationships -->
+
+<!-- 1. users_data to parties (Association) - Horizontal at middle -->
+<path class="relationship" d="M 430 310 L 750 310" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="440" y="300" font-weight="600">1</text>
+<text class="label-text" x="730" y="300" font-weight="600">*</text>
+<text class="relationship-label" x="570" y="330">owns</text>
+
+<!-- 2. users_data to items (Association) - Route at very top -->
+<path class="relationship" d="M 290 200 L 290 150 L 1540 150 L 1540 200" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="280" y="195" font-weight="600">1</text>
+<text class="label-text" x="1530" y="195" font-weight="600">*</text>
+<text class="relationship-label" x="900" y="145">manages</text>
+
+<!-- 3. users_data to sales (Association) - Route at absolute top -->
+<path class="relationship" d="M 350 200 L 350 120 L 2190 120 L 2190 200" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="340" y="195" font-weight="600">1</text>
+<text class="label-text" x="2180" y="195" font-weight="600">*</text>
+<text class="relationship-label" x="1250" y="115">creates</text>
+
+<!-- 4. users_data to purchases (Association) - Route on far left -->
+<path class="relationship" d="M 150 420 L 150 1050 L 750 1050" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="140" y="430" font-weight="600">1</text>
+<text class="label-text" x="730" y="1045" font-weight="600">*</text>
+<text class="relationship-label" x="160" y="735">records</text>
+
+<!-- 5. parties to sales (Association) - Horizontal above parties -->
+<path class="relationship" d="M 1030 250 L 2050 250" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="1040" y="240" font-weight="600">1</text>
+<text class="label-text" x="2030" y="240" font-weight="600">0..*</text>
+<text class="relationship-label" x="1500" y="245">customer in</text>
+
+<!-- 6. parties to purchases (Association) - Vertical down -->
+<path class="relationship" d="M 890 580 L 890 850" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="880" y="590" font-weight="600">1</text>
+<text class="label-text" x="880" y="845" font-weight="600">0..*</text>
+<text class="relationship-label" x="900" y="715">supplier in</text>
+
+<!-- 7. items to sales_items (Association) - Route far right -->
+<path class="relationship" d="M 1680 400 L 1800 400 L 1800 950 L 2050 950" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="1690" y="390" font-weight="600">1</text>
+<text class="label-text" x="2030" y="945" font-weight="600">*</text>
+<text class="relationship-label" x="1810" y="675">sold in</text>
+
+<!-- 8. items to purchase_items (Association) - Vertical down -->
+<path class="relationship" d="M 1540 620 L 1540 850" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="1530" y="630" font-weight="600">1</text>
+<text class="label-text" x="1530" y="845" font-weight="600">*</text>
+<text class="relationship-label" x="1550" y="735">purchased in</text>
+
+<!-- 9. sales to sales_items (Composition) - Vertical down with diamond -->
+<path class="relationship" d="M 2190 600 L 2190 850" stroke="#dc2626" stroke-width="3"/>
+<polygon points="2190,600 2180,615 2190,630 2200,615" class="composition-diamond"/>
+<text class="label-text" x="2200" y="610" font-weight="600">1</text>
+<text class="label-text" x="2200" y="845" font-weight="600">1..*</text>
+<text class="relationship-label" x="2205" y="725" fill="#dc2626">contains</text>
+
+<!-- 10. purchases to purchase_items (Composition) - Horizontal with diamond -->
+<path class="relationship" d="M 1030 1050 L 1400 1050" stroke="#dc2626" stroke-width="3"/>
+<polygon points="1030,1050 1045,1040 1060,1050 1045,1060" class="composition-diamond"/>
+<text class="label-text" x="1040" y="1040" font-weight="600">1</text>
+<text class="label-text" x="1380" y="1040" font-weight="600">1..*</text>
+<text class="relationship-label" x="1190" y="1070" fill="#dc2626">contains</text>
+
+<!-- Legend -->
+<g transform="translate(150,1350)">
+<rect x="-10" y="-10" width="750" height="130" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2" rx="8"/>
+<text class="state-text" x="0" y="10" font-size="16" font-weight="700">Relationship Types:</text>
+
+<line x1="0" y1="40" x2="100" y2="40" stroke="#2563eb" stroke-width="3" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="110" y="45" font-size="14">Association (has-a relationship)</text>
+
+<line x1="0" y1="75" x2="80" y2="75" stroke="#dc2626" stroke-width="3"/>
+<polygon points="80,75 95,65 110,75 95,85" class="composition-diamond"/>
+<text class="label-text" x="120" y="80" font-size="14">Composition (strong ownership, lifecycle dependent)</text>
+
+<text class="label-text" x="0" y="105" font-size="13" fill="#64748b">Note: All relationship lines are carefully routed with ample spacing to avoid overlapping. Cardinality shows multiplicity (1, *, 0..*, 1..*)</text>
+</g>
+
+</svg>
+</div>
+</div>
+
+<!-- ACTIVITY DIAGRAM -->
+<div id="activity" class="diagram-section">
+<div class="diagram-header">
+<h2 class="diagram-title">Activity Diagram</h2>
+<p class="diagram-description">Sales invoice creation workflow</p>
+</div>
+<div class="diagram-content">
+<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" class="arrow"/>
+</marker>
+</defs>
+
+<!-- Start -->
+<circle cx="400" cy="30" r="15" fill="#1e293b"/>
+<path class="transition" d="M 400 45 L 400 80" marker-end="url(#arrowhead)"/>
+
+<!-- Login -->
+<rect class="activity-box" x="300" y="80" width="200" height="50" rx="25"/>
+<text class="state-text" x="400" y="110" text-anchor="middle">User Login</text>
+<path class="transition" d="M 400 130 L 400 170" marker-end="url(#arrowhead)"/>
+
+<!-- Navigate to Sales -->
+<rect class="activity-box" x="280" y="170" width="240" height="50" rx="25"/>
+<text class="state-text" x="400" y="200" text-anchor="middle">Navigate to Sales Page</text>
+<path class="transition" d="M 400 220 L 400 260" marker-end="url(#arrowhead)"/>
+
+<!-- Click Create Invoice -->
+<rect class="activity-box" x="280" y="260" width="240" height="50" rx="25"/>
+<text class="state-text" x="400" y="290" text-anchor="middle">Click Create Invoice</text>
+<path class="transition" d="M 400 310 L 400 350" marker-end="url(#arrowhead)"/>
+
+<!-- Select Customer -->
+<rect class="activity-box" x="280" y="350" width="240" height="50" rx="25"/>
+<text class="state-text" x="400" y="380" text-anchor="middle">Select Customer</text>
+<path class="transition" d="M 400 400 L 400 440" marker-end="url(#arrowhead)"/>
+
+<!-- Add Items -->
+<rect class="activity-box" x="280" y="440" width="240" height="50" rx="25"/>
+<text class="state-text" x="400" y="470" text-anchor="middle">Add Items to Invoice</text>
+<path class="transition" d="M 400 490 L 400 530" marker-end="url(#arrowhead)"/>
+
+<!-- Decision: More Items? -->
+<path class="decision-box" d="M 400 530 L 480 580 L 400 630 L 320 580 Z"/>
+<text class="state-text" x="400" y="585" text-anchor="middle">More</text>
+<text class="state-text" x="400" y="600" text-anchor="middle">Items?</text>
+
+<!-- Yes - Loop back -->
+<path class="transition" d="M 480 580 L 600 580 L 600 465 L 520 465" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="550" y="575">Yes</text>
+
+<!-- No - Continue -->
+<path class="transition" d="M 400 630 L 400 670" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="410" y="650">No</text>
+
+<!-- Apply Discount -->
+<rect class="activity-box" x="280" y="670" width="240" height="50" rx="25"/>
+<text class="state-text" x="400" y="700" text-anchor="middle">Apply Discount (Optional)</text>
+<path class="transition" d="M 400 720 L 400 760" marker-end="url(#arrowhead)"/>
+
+<!-- Calculate Total -->
+<rect class="activity-box" x="280" y="760" width="240" height="50" rx="25"/>
+<text class="state-text" x="400" y="790" text-anchor="middle">Calculate Total Amount</text>
+<path class="transition" d="M 400 810 L 400 850" marker-end="url(#arrowhead)"/>
+
+<!-- Review Invoice -->
+<rect class="activity-box" x="280" y="850" width="240" height="50" rx="25"/>
+<text class="state-text" x="400" y="880" text-anchor="middle">Review Invoice Details</text>
+<path class="transition" d="M 400 900 L 400 940" marker-end="url(#arrowhead)"/>
+
+<!-- Decision: Confirm? -->
+<path class="decision-box" d="M 400 940 L 480 990 L 400 1040 L 320 990 Z"/>
+<text class="state-text" x="400" y="995" text-anchor="middle">Confirm?</text>
+
+<!-- No - Edit -->
+<path class="transition" d="M 320 990 L 200 990 L 200 465 L 280 465" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="250" y="985">Edit</text>
+
+<!-- Yes - Save -->
+<path class="transition" d="M 480 990 L 600 990" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="520" y="985">Yes</text>
+
+<!-- Save Invoice -->
+<rect class="activity-box" x="600" y="965" width="150" height="50" rx="25"/>
+<text class="state-text" x="675" y="995" text-anchor="middle">Save Invoice</text>
+<path class="transition" d="M 675 1015 L 675 1055" marker-end="url(#arrowhead)"/>
+
+<!-- Update Stock -->
+<rect class="activity-box" x="600" y="1055" width="150" height="50" rx="25"/>
+<text class="state-text" x="675" y="1085" text-anchor="middle">Update Stock</text>
+<path class="transition" d="M 675 1105 L 675 1145" marker-end="url(#arrowhead)"/>
+
+<!-- End -->
+<circle cx="675" cy="1160" r="15" fill="none" stroke="#1e293b" stroke-width="2"/>
+<circle cx="675" cy="1160" r="10" fill="#1e293b"/>
+
+</svg>
+</div>
+</div>
+
+<!-- USE CASE DIAGRAM -->
+<div id="state" class="diagram-section">
+<div class="diagram-header">
+<h2 class="diagram-title">Use Case Diagram</h2>
+<p class="diagram-description">Shows all actors and their interactions with the BizBuddy system</p>
+</div>
+<div class="diagram-content">
+<svg viewBox="0 0 900 1100" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" class="arrow"/>
+</marker>
+</defs>
+
+<!-- System Boundary Box -->
+<rect x="150" y="80" width="600" height="950" fill="none" stroke="#4a9eff" stroke-width="3" rx="10"/>
+<text class="state-text" x="450" y="110" text-anchor="middle" font-size="16" font-weight="700" fill="#4a9eff">BizBuddy System</text>
+
+<!-- Left Actor: Business Owner -->
+<g transform="translate(60,550)">
+<circle cx="0" cy="-35" r="20" fill="none" stroke="#1e293b" stroke-width="2"/>
+<line x1="0" y1="-15" x2="0" y2="35" stroke="#1e293b" stroke-width="2"/>
+<line x1="0" y1="5" x2="-25" y2="25" stroke="#1e293b" stroke-width="2"/>
+<line x1="0" y1="5" x2="25" y2="25" stroke="#1e293b" stroke-width="2"/>
+<line x1="0" y1="35" x2="-20" y2="65" stroke="#1e293b" stroke-width="2"/>
+<line x1="0" y1="35" x2="20" y2="65" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="0" y="90" text-anchor="middle" font-weight="700">Business</text>
+<text class="state-text" x="0" y="105" text-anchor="middle" font-weight="700">Owner</text>
+</g>
+
+<!-- Right Actor: Gemini AI -->
+<g transform="translate(840,300)">
+<rect x="-30" y="-25" width="60" height="60" fill="none" stroke="#1e293b" stroke-width="2" rx="5"/>
+<text class="state-text" x="0" y="0" text-anchor="middle" font-weight="700" font-size="11">Gemini</text>
+<text class="state-text" x="0" y="12" text-anchor="middle" font-weight="700" font-size="11">AI</text>
+<text class="state-text" x="0" y="55" text-anchor="middle" font-weight="600" font-size="10">AI Service</text>
+</g>
+
+<!-- Right Actor: Database -->
+<g transform="translate(840,800)">
+<rect x="-30" y="-25" width="60" height="60" fill="none" stroke="#1e293b" stroke-width="2" rx="5"/>
+<text class="state-text" x="0" y="0" text-anchor="middle" font-weight="700" font-size="11">Database</text>
+<text class="state-text" x="0" y="55" text-anchor="middle" font-weight="600" font-size="10">Supabase</text>
+</g>
+
+<!-- Left Column Use Cases -->
+<!-- Authentication -->
+<ellipse cx="280" cy="180" rx="75" ry="30" fill="white" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="280" y="185" text-anchor="middle" font-size="12">Register Account</text>
+
+<ellipse cx="280" cy="250" rx="75" ry="30" fill="white" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="280" y="255" text-anchor="middle" font-size="12">Login/Logout</text>
+
+<!-- Dashboard -->
+<ellipse cx="280" cy="330" rx="75" ry="30" fill="white" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="280" y="335" text-anchor="middle" font-size="12">View Dashboard</text>
+
+<!-- Sales -->
+<ellipse cx="280" cy="420" rx="75" ry="30" fill="white" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="280" y="425" text-anchor="middle" font-size="12">Create Invoice</text>
+
+<ellipse cx="280" cy="490" rx="75" ry="30" fill="white" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="280" y="495" text-anchor="middle" font-size="12">Manage Sales</text>
+
+<!-- Purchase -->
+<ellipse cx="280" cy="570" rx="75" ry="30" fill="white" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="280" y="575" text-anchor="middle" font-size="12">Record Purchase</text>
+
+<ellipse cx="280" cy="640" rx="75" ry="30" fill="white" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="280" y="645" text-anchor="middle" font-size="12">Manage Purchases</text>
+
+<!-- Inventory -->
+<ellipse cx="280" cy="720" rx="75" ry="30" fill="white" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="280" y="725" text-anchor="middle" font-size="12">Manage Inventory</text>
+
+<ellipse cx="280" cy="790" rx="75" ry="30" fill="white" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="280" y="795" text-anchor="middle" font-size="12">Track Stock</text>
+
+<!-- Right Column Use Cases -->
+<!-- Party Management -->
+<ellipse cx="620" cy="180" rx="75" ry="30" fill="white" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="620" y="185" text-anchor="middle" font-size="12">Manage Parties</text>
+
+<!-- AI Assistant -->
+<ellipse cx="620" cy="270" rx="75" ry="30" fill="white" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="620" y="275" text-anchor="middle" font-size="12">Chat with AI</text>
+
+<!-- Reports -->
+<ellipse cx="620" cy="360" rx="75" ry="30" fill="white" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="620" y="365" text-anchor="middle" font-size="12">View Analytics</text>
+
+<ellipse cx="620" cy="430" rx="75" ry="30" fill="white" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="620" y="435" text-anchor="middle" font-size="12">Generate Reports</text>
+
+<ellipse cx="620" cy="500" rx="75" ry="30" fill="white" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="620" y="505" text-anchor="middle" font-size="12">Annual Reports</text>
+
+<ellipse cx="620" cy="570" rx="75" ry="30" fill="white" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="620" y="575" text-anchor="middle" font-size="12">Export Data</text>
+
+<!-- Settings -->
+<ellipse cx="620" cy="650" rx="75" ry="30" fill="white" stroke="#1e293b" stroke-width="2"/>
+<text class="state-text" x="620" y="655" text-anchor="middle" font-size="12">Configure Settings</text>
+
+<!-- Associations from Business Owner to Left Column -->
+<line x1="95" y1="540" x2="205" y2="180" stroke="#64748b" stroke-width="1.5"/>
+<line x1="95" y1="545" x2="205" y2="250" stroke="#64748b" stroke-width="1.5"/>
+<line x1="95" y1="550" x2="205" y2="330" stroke="#64748b" stroke-width="1.5"/>
+<line x1="95" y1="555" x2="205" y2="420" stroke="#64748b" stroke-width="1.5"/>
+<line x1="95" y1="555" x2="205" y2="490" stroke="#64748b" stroke-width="1.5"/>
+<line x1="95" y1="560" x2="205" y2="570" stroke="#64748b" stroke-width="1.5"/>
+<line x1="95" y1="560" x2="205" y2="640" stroke="#64748b" stroke-width="1.5"/>
+<line x1="95" y1="565" x2="205" y2="720" stroke="#64748b" stroke-width="1.5"/>
+<line x1="95" y1="565" x2="205" y2="790" stroke="#64748b" stroke-width="1.5"/>
+
+<!-- Associations from Business Owner to Right Column -->
+<line x1="95" y1="540" x2="545" y2="180" stroke="#64748b" stroke-width="1.5"/>
+<line x1="95" y1="545" x2="545" y2="270" stroke="#64748b" stroke-width="1.5"/>
+<line x1="95" y1="550" x2="545" y2="360" stroke="#64748b" stroke-width="1.5"/>
+<line x1="95" y1="555" x2="545" y2="430" stroke="#64748b" stroke-width="1.5"/>
+<line x1="95" y1="555" x2="545" y2="500" stroke="#64748b" stroke-width="1.5"/>
+<line x1="95" y1="560" x2="545" y2="570" stroke="#64748b" stroke-width="1.5"/>
+<line x1="95" y1="565" x2="545" y2="650" stroke="#64748b" stroke-width="1.5"/>
+
+<!-- Associations to Gemini AI -->
+<line x1="695" y1="270" x2="810" y2="300" stroke="#64748b" stroke-width="1.5"/>
+
+<!-- Associations to Database -->
+<line x1="355" y1="180" x2="810" y2="780" stroke="#64748b" stroke-width="1"/>
+<line x1="355" y1="250" x2="810" y2="785" stroke="#64748b" stroke-width="1"/>
+<line x1="355" y1="420" x2="810" y2="790" stroke="#64748b" stroke-width="1"/>
+<line x1="355" y1="490" x2="810" y2="792" stroke="#64748b" stroke-width="1"/>
+<line x1="355" y1="570" x2="810" y2="795" stroke="#64748b" stroke-width="1"/>
+<line x1="355" y1="640" x2="810" y2="798" stroke="#64748b" stroke-width="1"/>
+<line x1="355" y1="720" x2="810" y2="800" stroke="#64748b" stroke-width="1"/>
+<line x1="695" y1="180" x2="810" y2="805" stroke="#64748b" stroke-width="1"/>
+<line x1="695" y1="430" x2="810" y2="810" stroke="#64748b" stroke-width="1"/>
+<line x1="695" y1="500" x2="810" y2="812" stroke="#64748b" stroke-width="1"/>
+<line x1="695" y1="650" x2="810" y2="815" stroke="#64748b" stroke-width="1"/>
+
+</svg>
+</div>
+</div>
+
+<!-- SEQUENCE DIAGRAM -->
+<div id="sequence" class="diagram-section">
+<div class="diagram-header">
+<h2 class="diagram-title">Sequence Diagrams</h2>
+<p class="diagram-description">Interaction flows for main features of BizBuddy</p>
+</div>
+
+<!-- Sub-navigation for sequence diagrams -->
+<div style="padding:1rem 2rem;background:#f8fafc;border-bottom:1px solid #e2e8f0">
+<div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+<button class="nav-btn active" onclick="showSequence('seq-login')" style="font-size:12px;padding:0.5rem 1rem">Login</button>
+<button class="nav-btn" onclick="showSequence('seq-invoice')" style="font-size:12px;padding:0.5rem 1rem">Create Invoice</button>
+<button class="nav-btn" onclick="showSequence('seq-purchase')" style="font-size:12px;padding:0.5rem 1rem">Record Purchase</button>
+<button class="nav-btn" onclick="showSequence('seq-inventory')" style="font-size:12px;padding:0.5rem 1rem">Manage Inventory</button>
+<button class="nav-btn" onclick="showSequence('seq-party')" style="font-size:12px;padding:0.5rem 1rem">Manage Party</button>
+<button class="nav-btn" onclick="showSequence('seq-ai')" style="font-size:12px;padding:0.5rem 1rem">AI Assistant</button>
+</div>
+</div>
+
+<!-- 1. Login Sequence -->
+<div id="seq-login" class="diagram-content" style="display:block">
+<h3 style="padding:1rem 2rem;font-size:1.1rem;color:#1e293b">User Login Flow</h3>
+<svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" class="arrow"/>
+</marker>
+<marker id="arrowhead-light" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" fill="#94a3b8"/>
+</marker>
+</defs>
+
+<!-- Actors -->
+<text x="100" y="15" text-anchor="middle" font-size="20">👤</text>
+<rect class="sequence-actor" x="50" y="20" width="100" height="40" rx="5"/>
+<text class="state-text" x="100" y="45" text-anchor="middle" font-size="12">User</text>
+<line class="sequence-lifeline" x1="100" y1="60" x2="100" y2="650"/>
+
+<text x="300" y="15" text-anchor="middle" font-size="20">💻</text>
+<rect class="sequence-actor" x="250" y="20" width="100" height="40" rx="5"/>
+<text class="state-text" x="300" y="45" text-anchor="middle" font-size="12">LoginPage</text>
+<line class="sequence-lifeline" x1="300" y1="60" x2="300" y2="650"/>
+
+<text x="510" y="15" text-anchor="middle" font-size="20">⚙️</text>
+<rect class="sequence-actor" x="450" y="20" width="120" height="40" rx="5"/>
+<text class="state-text" x="510" y="45" text-anchor="middle" font-size="12">supabaseClient</text>
+<line class="sequence-lifeline" x1="510" y1="60" x2="510" y2="650"/>
+
+<text x="720" y="15" text-anchor="middle" font-size="20">🗄️</text>
+<rect class="sequence-actor" x="670" y="20" width="100" height="40" rx="5"/>
+<text class="state-text" x="720" y="45" text-anchor="middle" font-size="12">Supabase DB</text>
+<line class="sequence-lifeline" x1="720" y1="60" x2="720" y2="650"/>
+
+<text x="900" y="15" text-anchor="middle" font-size="20">📊</text>
+<rect class="sequence-actor" x="850" y="20" width="100" height="40" rx="5"/>
+<text class="state-text" x="900" y="45" text-anchor="middle" font-size="12">Dashboard</text>
+<line class="sequence-lifeline" x1="900" y1="60" x2="900" y2="650"/>
+
+<!-- Messages -->
+<path class="sequence-message" d="M 100 100 L 300 100" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="150" y="95">Enter credentials</text>
+
+<!-- Activation box for LoginPage -->
+<rect x="295" y="100" width="10" height="380" fill="#4a9eff" opacity="0.3"/>
+
+<path class="sequence-message" d="M 100 140 L 300 140" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="150" y="135">Click Login</text>
+
+<path class="sequence-message" d="M 305 180 L 510 180" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="360" y="175">loginUser(email, password)</text>
+
+<!-- Activation box for supabaseClient -->
+<rect x="505" y="180" width="10" height="180" fill="#4a9eff" opacity="0.3"/>
+
+<path class="sequence-message" d="M 515 220 L 720 220" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="570" y="215">SELECT FROM users_data</text>
+
+<!-- Activation box for Database -->
+<rect x="715" y="220" width="10" height="60" fill="#4a9eff" opacity="0.3"/>
+
+<!-- Alt frame for authentication -->
+<rect x="480" y="250" width="280" height="100" fill="none" stroke="#f59e0b" stroke-width="2" rx="5"/>
+<text class="label-text" x="490" y="265" font-weight="600" fill="#f59e0b">[alt]</text>
+<line x1="480" y1="270" x2="760" y2="270" stroke="#f59e0b" stroke-width="1"/>
+<text class="label-text" x="490" y="285" font-size="11">Valid credentials</text>
+
+<path class="sequence-return" d="M 720 295 L 515 295" marker-end="url(#arrowhead-light)"/>
+<text class="label-text" x="570" y="290">userData</text>
+
+<line x1="480" y1="310" x2="760" y2="310" stroke="#f59e0b" stroke-width="1" stroke-dasharray="5,3"/>
+<text class="label-text" x="490" y="325" font-size="11">Invalid credentials</text>
+
+<path class="sequence-return" d="M 720 335 L 515 335" marker-end="url(#arrowhead-light)"/>
+<text class="label-text" x="570" y="330">error</text>
+
+<path class="sequence-return" d="M 510 380 L 305 380" marker-end="url(#arrowhead-light)"/>
+<text class="label-text" x="360" y="375">{success, data}</text>
+
+<!-- Alt frame for navigation -->
+<rect x="270" y="400" width="660" height="90" fill="none" stroke="#10b981" stroke-width="2" rx="5"/>
+<text class="label-text" x="280" y="415" font-weight="600" fill="#10b981">[alt]</text>
+<line x1="270" y1="420" x2="930" y2="420" stroke="#10b981" stroke-width="1"/>
+<text class="label-text" x="280" y="435" font-size="11">Login successful</text>
+
+<path class="sequence-message" d="M 305 450 L 900 450" marker-end="url(#arrowhead)"/>
+<text class="label-text" x="550" y="445">Navigate to Dashboard</text>
+
+<!-- Activation box for Dashboard -->
+<rect x="895" y="450" width="10" height="40" fill="#4a9eff" opacity="0.3"/>
+
+<line x1="270" y1="465" x2="930" y2="465" stroke="#10b981" stroke-width="1" stroke-dasharray="5,3"/>
+<text class="label-text" x="280" y="480" font-size="11">Login failed</text>
+
+<path class="sequence-return" d="M 300 520 L 100 520" marker-end="url(#arrowhead-light)"/>
+<text class="label-text" x="150" y="515">Show error message</text>
+
+<path class="sequence-return" d="M 900 580 L 100 580" marker-end="url(#arrowhead-light)"/>
+<text class="label-text" x="450" y="575">Display Dashboard</text>
+
+</svg>
+</div>
+
+<!-- 2. Create Invoice Sequence -->
+<div id="seq-invoice" class="diagram-content" style="display:none">
+<h3 style="padding:1rem 2rem;font-size:1.1rem;color:#1e293b">Create Sales Invoice Flow</h3>
+<svg viewBox="0 0 1100 800" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" class="arrow"/>
+</marker>
+<marker id="arrowhead-light2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" fill="#94a3b8"/>
+</marker>
+</defs>
+
+<!-- Actors -->
+<text x="90" y="15" text-anchor="middle" font-size="20">👤</text>
+<rect class="sequence-actor" x="50" y="20" width="80" height="40" rx="5"/>
+<text class="state-text" x="90" y="45" text-anchor="middle" font-size="12">User</text>
+<line class="sequence-lifeline" x1="90" y1="60" x2="90" y2="750"/>
+
+<text x="260" y="15" text-anchor="middle" font-size="20">📝</text>
+<rect class="sequence-actor" x="200" y="20" width="120" height="40" rx="5"/>
+<text class="state-text" x="260" y="45" text-anchor="middle" font-size="12">CreateInvoice</text>
+<line class="sequence-lifeline" x1="260" y1="60" x2="260" y2="750"/>
+
+<text x="460" y="15" text-anchor="middle" font-size="20">⚙️</text>
+<rect class="sequence-actor" x="400" y="20" width="120" height="40" rx="5"/>
+<text class="state-text" x="460" y="45" text-anchor="middle" font-size="12">supabaseClient</text>
+<line class="sequence-lifeline" x1="460" y1="60" x2="460" y2="750"/>
+
+<text x="650" y="15" text-anchor="middle" font-size="20">🗄️</text>
+<rect class="sequence-actor" x="600" y="20" width="100" height="40" rx="5"/>
+<text class="state-text" x="650" y="45" text-anchor="middle" font-size="12">Database</text>
+<line class="sequence-lifeline" x1="650" y1="60" x2="650" y2="750"/>
+
+<text x="830" y="15" text-anchor="middle" font-size="20">💰</text>
+<rect class="sequence-actor" x="780" y="20" width="100" height="40" rx="5"/>
+<text class="state-text" x="830" y="45" text-anchor="middle" font-size="12">Sales Page</text>
+<line class="sequence-lifeline" x1="830" y1="60" x2="830" y2="750"/>
+
+<!-- Activation boxes -->
+<rect x="255" y="100" width="10" height="620" fill="#4a9eff" opacity="0.3"/>
+<rect x="455" y="140" width="10" height="120" fill="#4a9eff" opacity="0.3"/>
+<rect x="645" y="180" width="10" height="60" fill="#4a9eff" opacity="0.3"/>
+<rect x="455" y="280" width="10" height="120" fill="#4a9eff" opacity="0.3"/>
+<rect x="645" y="320" width="10" height="60" fill="#4a9eff" opacity="0.3"/>
+<rect x="455" y="440" width="10" height="200" fill="#4a9eff" opacity="0.3"/>
+<rect x="645" y="480" width="10" height="140" fill="#4a9eff" opacity="0.3"/>
+<rect x="825" y="700" width="10" height="40" fill="#4a9eff" opacity="0.3"/>
+
+<!-- Messages -->
+<path class="sequence-message" d="M 90 100 L 260 100" marker-end="url(#arrowhead2)"/>
+<text class="label-text" x="130" y="95">Fill invoice form</text>
+
+<!-- Load parties -->
+<path class="sequence-message" d="M 265 140 L 460 140" marker-end="url(#arrowhead2)"/>
+<text class="label-text" x="310" y="135">getParties(userId)</text>
+
+<path class="sequence-message" d="M 465 180 L 650 180" marker-end="url(#arrowhead2)"/>
+<text class="label-text" x="510" y="175">SELECT FROM parties</text>
+
+<path class="sequence-return" d="M 650 220 L 465 220" marker-end="url(#arrowhead-light2)"/>
+<text class="label-text" x="510" y="215">partyData</text>
+
+<path class="sequence-return" d="M 460 240 L 265 240" marker-end="url(#arrowhead-light2)"/>
+<text class="label-text" x="310" y="235">customerList</text>
+
+<!-- Load items -->
+<path class="sequence-message" d="M 265 280 L 460 280" marker-end="url(#arrowhead2)"/>
+<text class="label-text" x="310" y="275">getItems(userId)</text>
+
+<path class="sequence-message" d="M 465 320 L 650 320" marker-end="url(#arrowhead2)"/>
+<text class="label-text" x="510" y="315">SELECT FROM items</text>
+
+<path class="sequence-return" d="M 650 360 L 465 360" marker-end="url(#arrowhead-light2)"/>
+<text class="label-text" x="510" y="355">itemData</text>
+
+<path class="sequence-return" d="M 460 380 L 265 380" marker-end="url(#arrowhead-light2)"/>
+<text class="label-text" x="310" y="375">itemList</text>
+
+<path class="sequence-message" d="M 90 420 L 260 420" marker-end="url(#arrowhead2)"/>
+<text class="label-text" x="130" y="415">Add items & submit</text>
+
+<!-- Create invoice with alt frame -->
+<rect x="230" y="450" width="450" height="240" fill="none" stroke="#10b981" stroke-width="2" rx="5"/>
+<text class="label-text" x="240" y="465" font-weight="600" fill="#10b981">[alt]</text>
+<line x1="230" y1="470" x2="680" y2="470" stroke="#10b981" stroke-width="1"/>
+<text class="label-text" x="240" y="485" font-size="11">Valid invoice data</text>
+
+<path class="sequence-message" d="M 265 500 L 460 500" marker-end="url(#arrowhead2)"/>
+<text class="label-text" x="310" y="495">createSaleWithItems()</text>
+
+<path class="sequence-message" d="M 465 540 L 650 540" marker-end="url(#arrowhead2)"/>
+<text class="label-text" x="510" y="535">INSERT INTO sales</text>
+
+<path class="sequence-message" d="M 465 580 L 650 580" marker-end="url(#arrowhead2)"/>
+<text class="label-text" x="510" y="575">INSERT INTO sales_items</text>
+
+<path class="sequence-return" d="M 650 620 L 465 620" marker-end="url(#arrowhead-light2)"/>
+<text class="label-text" x="510" y="615">{success, saleId}</text>
+
+<line x1="230" y1="640" x2="680" y2="640" stroke="#10b981" stroke-width="1" stroke-dasharray="5,3"/>
+<text class="label-text" x="240" y="655" font-size="11">Invalid data</text>
+
+<path class="sequence-return" d="M 460 670 L 265 670" marker-end="url(#arrowhead-light2)"/>
+<text class="label-text" x="310" y="665">Validation error</text>
+
+<path class="sequence-message" d="M 265 700 L 830 700" marker-end="url(#arrowhead2)"/>
+<text class="label-text" x="490" y="695">Navigate to Sales</text>
+
+</svg>
+</div>
+
+<!-- 3. Record Purchase Sequence -->
+<div id="seq-purchase" class="diagram-content" style="display:none">
+<h3 style="padding:1rem 2rem;font-size:1.1rem;color:#1e293b">Record Purchase Flow</h3>
+<svg viewBox="0 0 1200 750" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" class="arrow"/>
+</marker>
+<marker id="arrowhead-light3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" fill="#94a3b8"/>
+</marker>
+</defs>
+
+<!-- Actors -->
+<text x="90" y="15" text-anchor="middle" font-size="20">👤</text>
+<rect class="sequence-actor" x="50" y="20" width="80" height="40" rx="5"/>
+<text class="state-text" x="90" y="45" text-anchor="middle" font-size="12">User</text>
+<line class="sequence-lifeline" x1="90" y1="60" x2="90" y2="700"/>
+
+<text x="250" y="15" text-anchor="middle" font-size="20">🛒</text>
+<rect class="sequence-actor" x="200" y="20" width="100" height="40" rx="5"/>
+<text class="state-text" x="250" y="45" text-anchor="middle" font-size="12">Purchases</text>
+<line class="sequence-lifeline" x1="250" y1="60" x2="250" y2="700"/>
+
+<text x="440" y="15" text-anchor="middle" font-size="20">⚙️</text>
+<rect class="sequence-actor" x="380" y="20" width="120" height="40" rx="5"/>
+<text class="state-text" x="440" y="45" text-anchor="middle" font-size="12">supabaseClient</text>
+<line class="sequence-lifeline" x1="440" y1="60" x2="440" y2="750"/>
+
+<text x="640" y="15" text-anchor="middle" font-size="20">📁</text>
+<rect class="sequence-actor" x="580" y="20" width="120" height="40" rx="5"/>
+<text class="state-text" x="640" y="45" text-anchor="middle" font-size="12">Supabase Storage</text>
+<line class="sequence-lifeline" x1="640" y1="60" x2="640" y2="700"/>
+
+<text x="830" y="15" text-anchor="middle" font-size="20">🗄️</text>
+<rect class="sequence-actor" x="780" y="20" width="100" height="40" rx="5"/>
+<text class="state-text" x="830" y="45" text-anchor="middle" font-size="12">Database</text>
+<line class="sequence-lifeline" x1="830" y1="60" x2="830" y2="700"/>
+
+<!-- Activation boxes -->
+<rect x="245" y="100" width="10" height="580" fill="#4a9eff" opacity="0.3"/>
+<rect x="435" y="180" width="10" height="100" fill="#4a9eff" opacity="0.3"/>
+<rect x="635" y="220" width="10" height="60" fill="#4a9eff" opacity="0.3"/>
+<rect x="435" y="340" width="10" height="280" fill="#4a9eff" opacity="0.3"/>
+<rect x="825" y="380" width="10" height="180" fill="#4a9eff" opacity="0.3"/>
+
+<!-- Messages -->
+<path class="sequence-message" d="M 90 100 L 250 100" marker-end="url(#arrowhead3)"/>
+<text class="label-text" x="130" y="95">Fill purchase form</text>
+
+<!-- Opt frame for document upload -->
+<rect x="220" y="130" width="460" height="160" fill="none" stroke="#667eea" stroke-width="2" rx="5"/>
+<text class="label-text" x="230" y="145" font-weight="600" fill="#667eea">[opt]</text>
+<line x1="220" y1="150" x2="680" y2="150" stroke="#667eea" stroke-width="1"/>
+<text class="label-text" x="230" y="165" font-size="11">Document attached</text>
+
+<path class="sequence-message" d="M 90 180 L 250 180" marker-end="url(#arrowhead3)"/>
+<text class="label-text" x="130" y="175">Attach document</text>
+
+<path class="sequence-message" d="M 255 220 L 440 220" marker-end="url(#arrowhead3)"/>
+<text class="label-text" x="300" y="215">uploadDocument(file)</text>
+
+<path class="sequence-message" d="M 445 240 L 640 240" marker-end="url(#arrowhead3)"/>
+<text class="label-text" x="490" y="235">Upload to bucket</text>
+
+<path class="sequence-return" d="M 640 260 L 445 260" marker-end="url(#arrowhead-light3)"/>
+<text class="label-text" x="490" y="255">documentURL</text>
+
+<path class="sequence-message" d="M 90 320 L 250 320" marker-end="url(#arrowhead3)"/>
+<text class="label-text" x="130" y="315">Submit purchase</text>
+
+<!-- Alt frame for purchase creation -->
+<rect x="220" y="350" width="640" height="280" fill="none" stroke="#10b981" stroke-width="2" rx="5"/>
+<text class="label-text" x="230" y="365" font-weight="600" fill="#10b981">[alt]</text>
+<line x1="220" y1="370" x2="860" y2="370" stroke="#10b981" stroke-width="1"/>
+<text class="label-text" x="230" y="385" font-size="11">Valid purchase data</text>
+
+<path class="sequence-message" d="M 255 400 L 440 400" marker-end="url(#arrowhead3)"/>
+<text class="label-text" x="300" y="395">createPurchaseWithItems()</text>
+
+<path class="sequence-message" d="M 445 440 L 830 440" marker-end="url(#arrowhead3)"/>
+<text class="label-text" x="580" y="435">INSERT INTO purchases</text>
+
+<path class="sequence-message" d="M 445 480 L 830 480" marker-end="url(#arrowhead3)"/>
+<text class="label-text" x="580" y="475">INSERT INTO purchase_items</text>
+
+<path class="sequence-return" d="M 830 520 L 445 520" marker-end="url(#arrowhead-light3)"/>
+<text class="label-text" x="580" y="515">{success, purchaseId}</text>
+
+<path class="sequence-return" d="M 440 560 L 255 560" marker-end="url(#arrowhead-light3)"/>
+<text class="label-text" x="300" y="555">Purchase recorded</text>
+
+<line x1="220" y1="580" x2="860" y2="580" stroke="#10b981" stroke-width="1" stroke-dasharray="5,3"/>
+<text class="label-text" x="230" y="595" font-size="11">Invalid data</text>
+
+<path class="sequence-return" d="M 440 610 L 255 610" marker-end="url(#arrowhead-light3)"/>
+<text class="label-text" x="300" y="605">Validation error</text>
+
+<path class="sequence-return" d="M 250 650 L 90 650" marker-end="url(#arrowhead-light3)"/>
+<text class="label-text" x="130" y="645">Show notification</text>
+
+</svg>
+</div>
+
+<!-- 4. Manage Inventory Sequence -->
+<div id="seq-inventory" class="diagram-content" style="display:none">
+<h3 style="padding:1rem 2rem;font-size:1.1rem;color:#1e293b">Manage Inventory Flow</h3>
+<svg viewBox="0 0 1000 650" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead4" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" class="arrow"/>
+</marker>
+<marker id="arrowhead-light4" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" fill="#94a3b8"/>
+</marker>
+</defs>
+
+<!-- Actors -->
+<text x="90" y="15" text-anchor="middle" font-size="20">👤</text>
+<rect class="sequence-actor" x="50" y="20" width="80" height="40" rx="5"/>
+<text class="state-text" x="90" y="45" text-anchor="middle" font-size="12">User</text>
+<line class="sequence-lifeline" x1="90" y1="60" x2="90" y2="600"/>
+
+<text x="270" y="15" text-anchor="middle" font-size="20">📦</text>
+<rect class="sequence-actor" x="200" y="20" width="140" height="40" rx="5"/>
+<text class="state-text" x="270" y="45" text-anchor="middle" font-size="12">ItemManagement</text>
+<line class="sequence-lifeline" x1="270" y1="60" x2="270" y2="600"/>
+
+<text x="480" y="15" text-anchor="middle" font-size="20">⚙️</text>
+<rect class="sequence-actor" x="420" y="20" width="120" height="40" rx="5"/>
+<text class="state-text" x="480" y="45" text-anchor="middle" font-size="12">supabaseClient</text>
+<line class="sequence-lifeline" x1="480" y1="60" x2="480" y2="600"/>
+
+<text x="670" y="15" text-anchor="middle" font-size="20">🗄️</text>
+<rect class="sequence-actor" x="620" y="20" width="100" height="40" rx="5"/>
+<text class="state-text" x="670" y="45" text-anchor="middle" font-size="12">Database</text>
+<line class="sequence-lifeline" x1="670" y1="60" x2="670" y2="600"/>
+
+<!-- Activation boxes -->
+<rect x="265" y="100" width="10" height="480" fill="#4a9eff" opacity="0.3"/>
+<rect x="475" y="140" width="10" height="100" fill="#4a9eff" opacity="0.3"/>
+<rect x="665" y="180" width="10" height="60" fill="#4a9eff" opacity="0.3"/>
+<rect x="475" y="370" width="10" height="140" fill="#4a9eff" opacity="0.3"/>
+<rect x="665" y="410" width="10" height="80" fill="#4a9eff" opacity="0.3"/>
+
+<!-- Messages -->
+<path class="sequence-message" d="M 90 100 L 270 100" marker-end="url(#arrowhead4)"/>
+<text class="label-text" x="130" y="95">View items</text>
+
+<path class="sequence-message" d="M 275 140 L 480 140" marker-end="url(#arrowhead4)"/>
+<text class="label-text" x="330" y="135">getItems(userId)</text>
+
+<path class="sequence-message" d="M 485 180 L 670 180" marker-end="url(#arrowhead4)"/>
+<text class="label-text" x="530" y="175">SELECT FROM items</text>
+
+<path class="sequence-return" d="M 670 220 L 485 220" marker-end="url(#arrowhead-light4)"/>
+<text class="label-text" x="530" y="215">itemData</text>
+
+<!-- Note box for low stock check -->
+<rect class="note-box" x="220" y="250" width="100" height="30" rx="3"/>
+<text class="label-text" x="270" y="270" text-anchor="middle" font-size="11">Check low stock</text>
+
+<path class="sequence-return" d="M 270 300 L 90 300" marker-end="url(#arrowhead-light4)"/>
+<text class="label-text" x="130" y="295">Display items + alerts</text>
+
+<path class="sequence-message" d="M 90 340 L 270 340" marker-end="url(#arrowhead4)"/>
+<text class="label-text" x="130" y="335">Add/Edit item</text>
+
+<!-- Alt frame for item operation -->
+<rect x="240" y="360" width="460" height="150" fill="none" stroke="#10b981" stroke-width="2" rx="5"/>
+<text class="label-text" x="250" y="375" font-weight="600" fill="#10b981">[alt]</text>
+<line x1="240" y1="380" x2="700" y2="380" stroke="#10b981" stroke-width="1"/>
+<text class="label-text" x="250" y="395" font-size="11">Valid item data</text>
+
+<path class="sequence-message" d="M 275 410 L 480 410" marker-end="url(#arrowhead4)"/>
+<text class="label-text" x="330" y="405">addItem() / updateItem()</text>
+
+<path class="sequence-message" d="M 485 450 L 670 450" marker-end="url(#arrowhead4)"/>
+<text class="label-text" x="530" y="445">INSERT / UPDATE items</text>
+
+<path class="sequence-return" d="M 670 480 L 485 480" marker-end="url(#arrowhead-light4)"/>
+<text class="label-text" x="530" y="475">{success}</text>
+
+<line x1="240" y1="495" x2="700" y2="495" stroke="#10b981" stroke-width="1" stroke-dasharray="5,3"/>
+<text class="label-text" x="250" y="505" font-size="11">Invalid data - show error</text>
+
+<path class="sequence-return" d="M 270 540 L 90 540" marker-end="url(#arrowhead-light4)"/>
+<text class="label-text" x="130" y="535">Show result</text>
+
+</svg>
+</div>
+
+<!-- 5. Manage Party Sequence -->
+<div id="seq-party" class="diagram-content" style="display:none">
+<h3 style="padding:1rem 2rem;font-size:1.1rem;color:#1e293b">Manage Party (Customer/Supplier) Flow</h3>
+<svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead5" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" class="arrow"/>
+</marker>
+<marker id="arrowhead-light5" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" fill="#94a3b8"/>
+</marker>
+</defs>
+
+<!-- Actors -->
+<text x="90" y="15" text-anchor="middle" font-size="20">👤</text>
+<rect class="sequence-actor" x="50" y="20" width="80" height="40" rx="5"/>
+<text class="state-text" x="90" y="45" text-anchor="middle" font-size="12">User</text>
+<line class="sequence-lifeline" x1="90" y1="60" x2="90" y2="550"/>
+
+<text x="270" y="15" text-anchor="middle" font-size="20">👥</text>
+<rect class="sequence-actor" x="200" y="20" width="140" height="40" rx="5"/>
+<text class="state-text" x="270" y="45" text-anchor="middle" font-size="12">PartyManagement</text>
+<line class="sequence-lifeline" x1="270" y1="60" x2="270" y2="550"/>
+
+<text x="480" y="15" text-anchor="middle" font-size="20">⚙️</text>
+<rect class="sequence-actor" x="420" y="20" width="120" height="40" rx="5"/>
+<text class="state-text" x="480" y="45" text-anchor="middle" font-size="12">supabaseClient</text>
+<line class="sequence-lifeline" x1="480" y1="60" x2="480" y2="550"/>
+
+<text x="670" y="15" text-anchor="middle" font-size="20">🗄️</text>
+<rect class="sequence-actor" x="620" y="20" width="100" height="40" rx="5"/>
+<text class="state-text" x="670" y="45" text-anchor="middle" font-size="12">Database</text>
+<line class="sequence-lifeline" x1="670" y1="60" x2="670" y2="550"/>
+
+<!-- Activation boxes -->
+<rect x="265" y="100" width="10" height="420" fill="#4a9eff" opacity="0.3"/>
+<rect x="475" y="140" width="10" height="100" fill="#4a9eff" opacity="0.3"/>
+<rect x="665" y="180" width="10" height="60" fill="#4a9eff" opacity="0.3"/>
+<rect x="475" y="300" width="10" height="140" fill="#4a9eff" opacity="0.3"/>
+<rect x="665" y="340" width="10" height="80" fill="#4a9eff" opacity="0.3"/>
+
+<!-- Messages -->
+<path class="sequence-message" d="M 90 100 L 270 100" marker-end="url(#arrowhead5)"/>
+<text class="label-text" x="130" y="95">View parties</text>
+
+<path class="sequence-message" d="M 275 140 L 480 140" marker-end="url(#arrowhead5)"/>
+<text class="label-text" x="330" y="135">getParties(userId)</text>
+
+<path class="sequence-message" d="M 485 180 L 670 180" marker-end="url(#arrowhead5)"/>
+<text class="label-text" x="530" y="175">SELECT FROM parties</text>
+
+<path class="sequence-return" d="M 670 220 L 485 220" marker-end="url(#arrowhead-light5)"/>
+<text class="label-text" x="530" y="215">partyData</text>
+
+<path class="sequence-return" d="M 480 240 L 275 240" marker-end="url(#arrowhead-light5)"/>
+<text class="label-text" x="330" y="235">partyList</text>
+
+<path class="sequence-message" d="M 90 280 L 270 280" marker-end="url(#arrowhead5)"/>
+<text class="label-text" x="130" y="275">Add/Edit party</text>
+
+<!-- Alt frame -->
+<rect x="240" y="290" width="460" height="170" fill="none" stroke="#10b981" stroke-width="2" rx="5"/>
+<text class="label-text" x="250" y="305" font-weight="600" fill="#10b981">[alt]</text>
+<line x1="240" y1="310" x2="700" y2="310" stroke="#10b981" stroke-width="1"/>
+<text class="label-text" x="250" y="325" font-size="11">Valid party data</text>
+
+<path class="sequence-message" d="M 275 340 L 480 340" marker-end="url(#arrowhead5)"/>
+<text class="label-text" x="330" y="335">addParty() / updateParty()</text>
+
+<path class="sequence-message" d="M 485 380 L 670 380" marker-end="url(#arrowhead5)"/>
+<text class="label-text" x="530" y="375">INSERT / UPDATE parties</text>
+
+<path class="sequence-return" d="M 670 410 L 485 410" marker-end="url(#arrowhead-light5)"/>
+<text class="label-text" x="530" y="405">{success, partyId}</text>
+
+<line x1="240" y1="430" x2="700" y2="430" stroke="#10b981" stroke-width="1" stroke-dasharray="5,3"/>
+<text class="label-text" x="250" y="445" font-size="11">Invalid data - show error</text>
+
+<path class="sequence-return" d="M 270 480 L 90 480" marker-end="url(#arrowhead-light5)"/>
+<text class="label-text" x="130" y="475">Show result</text>
+
+</svg>
+</div>
+
+<!-- 6. AI Assistant Sequence -->
+<div id="seq-ai" class="diagram-content" style="display:none">
+<h3 style="padding:1rem 2rem;font-size:1.1rem;color:#1e293b">AI Assistant Chat Flow</h3>
+<svg viewBox="0 0 1100 650" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead6" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" class="arrow"/>
+</marker>
+<marker id="arrowhead-light6" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" fill="#94a3b8"/>
+</marker>
+</defs>
+
+<!-- Actors -->
+<text x="90" y="15" text-anchor="middle" font-size="20">👤</text>
+<rect class="sequence-actor" x="50" y="20" width="80" height="40" rx="5"/>
+<text class="state-text" x="90" y="45" text-anchor="middle" font-size="12">User</text>
+<line class="sequence-lifeline" x1="90" y1="60" x2="90" y2="600"/>
+
+<text x="250" y="15" text-anchor="middle" font-size="20">📊</text>
+<rect class="sequence-actor" x="200" y="20" width="100" height="40" rx="5"/>
+<text class="state-text" x="250" y="45" text-anchor="middle" font-size="12">Dashboard</text>
+<line class="sequence-lifeline" x1="250" y1="60" x2="250" y2="600"/>
+
+<text x="430" y="15" text-anchor="middle" font-size="20">💬</text>
+<rect class="sequence-actor" x="380" y="20" width="100" height="40" rx="5"/>
+<text class="state-text" x="430" y="45" text-anchor="middle" font-size="12">AIChatbot</text>
+<line class="sequence-lifeline" x1="430" y1="60" x2="430" y2="600"/>
+
+<text x="620" y="15" text-anchor="middle" font-size="20">⚙️</text>
+<rect class="sequence-actor" x="560" y="20" width="120" height="40" rx="5"/>
+<text class="state-text" x="620" y="45" text-anchor="middle" font-size="12">geminiService</text>
+<line class="sequence-lifeline" x1="620" y1="60" x2="620" y2="600"/>
+
+<text x="810" y="15" text-anchor="middle" font-size="20">🤖</text>
+<rect class="sequence-actor" x="760" y="20" width="100" height="40" rx="5"/>
+<text class="state-text" x="810" y="45" text-anchor="middle" font-size="12">Gemini API</text>
+<line class="sequence-lifeline" x1="810" y1="60" x2="810" y2="600"/>
+
+<!-- Activation boxes -->
+<rect x="245" y="100" width="10" height="80" fill="#4a9eff" opacity="0.3"/>
+<rect x="425" y="140" width="10" height="440" fill="#4a9eff" opacity="0.3"/>
+<rect x="615" y="180" width="10" height="100" fill="#4a9eff" opacity="0.3"/>
+<rect x="805" y="250" width="10" height="40" fill="#4a9eff" opacity="0.3"/>
+<rect x="615" y="370" width="10" height="160" fill="#4a9eff" opacity="0.3"/>
+<rect x="805" y="410" width="10" height="80" fill="#4a9eff" opacity="0.3"/>
+
+<!-- Messages -->
+<path class="sequence-message" d="M 90 100 L 250 100" marker-end="url(#arrowhead6)"/>
+<text class="label-text" x="130" y="95">Click AI Assistant</text>
+
+<path class="sequence-message" d="M 255 140 L 430 140" marker-end="url(#arrowhead6)"/>
+<text class="label-text" x="290" y="135">Open chatbot</text>
+
+<path class="sequence-message" d="M 435 180 L 620 180" marker-end="url(#arrowhead6)"/>
+<text class="label-text" x="470" y="175">initializeChat(businessData)</text>
+
+<!-- Note box -->
+<rect class="note-box" x="570" y="210" width="100" height="30" rx="3"/>
+<text class="label-text" x="620" y="230" text-anchor="middle" font-size="11">Format context</text>
+
+<path class="sequence-message" d="M 625 250 L 810 250" marker-end="url(#arrowhead6)"/>
+<text class="label-text" x="670" y="245">Start chat session</text>
+
+<path class="sequence-return" d="M 810 280 L 625 280" marker-end="url(#arrowhead-light6)"/>
+<text class="label-text" x="670" y="275">Session ready</text>
+
+<path class="sequence-return" d="M 620 310 L 435 310" marker-end="url(#arrowhead-light6)"/>
+<text class="label-text" x="470" y="305">Chat initialized</text>
+
+<path class="sequence-message" d="M 90 350 L 430 350" marker-end="url(#arrowhead6)"/>
+<text class="label-text" x="210" y="345">Type message</text>
+
+<path class="sequence-message" d="M 435 390 L 620 390" marker-end="url(#arrowhead6)"/>
+<text class="label-text" x="470" y="385">sendMessage(userMessage)</text>
+
+<path class="sequence-message" d="M 625 430 L 810 430" marker-end="url(#arrowhead6)"/>
+<text class="label-text" x="670" y="425">Send with context</text>
+
+<path class="sequence-return" d="M 810 470 L 625 470" marker-end="url(#arrowhead-light6)"/>
+<text class="label-text" x="670" y="465">AI response</text>
+
+<path class="sequence-return" d="M 620 510 L 435 510" marker-end="url(#arrowhead-light6)"/>
+<text class="label-text" x="470" y="505">Response text</text>
+
+<path class="sequence-return" d="M 430 550 L 90 550" marker-end="url(#arrowhead-light6)"/>
+<text class="label-text" x="210" y="545">Display AI reply</text>
+
+</svg>
+</div>
+
+</div>
+
+<script>
+function showDiagram(diagramName){
+document.querySelectorAll('.diagram-section').forEach(s=>s.classList.remove('active'));
+document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+document.getElementById(diagramName).classList.add('active');
+event.target.classList.add('active');
+}
+
+function showSequence(seqName){
+document.querySelectorAll('#sequence .diagram-content').forEach(s=>s.style.display='none');
+document.querySelectorAll('#sequence .nav-btn').forEach(b=>b.classList.remove('active'));
+document.getElementById(seqName).style.display='block';
+event.target.classList.add('active');
+}
+</script>
+
+</div>
+</body>
+</html>

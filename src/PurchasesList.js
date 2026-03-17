@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import "./PurchasesList.css";
 import { getPurchasesWithDocuments } from "./supabaseClient";
+import LoadingSkeleton from "./LoadingSkeleton";
+import { useToast } from "./Toast";
 
 const PurchasesList = ({ user, onBack }) => {
+  const toast = useToast();
   const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -36,7 +39,7 @@ const PurchasesList = ({ user, onBack }) => {
     if (documentUrl) {
       window.open(documentUrl, '_blank');
     } else {
-      alert(`Document: ${fileName || 'Unknown file'}`);
+      toast.info(`Document: ${fileName || 'Unknown file'}`);
     }
   };
 
@@ -62,9 +65,8 @@ const PurchasesList = ({ user, onBack }) => {
       </div>
 
       {loading && (
-        <div className="loading-state">
-          <div className="loading-spinner">⏳</div>
-          <p>Loading purchases...</p>
+        <div className="loading-skeleton-container">
+          <LoadingSkeleton type="table" rows={8} columns={6} />
         </div>
       )}
 

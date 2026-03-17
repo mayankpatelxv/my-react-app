@@ -4,9 +4,12 @@ import { getItems, getParties, createSaleWithItems } from "./supabaseClient";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
 import jsPDF from 'jspdf';
+import LoadingSkeleton from "./LoadingSkeleton";
+import { useToast } from "./Toast";
 
 const Sales = ({ user, onLogout, onNavigate }) => {
   const { formatCurrency, getText, formatDate } = useSettings();
+  const toast = useToast();
   const [activeMenu, setActiveMenu] = useState("Sales");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState("");
@@ -35,6 +38,11 @@ const Sales = ({ user, onLogout, onNavigate }) => {
   // Fetch data on component mount
   useEffect(() => {
     fetchData();
+    
+    // Request notification permission
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
   }, [user]);
 
   const fetchData = async () => {
@@ -115,7 +123,7 @@ const Sales = ({ user, onLogout, onNavigate }) => {
 
   const handleAddItem = () => {
     if (availableItems.length === 0) {
-      alert("No items available. Please add items in Item Management first.");
+      toast.warning("No items available. Please add items in Item Management first.");
       return;
     }
     
@@ -125,7 +133,7 @@ const Sales = ({ user, onLogout, onNavigate }) => {
     );
     
     if (!availableItem) {
-      alert("All available items have been added to the invoice.");
+      toast.info("All available items have been added to the invoice.");
       return;
     }
     
@@ -156,17 +164,17 @@ const Sales = ({ user, onLogout, onNavigate }) => {
 
   const handleSaveInvoice = async () => {
     if (!selectedCustomer) {
-      alert("Please select a customer.");
+      toast.warning("Please select a customer.");
       return;
     }
     
     if (items.length === 0) {
-      alert("Please add at least one item to the invoice.");
+      toast.warning("Please add at least one item to the invoice.");
       return;
     }
     
     if (items.some(item => item.quantity <= 0)) {
-      alert("All items must have a quantity greater than 0.");
+      toast.warning("All items must have a quantity greater than 0.");
       return;
     }
 
@@ -183,13 +191,23 @@ const Sales = ({ user, onLogout, onNavigate }) => {
         totalAmount: calculateGrandTotal(),
         status: 'draft',
         paymentTerms: null,
-        notes: null
+        notes: null,
+        invoiceDate: new Date().toISOString().split('T')[0]
       };
 
       const result = await createSaleWithItems(saleData, items, user.id);
       
       if (result.success) {
-        alert(`Invoice saved successfully! Invoice #${result.data.sale.invoice_number}`);
+        const invoiceNum = result.data.sale.invoice_number;
+        toast.success(`Invoice saved! Invoice #${invoiceNum}`);
+        
+        // Show browser notification
+        if ("Notification" in window && Notification.permission === "granted") {
+          new Notification("Invoice Created", {
+            body: `Invoice #${invoiceNum} for ${selectedCustomer} - ${formatCurrency(calculateGrandTotal())}`,
+            icon: "/logo192.png"
+          });
+        }
         
         // Reset form
         setItems([]);
@@ -199,11 +217,11 @@ const Sales = ({ user, onLogout, onNavigate }) => {
         // Optionally navigate to a sales list or dashboard
         // onNavigate("Dashboard");
       } else {
-        alert("Failed to save invoice: " + result.error);
+        toast.error("Failed to save invoice: " + result.error);
       }
     } catch (error) {
       console.error("Error saving invoice:", error);
-      alert("Failed to save invoice. Please try again.");
+      toast.error("Failed to save invoice. Please try again.");
     } finally {
       setIsSaving(false);
     }
@@ -211,12 +229,12 @@ const Sales = ({ user, onLogout, onNavigate }) => {
 
   const handlePrintInvoice = () => {
     if (!selectedCustomer) {
-      alert("Please select a customer first.");
+      toast.warning("Please select a customer first.");
       return;
     }
     
     if (items.length === 0) {
-      alert("Please add at least one item to print invoice.");
+      toast.warning("Please add at least one item to print invoice.");
       return;
     }
 
@@ -351,18 +369,64 @@ const Sales = ({ user, onLogout, onNavigate }) => {
       
     } catch (error) {
       console.error("Error generating PDF for printing:", error);
-      alert("Failed to generate PDF for printing. Please try again.");
+      toast.error("Failed to generate PDF for printing. Please try again.");
     }
+  };
+
+  const handleWhatsAppShare = () => {
+    if (!selectedCustomer) {
+      toast.warning("Please select a customer first.");
+      return;
+    }
+    if (items.length === 0) {
+      toast.warning("Please add at least one item to share.");
+      return;
+    }
+
+    const invoiceNumber = `INV-${Date.now().toString().slice(-6)}`;
+    const currentDate = new Date().toLocaleDateString('en-IN');
+    const subtotal = calculateSubtotal();
+    const discount = calculateDiscount();
+    const tax = calculateTax();
+    const grandTotal = calculateGrandTotal();
+
+    // Build items list
+    const itemLines = items
+      .map(item => `  • ${item.name} x${item.quantity} — ${formatCurrency(item.price * item.quantity)}`)
+      .join("\n");
+
+    // Build message
+    let message = `*Invoice #${invoiceNumber}*\n`;
+    message += `Date: ${currentDate}\n`;
+    message += `Customer: ${selectedCustomer}\n\n`;
+    message += `*Items:*\n${itemLines}\n\n`;
+    message += `Subtotal: ${formatCurrency(subtotal)}\n`;
+    if (discount > 0) message += `Discount: -${formatCurrency(discount)}\n`;
+    message += `Tax (${taxRate}%): ${formatCurrency(tax)}\n`;
+    message += `*Total: ${formatCurrency(grandTotal)}*\n\n`;
+    message += `_Thank you for your business!_\n— BizBuddy`;
+
+    // Try to send directly to customer's phone if available
+    const customer = customers.find(c => c.name === selectedCustomer);
+    const phone = customer?.phone?.replace(/\D/g, ""); // strip non-digits
+
+    const encodedMsg = encodeURIComponent(message);
+    const url = phone
+      ? `https://wa.me/${phone}?text=${encodedMsg}`
+      : `https://wa.me/?text=${encodedMsg}`;
+
+    window.open(url, "_blank");
+    toast.success("Opening WhatsApp...");
   };
 
   const handleDownloadPDF = () => {
     if (!selectedCustomer) {
-      alert("Please select a customer first.");
+      toast.warning("Please select a customer first.");
       return;
     }
     
     if (items.length === 0) {
-      alert("Please add at least one item to generate PDF.");
+      toast.warning("Please add at least one item to generate PDF.");
       return;
     }
 
@@ -489,7 +553,7 @@ const Sales = ({ user, onLogout, onNavigate }) => {
       
     } catch (error) {
       console.error("Error generating PDF:", error);
-      alert("Failed to generate PDF. Please try again.");
+      toast.error("Failed to generate PDF. Please try again.");
     }
   };
 
@@ -571,9 +635,8 @@ const Sales = ({ user, onLogout, onNavigate }) => {
         {/* Invoice Content */}
         <div className="invoice-content">
           {loadingData ? (
-            <div className="loading-container">
-              <div className="loading-spinner">⏳</div>
-              <p>Loading data...</p>
+            <div className="loading-skeleton-container">
+              <LoadingSkeleton type="form" />
             </div>
           ) : (
             <>
@@ -785,6 +848,12 @@ const Sales = ({ user, onLogout, onNavigate }) => {
                 </button>
                 <button className="download-pdf-btn" onClick={handleDownloadPDF}>
                   Download PDF
+                </button>
+                <button className="whatsapp-share-btn" onClick={handleWhatsAppShare}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{flexShrink:0}}>
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                  </svg>
+                  Share on WhatsApp
                 </button>
               </div>
             </div>

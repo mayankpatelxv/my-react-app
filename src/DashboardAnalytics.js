@@ -1,7 +1,9 @@
 import { useState } from "react";
 import "./DashboardAnalytics.css";
 import BizBuddyLogo from "./BizBuddyLogo";
+import { useToast } from "./Toast";
 const DashboardAnalytics = ({ user, onLogout, onNavigate }) => {
+  const toast = useToast();
   const [activeMenu, setActiveMenu] = useState("Dashboard & Analytics");
   const [dateRange, setDateRange] = useState("Last 7 Days");
   const [location, setLocation] = useState("All Locations");
@@ -83,12 +85,12 @@ const DashboardAnalytics = ({ user, onLogout, onNavigate }) => {
 
   const handleExportData = () => {
     console.log("Exporting analytics data...");
-    alert("Analytics data exported successfully!");
+    toast.success("Analytics data exported successfully!");
   };
 
   const handleGenerateReport = () => {
     console.log("Generating analytics report...");
-    alert("Analytics report generated successfully!");
+    toast.success("Analytics report generated successfully!");
   };
 
   return (

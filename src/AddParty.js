@@ -2,8 +2,10 @@ import { useState } from "react";
 import "./AddParty.css";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
+import { useToast } from "./Toast";
 const AddParty = ({ user, onLogout, onNavigate }) => {
   const { getText } = useSettings();
+  const toast = useToast();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -55,7 +57,7 @@ const AddParty = ({ user, onLogout, onNavigate }) => {
       console.log("User ID being used:", userId);
       
       if (!userId) {
-        alert("User not found. Please log in again.");
+        toast.error("User not found. Please log in again.");
         setIsLoading(false);
         return;
       }
@@ -63,7 +65,7 @@ const AddParty = ({ user, onLogout, onNavigate }) => {
       const result = await addParty(formData, userId);
       
       if (result.success) {
-        alert(`${formData.partyType} "${formData.name}" has been added successfully!`);
+        toast.success(`${formData.partyType} "${formData.name}" added successfully!`);
         
         // Reset form
         setFormData({
@@ -85,12 +87,12 @@ const AddParty = ({ user, onLogout, onNavigate }) => {
         // Navigate back to Party Management
         onNavigate("Party Management");
       } else {
-        alert("Error adding party: " + result.error);
+        toast.error("Error adding party: " + result.error);
       }
       
     } catch (error) {
       console.error("Error adding party:", error);
-      alert("Error adding party: " + error.message);
+      toast.error("Error adding party: " + error.message);
     } finally {
       setIsLoading(false);
     }

@@ -142,7 +142,10 @@
 
 .settings-icon {
   font-size: 1.25rem;
+  display: flex;
+  align-items: center;
 }
+.settings-icon svg { width: 18px; height: 18px; }
 
 /* Stats Grid - Desktop First */
 .stats-grid {
@@ -183,7 +186,10 @@
 .stat-icon {
   font-size: 1.25rem;
   opacity: 0.8;
+  display: flex;
+  align-items: center;
 }
+.stat-icon svg { width: 22px; height: 22px; }
 
 .stat-value {
   font-size: 1.5rem;
@@ -1034,7 +1040,11 @@ body.compact-view .chart-header h2 {
   color: #1f2937;
   margin: 0;
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
+.activity-header h2 svg { width: 22px; height: 22px; color: #4a9eff; }
 
 .activity-header h2::after {
   content: '';
@@ -1098,7 +1108,11 @@ body.compact-view .chart-header h2 {
   font-weight: 700;
   color: #1f2937;
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
+.card-header h3 svg { width: 18px; height: 18px; color: #4a9eff; }
 
 .insight-badge, .stats-badge {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
@@ -1134,7 +1148,11 @@ body.compact-view .chart-header h2 {
 .insight-icon {
   font-size: 20px;
   margin-top: 2px;
+  display: flex;
+  align-items: center;
+  color: #4a9eff;
 }
+.insight-icon svg { width: 20px; height: 20px; flex-shrink: 0; }
 
 .insight-text {
   font-size: 14px;
@@ -1188,7 +1206,10 @@ body.compact-view .chart-header h2 {
   right: 8px;
   font-size: 16px;
   opacity: 0.7;
+  display: flex;
+  align-items: center;
 }
+.quick-stat-item .stat-icon svg { width: 16px; height: 16px; }
 
 .action-cards-row {
   display: grid;
@@ -1229,6 +1250,7 @@ body.compact-view .chart-header h2 {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(229, 231, 235, 0.8);
 }
+.action-card-icon svg { width: 26px; height: 26px; flex-shrink: 0; }
 
 .action-card-content {
   flex: 1;
@@ -1455,4 +1477,150 @@ body.compact-view .chart-header h2 {
   .bar-amount {
     font-size: 0.875rem;
   }
+}
+
+/* ============================================
+   BOTTOM SECTION — Profit Overview & Financial Summary
+   ============================================ */
+.bottom-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.db-card {
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 1.75rem;
+  border: 1px solid rgba(229,231,235,0.8);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  transition: box-shadow 0.2s ease;
+}
+.db-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.12); }
+
+.db-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.db-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+.db-card-icon-wrap {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+}
+.db-card-icon-wrap svg { width: 18px; height: 18px; }
+.db-card-icon-wrap.blue  { background: rgba(74,158,255,0.12); color: #4a9eff; }
+.db-card-icon-wrap.purple { background: rgba(139,92,246,0.12); color: #8b5cf6; }
+.db-card-icon-wrap.green  { background: rgba(16,185,129,0.12); color: #10b981; }
+
+.db-link-btn {
+  background: none; border: none; cursor: pointer;
+  color: #4a9eff; font-size: 0.8rem; font-weight: 600;
+  padding: 0; font-family: inherit;
+  transition: opacity 0.2s;
+}
+.db-link-btn:hover { opacity: 0.7; }
+
+.live-badge {
+  font-size: 0.75rem; font-weight: 600;
+  color: #10b981;
+  background: rgba(16,185,129,0.1);
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+}
+
+/* Profit bars */
+.profit-bars { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+.profit-bar-row { display: flex; align-items: center; gap: 0.75rem; }
+.profit-bar-label {
+  display: flex; align-items: center; gap: 0.4rem;
+  min-width: 110px; font-size: 0.8rem; color: #6b7280; font-weight: 500;
+}
+.profit-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.blue-dot   { background: #4a9eff; }
+.orange-dot { background: #f59e0b; }
+.green-dot  { background: #10b981; }
+
+.profit-bar-track {
+  flex: 1; height: 10px;
+  background: #f3f4f6; border-radius: 6px; overflow: hidden;
+}
+.profit-bar-fill {
+  height: 100%; border-radius: 6px;
+  transition: width 1s ease;
+}
+.sales-bar          { background: linear-gradient(90deg, #4a9eff, #667eea); }
+.purchase-bar       { background: linear-gradient(90deg, #f59e0b, #f97316); }
+.profit-bar-fill-green { background: linear-gradient(90deg, #10b981, #059669); }
+
+.profit-bar-value {
+  min-width: 80px; text-align: right;
+  font-size: 0.8rem; font-weight: 700; color: #1f2937;
+}
+.net-profit-val { color: #10b981; }
+
+.profit-footer {
+  display: flex; align-items: center;
+  background: #f9fafb; border-radius: 12px;
+  padding: 0.875rem 1rem; gap: 0;
+}
+.profit-footer-item {
+  flex: 1; text-align: center;
+  display: flex; flex-direction: column; gap: 0.2rem;
+}
+.profit-footer-divider {
+  width: 1px; height: 32px; background: #e5e7eb; flex-shrink: 0;
+}
+.pf-label { font-size: 0.7rem; color: #9ca3af; font-weight: 500; text-transform: uppercase; letter-spacing: 0.4px; }
+.pf-value { font-size: 0.9rem; font-weight: 800; }
+.pf-value.blue   { color: #4a9eff; }
+.pf-value.green  { color: #10b981; }
+.pf-value.red    { color: #ef4444; }
+.pf-value.purple { color: #8b5cf6; }
+
+/* Ring chart */
+.ring-chart-wrap {
+  display: flex; align-items: center; gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.ring-svg { width: 140px; height: 140px; flex-shrink: 0; }
+.ring-legend { display: flex; flex-direction: column; gap: 0.75rem; }
+.ring-legend-item { display: flex; align-items: center; gap: 0.6rem; }
+.ring-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.ring-legend-label { font-size: 0.75rem; color: #6b7280; }
+.ring-legend-val { font-size: 0.9rem; font-weight: 700; color: #1f2937; }
+
+/* Summary rows */
+.summary-rows { display: flex; flex-direction: column; gap: 0; }
+.summary-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+.summary-row:last-child { border-bottom: none; }
+.sr-label {
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.85rem; color: #6b7280;
+}
+.sr-label svg { width: 15px; height: 15px; }
+.sr-value { font-size: 0.9rem; font-weight: 700; color: #1f2937; }
+.sr-value.green { color: #10b981; }
+.sr-value.red   { color: #ef4444; }
+
+@media (max-width: 1023px) {
+  .bottom-section { grid-template-columns: 1fr; }
+  .ring-chart-wrap { flex-direction: column; align-items: flex-start; }
 }

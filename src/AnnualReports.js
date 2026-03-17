@@ -4,12 +4,15 @@ import AnalyticsReport from "./AnalyticsReport";
 import { getSales, getPurchases } from "./supabaseClient";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
+import LoadingSkeleton from "./LoadingSkeleton";
+import { useToast } from "./Toast";
 
 const AnnualReports = ({ user, onLogout, onNavigate }) => {
   const { formatCurrency, getText, formatDate } = useSettings();
+  const toast = useToast();
   const [activeMenu, setActiveMenu] = useState("Annual Reports");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [selectedYear, setSelectedYear] = useState("2024");
+  const selectedYear = new Date().getFullYear().toString();
   const [showAnalyticsReport, setShowAnalyticsReport] = useState(false);
   const [loading, setLoading] = useState(true);
   const [reportData, setReportData] = useState({
@@ -145,9 +148,7 @@ const AnnualReports = ({ user, onLogout, onNavigate }) => {
     { name: getText('reports'), icon: "📈", key: "Annual Reports" }
   ];
 
-  const years = ["2026", "2025", "2024", "2023", "2022", "2021", "2020"];
 
-  // Remove the sample data - now using real data from state
 
   const handleExportPDF = async () => {
     try {
@@ -165,10 +166,10 @@ const AnnualReports = ({ user, onLogout, onNavigate }) => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      alert(`📄 Annual Report for ${selectedYear} exported successfully!`);
+      toast.success(`Annual Report for ${selectedYear} exported successfully!`);
     } catch (error) {
       console.error('Error exporting report:', error);
-      alert('Error exporting report. Please try again.');
+      toast.error('Error exporting report. Please try again.');
     }
   };
 
@@ -378,15 +379,6 @@ End of Report
             >
               📈 Dashboard & Analytics
             </button>
-            <select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
-              className="year-select"
-            >
-              {years.map(year => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
             <button className="export-btn" onClick={handleExportPDF}>
               📄 Export PDF
             </button>
@@ -396,10 +388,8 @@ End of Report
         {/* Reports Content */}
         <div className="reports-content">
           {loading ? (
-            <div className="loading-container">
-              <div className="loading-spinner">⏳</div>
-              <h3>Loading Annual Reports...</h3>
-              <p>Please wait while we fetch your data for {selectedYear}.</p>
+            <div className="loading-skeleton-container">
+              <LoadingSkeleton type="dashboard" />
             </div>
           ) : (
             <>

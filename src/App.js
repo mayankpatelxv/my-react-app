@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import './App.css';
 import { SettingsProvider } from './SettingsContext';
+import { handleOAuthCallback } from './supabaseClient';
 import LandingPage from './LandingPage';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
@@ -16,6 +17,7 @@ import Sales from './Sales';
 import Purchases from './Purchases';
 import AnnualReports from './AnnualReports';
 import Settings from './Settings';
+import InstallPrompt from './InstallPrompt';
 
 // Protected Route Component
 function ProtectedRoute({ children, user }) {
@@ -33,8 +35,27 @@ function AppContent() {
 
   // Check authentication on mount
   useEffect(() => {
-    const checkAuth = () => {
+    const checkAuth = async () => {
       try {
+        // Check for OAuth callback (hash fragment in URL)
+        if (window.location.hash && window.location.hash.includes('access_token')) {
+          console.log('🔐 OAuth callback detected');
+          const result = await handleOAuthCallback();
+          
+          if (result.success) {
+            console.log('✅ OAuth user authenticated:', result.data.email);
+            setUser(result.data);
+            localStorage.setItem('bizBuddy_user', JSON.stringify(result.data));
+            // Clear the hash from URL
+            window.history.replaceState(null, '', window.location.pathname);
+            setIsLoading(false);
+            return;
+          } else {
+            console.error('❌ OAuth callback failed:', result.error);
+          }
+        }
+        
+        // Check for existing session
         const savedUser = localStorage.getItem('bizBuddy_user');
         if (savedUser && savedUser !== 'null' && savedUser !== 'undefined') {
           const userData = JSON.parse(savedUser);
@@ -273,6 +294,7 @@ function App() {
       <BrowserRouter basename="/my-react-app">
         <div className="App">
           <AppContent />
+          <InstallPrompt />
         </div>
       </BrowserRouter>
     </SettingsProvider>

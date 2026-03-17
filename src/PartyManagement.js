@@ -2,13 +2,21 @@ import { useState, useEffect } from "react";
 import "./PartyManagement.css";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
+import LoadingSkeleton from "./LoadingSkeleton";
+import CSVImport from "./CSVImport";
+import { useToast } from "./Toast";
+import { useConfirm } from "./ConfirmDialog";
+
 const PartyManagement = ({ user, onLogout, onNavigate }) => {
   const { formatCurrency, getText, formatDate } = useSettings();
+  const toast = useToast();
+  const confirm = useConfirm();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("All");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [parties, setParties] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showCSVImport, setShowCSVImport] = useState(false);
   const [editingParty, setEditingParty] = useState(null);
   const [editFormData, setEditFormData] = useState({
     name: "",
@@ -36,11 +44,11 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
         setParties(result.data || []);
       } else {
         console.error("Error fetching parties:", result.error);
-        alert("Error loading parties: " + result.error);
+        toast.error("Error loading parties: " + result.error);
       }
     } catch (error) {
       console.error("Error fetching parties:", error);
-      alert("Error loading parties: " + error.message);
+      toast.error("Error loading parties: " + error.message);
     } finally {
       setIsLoading(false);
     }
@@ -63,23 +71,25 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
   });
 
   const handleDeleteParty = async (partyId) => {
-    if (!window.confirm("Are you sure you want to delete this party?")) {
-      return;
-    }
+    const ok = await confirm({
+      title: "Delete Party?",
+      message: "This will permanently remove the party and cannot be undone.",
+      confirmText: "Delete",
+    });
+    if (!ok) return;
 
     try {
       const { deleteParty } = await import('./supabaseClient');
       const result = await deleteParty(partyId, user.id);
-      
       if (result.success) {
-        alert("Party deleted successfully!");
-        fetchParties(); // Refresh the list
+        toast.success("Party deleted successfully!");
+        fetchParties();
       } else {
-        alert("Error deleting party: " + result.error);
+        toast.error("Error deleting party: " + result.error);
       }
     } catch (error) {
       console.error("Error deleting party:", error);
-      alert("Error deleting party: " + error.message);
+      toast.error("Error deleting party: " + error.message);
     }
   };
 
@@ -99,7 +109,7 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
     e.preventDefault();
     
     if (!editFormData.name.trim()) {
-      alert("Party name is required");
+      toast.warning("Party name is required");
       return;
     }
 
@@ -108,15 +118,15 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
       const result = await updateParty(editingParty.id, editFormData, user.id);
       
       if (result.success) {
-        alert("Party updated successfully!");
+        toast.success("Party updated successfully!");
         setEditingParty(null);
-        fetchParties(); // Refresh the list
+        fetchParties();
       } else {
-        alert("Error updating party: " + result.error);
+        toast.error("Error updating party: " + result.error);
       }
     } catch (error) {
       console.error("Error updating party:", error);
-      alert("Error updating party: " + error.message);
+      toast.error("Error updating party: " + error.message);
     }
   };
 
@@ -208,6 +218,9 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
               <span>+</span>
               Add New Party
             </button>
+            <button className="csv-import-btn" onClick={() => setShowCSVImport(true)}>
+              📥 Import CSV
+            </button>
           </div>
         </div>
 
@@ -254,12 +267,8 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan="6" className="loading-state">
-                    <div className="loading-content">
-                      <div className="loading-icon">⏳</div>
-                      <h3>Loading Parties...</h3>
-                      <p>Please wait while we fetch your party data.</p>
-                    </div>
+                  <td colSpan="6" className="loading-skeleton-cell">
+                    <LoadingSkeleton type="table" rows={5} columns={6} />
                   </td>
                 </tr>
               ) : filteredParties.length === 0 ? (
@@ -410,6 +419,15 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
             </form>
           </div>
         </div>
+      )}
+
+      {showCSVImport && (
+        <CSVImport
+          type="parties"
+          user={user}
+          onClose={() => setShowCSVImport(false)}
+          onSuccess={() => { setShowCSVImport(false); fetchParties(); }}
+        />
       )}
     </div>
   );
