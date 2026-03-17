@@ -1,0 +1,33 @@
+{
+  "short_name": "bizBuddy",
+  "name": "bizBuddy - Smart Business Support System",
+  "description": "Your smart business support system for managing sales, purchases, inventory, and generating comprehensive business reports.",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable any"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#667eea",
+  "background_color": "#ffffff",
+  "categories": ["business", "productivity", "finance"],
+  "lang": "en",
+  "scope": "/",
+  "prefer_related_applications": false
+}
