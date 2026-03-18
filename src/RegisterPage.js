@@ -88,7 +88,7 @@ const RegisterPage = ({ onSwitchToLogin }) => {
         <div className="auth-left-content">
           <div className="brand-section">
             <BizBuddyLogo size={48} />
-            <h1 className="brand-name">bizBuddy</h1>
+            <h1 className="brand-name"></h1>
           </div>
 
           <div className="hero-section">

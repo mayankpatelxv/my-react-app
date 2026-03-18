@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./Purchases.css";
-import { getItems, getParties, createPurchaseWithItems, uploadPurchaseDocument } from "./supabaseClient";
+import { getItems, getParties, createPurchaseWithItems, uploadPurchaseDocument, updateItem } from "./supabaseClient";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
 import PurchasesList from "./PurchasesList";
@@ -238,6 +238,33 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
       if (result.success) {
         const billNum = result.data.purchase.bill_number;
         toast.success(`Purchase saved! Bill #${billNum}`);
+
+        // Increase stock for each purchased item
+        for (const purchasedItem of items) {
+          if (!purchasedItem.itemId) continue;
+          const sourceItem = availableItems.find(ai => ai.id === purchasedItem.itemId);
+          if (!sourceItem) continue;
+          const newStock = (sourceItem.stock_level || 0) + purchasedItem.quantity;
+          await updateItem(purchasedItem.itemId, {
+            name: sourceItem.name,
+            category: sourceItem.category,
+            unit: sourceItem.unit,
+            price: sourceItem.price,
+            stockLevel: newStock,
+            minStockLevel: sourceItem.min_stock_level,
+            description: sourceItem.description,
+            sku: sourceItem.sku,
+            barcode: sourceItem.barcode,
+            supplier: sourceItem.supplier,
+            location: sourceItem.location,
+            weight: sourceItem.weight,
+            dimensions: sourceItem.dimensions,
+            notes: sourceItem.notes,
+          }, user.id);
+        }
+        // Refresh available items so stock shows updated values
+        const refreshed = await getItems(user.id);
+        if (refreshed.success) setAvailableItems(refreshed.data);
         
         // Show browser notification
         if ("Notification" in window && Notification.permission === "granted") {
@@ -495,13 +522,18 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
                               onChange={(e) => {
                                 const selectedItem = availableItems.find(ai => ai.id === parseInt(e.target.value));
                                 if (selectedItem) {
-                                  handleItemChange(item.id, 'itemId', selectedItem.id);
-                                  handleItemChange(item.id, 'name', selectedItem.name);
-                                  handleItemChange(item.id, 'unitCost', selectedItem.price || 0);
-                                  handleItemChange(item.id, 'description', selectedItem.description);
-                                  // Recalculate total
-                                  const newTotal = (selectedItem.price || 0) * item.quantity;
-                                  handleItemChange(item.id, 'total', newTotal);
+                                  setItems(prev => prev.map(it =>
+                                    it.id === item.id
+                                      ? {
+                                          ...it,
+                                          itemId: selectedItem.id,
+                                          name: selectedItem.name,
+                                          unitCost: selectedItem.price || 0,
+                                          description: selectedItem.description || '',
+                                          total: (selectedItem.price || 0) * it.quantity
+                                        }
+                                      : it
+                                  ));
                                 }
                               }}
                               className="item-select"

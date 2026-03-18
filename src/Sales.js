@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./Sales.css";
-import { getItems, getParties, createSaleWithItems } from "./supabaseClient";
+import { getItems, getParties, createSaleWithItems, updateItem } from "./supabaseClient";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
 import jsPDF from 'jspdf';
@@ -127,23 +127,14 @@ const Sales = ({ user, onLogout, onNavigate }) => {
       return;
     }
     
-    // Add first available item that's not already in the list
-    const availableItem = availableItems.find(item => 
-      !items.some(selectedItem => selectedItem.itemId === item.id)
-    );
-    
-    if (!availableItem) {
-      toast.info("All available items have been added to the invoice.");
-      return;
-    }
-    
+    // Add a blank row — user picks the item themselves
     const newItem = {
-      id: Date.now(), // Temporary ID for the UI
-      itemId: availableItem.id, // Reference to the actual item
-      name: availableItem.name,
-      price: availableItem.price,
+      id: Date.now(),
+      itemId: null,
+      name: "",
+      price: 0,
       quantity: 1,
-      description: availableItem.description
+      description: ""
     };
     setItems([...items, newItem]);
   };
@@ -178,6 +169,11 @@ const Sales = ({ user, onLogout, onNavigate }) => {
       return;
     }
 
+    if (items.some(item => !item.itemId)) {
+      toast.warning("Please select an item for all rows.");
+      return;
+    }
+
     setIsSaving(true);
     
     try {
@@ -200,7 +196,36 @@ const Sales = ({ user, onLogout, onNavigate }) => {
       if (result.success) {
         const invoiceNum = result.data.sale.invoice_number;
         toast.success(`Invoice saved! Invoice #${invoiceNum}`);
-        
+
+        // Deduct stock for each sold item
+        if (confirmInventoryUpdate) {
+          for (const soldItem of items) {
+            if (!soldItem.itemId) continue;
+            const sourceItem = availableItems.find(ai => ai.id === soldItem.itemId);
+            if (!sourceItem) continue;
+            const newStock = Math.max(0, sourceItem.stock_level - soldItem.quantity);
+            await updateItem(soldItem.itemId, {
+              name: sourceItem.name,
+              category: sourceItem.category,
+              unit: sourceItem.unit,
+              price: sourceItem.price,
+              stockLevel: newStock,
+              minStockLevel: sourceItem.min_stock_level,
+              description: sourceItem.description,
+              sku: sourceItem.sku,
+              barcode: sourceItem.barcode,
+              supplier: sourceItem.supplier,
+              location: sourceItem.location,
+              weight: sourceItem.weight,
+              dimensions: sourceItem.dimensions,
+              notes: sourceItem.notes,
+            }, user.id);
+          }
+          // Refresh available items so stock shows updated values
+          const refreshed = await getItems(user.id);
+          if (refreshed.success) setAvailableItems(refreshed.data);
+        }
+
         // Show browser notification
         if ("Notification" in window && Notification.permission === "granted") {
           new Notification("Invoice Created", {
@@ -691,14 +716,15 @@ const Sales = ({ user, onLogout, onNavigate }) => {
                           <tr key={item.id}>
                             <td className="item-name">
                               <select
-                                value={item.itemId || ''}
+                                value={item.itemId ? String(item.itemId) : ''}
                                 onChange={(e) => {
                                   const selectedItem = availableItems.find(ai => ai.id === parseInt(e.target.value));
                                   if (selectedItem) {
-                                    handleItemChange(item.id, 'itemId', selectedItem.id);
-                                    handleItemChange(item.id, 'name', selectedItem.name);
-                                    handleItemChange(item.id, 'price', selectedItem.price);
-                                    handleItemChange(item.id, 'description', selectedItem.description);
+                                    setItems(prev => prev.map(it =>
+                                      it.id === item.id
+                                        ? { ...it, itemId: selectedItem.id, name: selectedItem.name, price: selectedItem.price, description: selectedItem.description || '' }
+                                        : it
+                                    ));
                                   }
                                 }}
                                 className="item-select"

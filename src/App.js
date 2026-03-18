@@ -7,7 +7,6 @@ import LandingPage from './LandingPage';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
 import Dashboard from './Dashboard';
-import DashboardAnalytics from './DashboardAnalytics';
 import PartyManagement from './PartyManagement';
 import CreateInvoice from './CreateInvoice';
 import AddParty from './AddParty';
@@ -122,7 +121,6 @@ function AppContent() {
   const handleNavigation = (pageName) => {
     const routeMap = {
       'Dashboard': '/dashboard',
-      'Dashboard & Analytics': '/dashboard-analytics',
       'Party Management': '/party-management',
       'Create Invoice': '/create-invoice',
       'Add Party': '/add-party',
@@ -193,14 +191,6 @@ function AppContent() {
         element={
           <ProtectedRoute user={user}>
             <Dashboard user={user} onLogout={handleLogout} onNavigate={handleNavigation} />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/dashboard-analytics" 
-        element={
-          <ProtectedRoute user={user}>
-            <DashboardAnalytics user={user} onLogout={handleLogout} onNavigate={handleNavigation} />
           </ProtectedRoute>
         } 
       />

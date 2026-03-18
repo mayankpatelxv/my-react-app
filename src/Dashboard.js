@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./Dashboard.css";
 import AIChatbot from "./AIChatbot";
 import { getItems, getParties, getSales, getPurchases } from "./supabaseClient";

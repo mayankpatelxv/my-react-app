@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import "./AnnualReports.css";
-import AnalyticsReport from "./AnalyticsReport";
 import { getSales, getPurchases } from "./supabaseClient";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
@@ -13,7 +12,6 @@ const AnnualReports = ({ user, onLogout, onNavigate }) => {
   const [activeMenu, setActiveMenu] = useState("Annual Reports");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const selectedYear = new Date().getFullYear().toString();
-  const [showAnalyticsReport, setShowAnalyticsReport] = useState(false);
   const [loading, setLoading] = useState(true);
   const [reportData, setReportData] = useState({
     totalRevenue: 0,
@@ -133,11 +131,6 @@ const AnnualReports = ({ user, onLogout, onNavigate }) => {
       setLoading(false);
     }
   };
-
-  // If Analytics Report is active, show that component
-  if (showAnalyticsReport) {
-    return <AnalyticsReport onBack={() => setShowAnalyticsReport(false)} user={user} />;
-  }
 
   const menuItems = [
     { name: getText('dashboard'), icon: "📊", key: "Dashboard" },
@@ -373,12 +366,6 @@ End of Report
             <h1>Annual Reports</h1>
           </div>
           <div className="header-actions">
-            <button 
-              className="analytics-btn"
-              onClick={() => setShowAnalyticsReport(true)}
-            >
-              📈 Dashboard & Analytics
-            </button>
             <button className="export-btn" onClick={handleExportPDF}>
               📄 Export PDF
             </button>
@@ -540,6 +527,162 @@ End of Report
                 ))}
               </div>
             </div>
+          </div>
+
+          {/* ── CHARTS ROW ── */}
+          <div className="extra-charts-row">
+
+            {/* 2D Line Graph — Monthly Revenue vs Expenses */}
+            <div className="extra-chart-card">
+              <h3 className="extra-chart-title">📈 Monthly Revenue vs Expenses</h3>
+              {(() => {
+                const W = 420, H = 200, padL = 48, padB = 28, padT = 16, padR = 16;
+                const innerW = W - padL - padR;
+                const innerH = H - padT - padB;
+                const maxVal = Math.max(...monthlyData.map(d => Math.max(d.sales, d.purchases)), 1);
+                const xStep = innerW / (monthlyData.length - 1 || 1);
+                const toX = i => padL + i * xStep;
+                const toY = v => padT + innerH - (v / maxVal) * innerH;
+                const salesPts = monthlyData.map((d, i) => `${toX(i)},${toY(d.sales)}`).join(' ');
+                const purchPts = monthlyData.map((d, i) => `${toX(i)},${toY(d.purchases)}`).join(' ');
+                const gridLines = [0, 0.25, 0.5, 0.75, 1].map(f => Math.round(maxVal * f));
+                return (
+                  <svg viewBox={`0 0 ${W} ${H}`} className="line-chart-svg">
+                    {/* grid */}
+                    {gridLines.map(v => (
+                      <g key={v}>
+                        <line x1={padL} y1={toY(v)} x2={W - padR} y2={toY(v)} stroke="#e5e7eb" strokeWidth="1"/>
+                        <text x={padL - 4} y={toY(v) + 4} fontSize="9" fill="#9ca3af" textAnchor="end">
+                          {v >= 1000 ? `${(v/1000).toFixed(0)}k` : v}
+                        </text>
+                      </g>
+                    ))}
+                    {/* area fills */}
+                    <polygon
+                      points={`${padL},${padT + innerH} ${salesPts} ${W - padR},${padT + innerH}`}
+                      fill="rgba(74,158,255,0.12)"
+                    />
+                    <polygon
+                      points={`${padL},${padT + innerH} ${purchPts} ${W - padR},${padT + innerH}`}
+                      fill="rgba(245,158,11,0.12)"
+                    />
+                    {/* lines */}
+                    <polyline fill="none" stroke="#4a9eff" strokeWidth="2.5" strokeLinejoin="round" points={salesPts}/>
+                    <polyline fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinejoin="round" points={purchPts}/>
+                    {/* dots */}
+                    {monthlyData.map((d, i) => (
+                      <g key={d.month}>
+                        <circle cx={toX(i)} cy={toY(d.sales)} r="3.5" fill="#4a9eff"/>
+                        <circle cx={toX(i)} cy={toY(d.purchases)} r="3.5" fill="#f59e0b"/>
+                        <text x={toX(i)} y={H - 4} fontSize="9" fill="#6b7280" textAnchor="middle">{d.month}</text>
+                      </g>
+                    ))}
+                  </svg>
+                );
+              })()}
+              <div className="extra-chart-legend">
+                <span className="ecl-dot" style={{ background: '#4a9eff' }}/><span>Revenue</span>
+                <span className="ecl-dot" style={{ background: '#f59e0b' }}/><span>Expenses</span>
+              </div>
+            </div>
+
+            {/* Pie Chart — Customer Revenue Share */}
+            <div className="extra-chart-card">
+              <h3 className="extra-chart-title">🥧 Customer Revenue Share</h3>
+              {(() => {
+                const PIE_COLORS = ['#4a9eff','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899'];
+                const total = topCustomers.reduce((s, c) => s + c.revenue, 0) || 0;
+                const cx = 110, cy = 110, R = 80, innerR = 46;
+
+                if (total === 0) {
+                  return (
+                    <div className="pie-empty">
+                      <svg viewBox="0 0 220 220" className="donut-svg-main">
+                        <circle cx={cx} cy={cy} r={R} fill="#f3f4f6"/>
+                        <circle cx={cx} cy={cy} r={innerR} fill="white"/>
+                        <text x={cx} y={cy + 5} textAnchor="middle" fontSize="13" fill="#9ca3af">No data</text>
+                      </svg>
+                    </div>
+                  );
+                }
+
+                let cumAngle = -Math.PI / 2;
+                const slices = topCustomers.map((c, i) => {
+                  const angle = (c.revenue / total) * 2 * Math.PI;
+                  const startA = cumAngle;
+                  cumAngle += angle;
+                  const endA = cumAngle;
+                  const x1 = cx + R * Math.cos(startA);
+                  const y1 = cy + R * Math.sin(startA);
+                  const x2 = cx + R * Math.cos(endA);
+                  const y2 = cy + R * Math.sin(endA);
+                  const ix1 = cx + innerR * Math.cos(endA);
+                  const iy1 = cy + innerR * Math.sin(endA);
+                  const ix2 = cx + innerR * Math.cos(startA);
+                  const iy2 = cy + innerR * Math.sin(startA);
+                  const large = angle > Math.PI ? 1 : 0;
+                  const midA = startA + angle / 2;
+                  const labelR = R * 0.68;
+                  const lx = cx + labelR * Math.cos(midA);
+                  const ly = cy + labelR * Math.sin(midA);
+                  const pct = (c.revenue / total) * 100;
+                  return {
+                    d: `M${x1},${y1} A${R},${R} 0 ${large},1 ${x2},${y2} L${ix1},${iy1} A${innerR},${innerR} 0 ${large},0 ${ix2},${iy2} Z`,
+                    color: PIE_COLORS[i % PIE_COLORS.length],
+                    name: c.name, revenue: c.revenue,
+                    pct: pct.toFixed(1), lx, ly, showLabel: pct >= 5
+                  };
+                });
+
+                return (
+                  <div className="donut-layout">
+                    <svg viewBox="0 0 220 220" className="donut-svg-main">
+                      <defs>
+                        {slices.map((s, i) => (
+                          <filter key={i} id={`shadow-${i}`} x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor={s.color} floodOpacity="0.35"/>
+                          </filter>
+                        ))}
+                      </defs>
+                      {slices.map((s, i) => (
+                        <path key={i} d={s.d} fill={s.color}
+                          stroke="white" strokeWidth="2"
+                          filter={`url(#shadow-${i})`}
+                          className="donut-slice"
+                        />
+                      ))}
+                      {/* center hole label */}
+                      <circle cx={cx} cy={cy} r={innerR - 2} fill="white"/>
+                      <text x={cx} y={cy - 8} textAnchor="middle" fontSize="10" fill="#9ca3af" fontWeight="500">Total</text>
+                      <text x={cx} y={cy + 10} textAnchor="middle" fontSize="13" fill="#1f2937" fontWeight="800">
+                        {topCustomers.length}
+                      </text>
+                      <text x={cx} y={cy + 24} textAnchor="middle" fontSize="9" fill="#9ca3af">customers</text>
+                      {/* slice % labels */}
+                      {slices.filter(s => s.showLabel).map((s, i) => (
+                        <text key={i} x={s.lx} y={s.ly} textAnchor="middle" dominantBaseline="middle"
+                          fontSize="9" fontWeight="700" fill="white">
+                          {s.pct}%
+                        </text>
+                      ))}
+                    </svg>
+
+                    <div className="donut-legend-grid">
+                      {slices.map((s, i) => (
+                        <div key={i} className="donut-legend-item">
+                          <span className="donut-legend-dot" style={{ background: s.color }}/>
+                          <div className="donut-legend-text">
+                            <span className="donut-legend-name">{s.name}</span>
+                            <span className="donut-legend-val">{s.pct}%</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+
           </div>
             </>
           )}
