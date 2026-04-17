@@ -1,273 +1,171 @@
-import { useState, useRef, useEffect } from "react";
-import "./AIChatbot.css";
-import { sendMessageToGemini, getQuickResponse } from "./geminiService";
+import { useState, useRef, useEffect } from 'react';
+import './AIChatbot.css';
+import { getAIResponse, isAIConfigured } from './geminiService';
 
-const AIChatbot = ({ isOpen, onClose, user }) => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      type: "bot",
-      content: "Hello! I'm your AI business assistant for bizBuddy. I can help you with sales, purchases, inventory management, customer relations, and business analytics. How can I assist you today?",
-      timestamp: new Date()
-    }
-  ]);
-  const [inputMessage, setInputMessage] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const [isConnected, setIsConnected] = useState(true);
-  const messagesEndRef = useRef(null);
+const SUGGESTIONS = [
+  'How to create a sale?',
+  'How to add a customer?',
+  'How to add an item?',
+  'How to view reports?',
+  'How to record a purchase?',
+  'How to change currency?',
+];
 
+function AIChatbot({ isOpen, onClose }) {
+  const [messages, setMessages]   = useState([]);
+  const [input, setInput]         = useState('');
+  const [isTyping, setIsTyping]   = useState(false);
+  const [isOnline]                = useState(isAIConfigured());
+  const endRef                    = useRef(null);
 
-
-  const chatbotTips = [
-    {
-      title: "Be Specific with Your Questions",
-      description: "The more detail you provide, the better the AI can understand your request and offer precise answers."
-    },
-    {
-      title: "Use Keywords for Quicker Results",
-      description: "Mention key terms related to your query, like \"invoice,\" \"sales report,\" or \"expense categories.\""
-    },
-    {
-      title: "Ask Follow-Up Questions",
-      description: "Don't hesitate to ask for clarification or additional information on any topic."
-    },
-    {
-      title: "Try Different Phrasing",
-      description: "If you don't get the answer you're looking for, try rephrasing your question."
-    }
-  ];
-
-  const faqs = [
-    {
-      question: "What can the AI assistant help me with?",
-      answer: "I can help with sales management, invoice creation, inventory tracking, customer management, purchase orders, and business analytics."
-    },
-    {
-      question: "How do I create a new invoice?",
-      answer: "Go to the Sales section and click 'Create New Invoice'. Select a customer, add items, and I can guide you through the process."
-    },
-    {
-      question: "Can you access my business data?",
-      answer: "Yes, I can help analyze your sales, purchases, inventory, and customer data to provide insights and answer questions."
-    },
-    {
-      question: "Is the AI assistant available 24/7?",
-      answer: "Yes, I'm available 24/7 to help with your business queries and provide guidance on using bizBuddy features."
-    }
-  ];
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
+  // Scroll to bottom on new message
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    endRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isTyping]);
 
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+  // Welcome message on first open
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+      setMessages([{
+        id: 1,
+        role: 'bot',
+        text: "👋 Hi! I'm your **bizBuddy AI Assistant** powered by Llama 3!\n\nI can help you with sales, purchases, inventory, customers, reports, and settings.\n\nWhat would you like to know? 😊",
+        time: new Date(),
+      }]);
+    }
+  }, [isOpen]);
 
-    const userMessage = {
-      id: Date.now(),
-      type: "user",
-      content: inputMessage,
-      timestamp: new Date()
-    };
+  function addMessage(role, text) {
+    setMessages(prev => [...prev, {
+      id: Date.now() + Math.random(),
+      role,
+      text,
+      time: new Date(),
+    }]);
+  }
 
-    setMessages(prev => [...prev, userMessage]);
-    const currentInput = inputMessage;
-    setInputMessage("");
+  async function sendMessage(textArg) {
+    const text = (textArg !== undefined ? textArg : input).trim();
+    if (!text || isTyping) return;
+
+    addMessage('user', text);
+    setInput('');
     setIsTyping(true);
 
     try {
-      console.log('🚀 Starting message send process');
-      
-      // Check for quick responses first
-      const quickResponse = getQuickResponse(currentInput);
-      if (quickResponse) {
-        console.log('⚡ Using quick response');
-        setTimeout(() => {
-          const aiResponse = {
-            id: Date.now() + 1,
-            type: "bot",
-            content: quickResponse,
-            timestamp: new Date()
-          };
-          setMessages(prev => [...prev, aiResponse]);
-          setIsTyping(false);
-          setIsConnected(true);
-        }, 800);
-        return;
-      }
-
-      console.log('🤖 Calling Gemini API');
-      
-      // Get conversation history (last 5 messages for context)
-      const conversationHistory = messages.slice(-5);
-      
-      // Call Gemini API with simple message
-      const result = await sendMessageToGemini(currentInput, conversationHistory);
-      
-      console.log('📨 API Result:', result);
-      
-      let responseContent;
-      if (result.success) {
-        responseContent = result.response;
-        setIsConnected(true);
-        console.log('✅ API call successful');
-      } else {
-        responseContent = result.fallbackResponse || "I apologize, but I'm having trouble processing your request right now. Please try again.";
-        setIsConnected(false);
-        console.error('❌ API call failed:', result.error);
-      }
-
-      const aiResponse = {
-        id: Date.now() + 1,
-        type: "bot",
-        content: responseContent,
-        timestamp: new Date()
-      };
-
-      setMessages(prev => [...prev, aiResponse]);
-      
-    } catch (error) {
-      console.error('💥 Error in handleSendMessage:', error);
-      const errorResponse = {
-        id: Date.now() + 1,
-        type: "bot",
-        content: "I'm sorry, I encountered an error while processing your message. Please try again.",
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, errorResponse]);
-      setIsConnected(false);
+      const reply = await getAIResponse(text);
+      addMessage('bot', reply);
+    } catch (err) {
+      addMessage('bot', `⚠️ Sorry, something went wrong:\n${err.message}`);
     } finally {
       setIsTyping(false);
-      console.log('🏁 Message send process completed');
     }
-  };
+  }
 
-
-
-  const handleKeyPress = (e) => {
+  function handleKeyDown(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage();
+      sendMessage();
     }
-  };
+  }
+
+  function formatTime(d) {
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // Render bold text (**word**)
+  function renderText(text) {
+    return text.split('\n').map((line, i) => {
+      const parts = line.split(/\*\*(.+?)\*\*/g);
+      return (
+        <div key={i} className={line === '' ? 'msg-spacer' : ''}>
+          {parts.map((part, j) =>
+            j % 2 === 1 ? <strong key={j}>{part}</strong> : part
+          )}
+        </div>
+      );
+    });
+  }
 
   if (!isOpen) return null;
 
   return (
-    <div className="chatbot-overlay">
-      <div className="chatbot-container">
+    <div className="cb-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="cb-window">
+
         {/* Header */}
-        <div className="chatbot-header">
-          <div className="chatbot-title">
-            <div className="ai-icon">🤖</div>
+        <div className="cb-header">
+          <div className="cb-header-left">
+            <div className="cb-avatar">🤖</div>
             <div>
-              <h3>AI Business Assistant</h3>
-              <span className={`status ${isConnected ? 'online' : 'offline'}`}>
-                {isConnected ? 'Online' : 'Reconnecting...'}
-              </span>
-            </div>
-          </div>
-          <button className="close-btn" onClick={onClose}>✕</button>
-        </div>
-
-        {/* Main Content */}
-        <div className="chatbot-content">
-          {/* Chat Messages */}
-          <div className="chat-section">
-            <div className="messages-container">
-              {messages.map((message) => (
-                <div key={message.id} className={`message ${message.type}`}>
-                  <div className="message-content">
-                    {message.content.split('\n').map((line, index) => (
-                      <div key={index}>{line}</div>
-                    ))}
-                  </div>
-                  <div className="message-time">
-                    {message.timestamp.toLocaleTimeString([], { 
-                      hour: '2-digit', 
-                      minute: '2-digit' 
-                    })}
-                  </div>
-                </div>
-              ))}
-              
-              {isTyping && (
-                <div className="message bot typing">
-                  <div className="message-content">
-                    <div className="typing-indicator">
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                    </div>
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-
-
-
-            {/* Input */}
-            <div className="chat-input-container">
-              <textarea
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Type your message here..."
-                className="chat-input"
-                rows="1"
-              />
-              <button 
-                className="send-btn" 
-                onClick={handleSendMessage}
-                disabled={!inputMessage.trim()}
-              >
-                📤
-              </button>
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="chatbot-sidebar">
-            {/* Tips Section */}
-            <div className="sidebar-section">
-              <h4>Chatbot Tips</h4>
-              <div className="tips-list">
-                {chatbotTips.map((tip, index) => (
-                  <div key={index} className="tip-item">
-                    <div className="tip-title">{tip.title}</div>
-                    <div className="tip-description">{tip.description}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* FAQs Section */}
-            <div className="sidebar-section">
-              <h4>FAQs</h4>
-              <div className="faqs-list">
-                {faqs.map((faq, index) => (
-                  <details key={index} className="faq-item">
-                    <summary className="faq-question">{faq.question}</summary>
-                    <div className="faq-answer">{faq.answer}</div>
-                  </details>
-                ))}
+              <div className="cb-title">bizBuddy Assistant</div>
+              <div className={`cb-status ${isOnline ? 'online' : 'offline'}`}>
+                <span className="cb-dot" />
+                {isOnline ? 'Online · Llama 3 AI' : 'Offline'}
               </div>
             </div>
           </div>
+          <button className="cb-close" onClick={onClose} aria-label="Close chat">✕</button>
         </div>
 
-        {/* Footer */}
-        <div className="chatbot-footer">
-          <span>© 2025 Smart Business Management. All rights reserved.</span>
+        {/* Messages */}
+        <div className="cb-messages">
+          {messages.map(msg => (
+            <div key={msg.id} className={`cb-msg cb-msg--${msg.role}`}>
+              {msg.role === 'bot' && <div className="cb-msg-avatar">🤖</div>}
+              <div className="cb-msg-body">
+                <div className="cb-msg-bubble">{renderText(msg.text)}</div>
+                <div className="cb-msg-time">{formatTime(msg.time)}</div>
+              </div>
+            </div>
+          ))}
+
+          {isTyping && (
+            <div className="cb-msg cb-msg--bot">
+              <div className="cb-msg-avatar">🤖</div>
+              <div className="cb-msg-body">
+                <div className="cb-msg-bubble cb-typing">
+                  <span /><span /><span />
+                </div>
+              </div>
+            </div>
+          )}
+          <div ref={endRef} />
         </div>
+
+        {/* Suggestions */}
+        {messages.length <= 1 && (
+          <div className="cb-suggestions">
+            {SUGGESTIONS.map((s, i) => (
+              <button key={i} className="cb-chip" onClick={() => sendMessage(s)}>{s}</button>
+            ))}
+          </div>
+        )}
+
+        {/* Input */}
+        <div className="cb-input-row">
+          <textarea
+            className="cb-input"
+            rows={1}
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Ask anything about bizBuddy..."
+            disabled={isTyping}
+          />
+          <button
+            className="cb-send"
+            onClick={() => sendMessage()}
+            disabled={!input.trim() || isTyping}
+            aria-label="Send message"
+          >
+            Send
+          </button>
+        </div>
+
       </div>
     </div>
   );
-};
+}
 
 export default AIChatbot;
