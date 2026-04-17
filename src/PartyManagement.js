@@ -6,6 +6,7 @@ import LoadingSkeleton from "./LoadingSkeleton";
 import CSVImport from "./CSVImport";
 import { useToast } from "./Toast";
 import { useConfirm } from "./ConfirmDialog";
+import { handleNumericKeyPress } from "./utils/validation";
 
 const PartyManagement = ({ user, onLogout, onNavigate }) => {
   const { formatCurrency, getText, formatDate } = useSettings();
@@ -115,7 +116,18 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
 
     try {
       const { updateParty } = await import('./supabaseClient');
-      const result = await updateParty(editingParty.id, editFormData, user.id);
+      
+      // Convert snake_case to camelCase for updateParty function
+      const updateData = {
+        name: editFormData.name,
+        partyType: editFormData.party_type,
+        email: editFormData.email,
+        phone: editFormData.phone,
+        address: editFormData.address,
+        creditLimit: editFormData.credit_limit
+      };
+      
+      const result = await updateParty(editingParty.id, updateData, user.id);
       
       if (result.success) {
         toast.success("Party updated successfully!");
@@ -402,9 +414,11 @@ const PartyManagement = ({ user, onLogout, onNavigate }) => {
                   type="number"
                   value={editFormData.credit_limit}
                   onChange={(e) => setEditFormData({...editFormData, credit_limit: parseFloat(e.target.value) || 0})}
+                  onKeyDown={handleNumericKeyPress}
                   placeholder="Enter credit limit"
                   step="0.01"
                   min="0"
+                  max="1000000"
                 />
               </div>
 

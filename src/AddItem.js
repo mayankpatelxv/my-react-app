@@ -4,6 +4,7 @@ import { addItem } from "./supabaseClient";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
 import { useToast } from "./Toast";
+import { validateNumericInput, handleNumericKeyPress, handleIntegerKeyPress } from "./utils/validation";
 const AddItem = ({ user, onLogout, onNavigate }) => {
   const { getText } = useSettings();
   const toast = useToast();
@@ -82,6 +83,56 @@ const AddItem = ({ user, onLogout, onNavigate }) => {
         setError("Please fill in all required fields");
         setIsLoading(false);
         return;
+      }
+
+      // Validate price
+      const priceValidation = validateNumericInput(formData.price, {
+        min: 0,
+        fieldName: "Price"
+      });
+      if (!priceValidation.isValid) {
+        setError(priceValidation.error);
+        setIsLoading(false);
+        return;
+      }
+
+      // Validate stock level
+      const stockValidation = validateNumericInput(formData.stockLevel, {
+        min: 0,
+        allowDecimal: false,
+        fieldName: "Stock Level"
+      });
+      if (!stockValidation.isValid) {
+        setError(stockValidation.error);
+        setIsLoading(false);
+        return;
+      }
+
+      // Validate min stock level if provided
+      if (formData.minStockLevel) {
+        const minStockValidation = validateNumericInput(formData.minStockLevel, {
+          min: 0,
+          allowDecimal: false,
+          fieldName: "Minimum Stock Level"
+        });
+        if (!minStockValidation.isValid) {
+          setError(minStockValidation.error);
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // Validate weight if provided
+      if (formData.weight) {
+        const weightValidation = validateNumericInput(formData.weight, {
+          min: 0,
+          fieldName: "Weight"
+        });
+        if (!weightValidation.isValid) {
+          setError(weightValidation.error);
+          setIsLoading(false);
+          return;
+        }
       }
 
       // Save to Supabase
@@ -267,6 +318,7 @@ const AddItem = ({ user, onLogout, onNavigate }) => {
                     name="price"
                     value={formData.price}
                     onChange={handleInputChange}
+                    onKeyDown={handleNumericKeyPress}
                     placeholder="0.00"
                     min="0"
                     step="0.01"
@@ -282,6 +334,7 @@ const AddItem = ({ user, onLogout, onNavigate }) => {
                     name="stockLevel"
                     value={formData.stockLevel}
                     onChange={handleInputChange}
+                    onKeyDown={handleIntegerKeyPress}
                     placeholder="0"
                     min="0"
                     required
@@ -342,6 +395,7 @@ const AddItem = ({ user, onLogout, onNavigate }) => {
                     name="minStockLevel"
                     value={formData.minStockLevel}
                     onChange={handleInputChange}
+                    onKeyDown={handleIntegerKeyPress}
                     placeholder="10"
                     min="0"
                   />
@@ -389,6 +443,7 @@ const AddItem = ({ user, onLogout, onNavigate }) => {
                     name="weight"
                     value={formData.weight}
                     onChange={handleInputChange}
+                    onKeyDown={handleNumericKeyPress}
                     placeholder="0.5"
                     min="0"
                     step="0.01"

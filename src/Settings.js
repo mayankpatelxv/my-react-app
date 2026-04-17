@@ -2,15 +2,18 @@ import { useState } from "react";
 import "./Settings.css";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
+import { getItems, getParties, getSales, getPurchases, deleteAllUserData } from "./supabaseClient";
+import { useToast } from "./Toast";
 
 const Settings = ({ onBack, user, onLogout, onNavigate }) => {
   const { settings, updateSetting, getText } = useSettings();
   const [activeSection, setActiveSection] = useState('general');
+  const toast = useToast();
+  const [isExporting, setIsExporting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const settingSections = [
     { id: 'general', name: 'General', icon: '⚙️' },
-    { id: 'appearance', name: 'Appearance', icon: '🎨' },
-    { id: 'notifications', name: 'Notifications', icon: '🔔' },
     { id: 'data', name: 'Data & Privacy', icon: '🔒' },
     { id: 'about', name: 'About', icon: 'ℹ️' }
   ];
@@ -91,114 +94,142 @@ const Settings = ({ onBack, user, onLogout, onNavigate }) => {
     </div>
   );
 
-  const renderAppearanceSettings = () => (
-    <div className="settings-content">
-      <h3>Appearance Settings</h3>
+  // Data & Privacy handlers
+  const handleExportData = async () => {
+    if (!user?.id) {
+      toast.error("User not authenticated");
+      return;
+    }
+
+    setIsExporting(true);
+    try {
+      // Fetch all data
+      const [itemsRes, partiesRes, salesRes, purchasesRes] = await Promise.all([
+        getItems(user.id),
+        getParties(user.id),
+        getSales(user.id),
+        getPurchases(user.id)
+      ]);
+
+      const exportData = {
+        exportDate: new Date().toISOString(),
+        userId: user.id,
+        userEmail: user.email,
+        items: itemsRes.success ? itemsRes.data : [],
+        parties: partiesRes.success ? partiesRes.data : [],
+        sales: salesRes.success ? salesRes.data : [],
+        purchases: purchasesRes.success ? purchasesRes.data : []
+      };
+
+      // Create and download JSON file
+      const dataStr = JSON.stringify(exportData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `bizbuddy-export-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success("Data exported successfully!");
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Failed to export data");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleImportData = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        
+        // Validate data structure
+        if (!data.items && !data.parties && !data.sales && !data.purchases) {
+          toast.error("Invalid data format");
+          return;
+        }
+
+        toast.info("Import functionality coming soon! Data structure validated.");
+        console.log("Import data:", data);
+      } catch (error) {
+        console.error("Import error:", error);
+        toast.error("Failed to import data. Invalid JSON file.");
+      }
+    };
+    input.click();
+  };
+
+  const handleClearCache = () => {
+    try {
+      // Clear localStorage except user session
+      const keysToKeep = ['supabase.auth.token'];
+      const allKeys = Object.keys(localStorage);
       
-      <div className="setting-group">
-        <label className="setting-label">Theme</label>
-        <div className="theme-options">
-          <div 
-            className={`theme-option ${settings.theme === 'light' ? 'active' : ''}`}
-            onClick={() => updateSetting('theme', 'light')}
-          >
-            <div className="theme-preview light-preview">
-              <div className="preview-header"></div>
-              <div className="preview-content"></div>
-            </div>
-            <span>Light</span>
-          </div>
-          <div 
-            className={`theme-option ${settings.theme === 'dark' ? 'active' : ''}`}
-            onClick={() => updateSetting('theme', 'dark')}
-          >
-            <div className="theme-preview dark-preview">
-              <div className="preview-header"></div>
-              <div className="preview-content"></div>
-            </div>
-            <span>Dark</span>
-          </div>
-          <div 
-            className={`theme-option ${settings.theme === 'auto' ? 'active' : ''}`}
-            onClick={() => updateSetting('theme', 'auto')}
-          >
-            <div className="theme-preview auto-preview">
-              <div className="preview-header"></div>
-              <div className="preview-content"></div>
-            </div>
-            <span>Auto</span>
-          </div>
-        </div>
-      </div>
+      allKeys.forEach(key => {
+        if (!keysToKeep.some(keepKey => key.includes(keepKey))) {
+          localStorage.removeItem(key);
+        }
+      });
 
-      <div className="setting-group">
-        <div className="setting-toggle">
-          <label className="setting-label">Compact View</label>
-          <div className="toggle-switch">
-            <input 
-              type="checkbox" 
-              checked={settings.compactView}
-              onChange={(e) => {
-                console.log('Toggle clicked, new value:', e.target.checked); // Debug log
-                updateSetting('compactView', e.target.checked);
-              }}
-            />
-            <span className="toggle-slider"></span>
-          </div>
-        </div>
-        <p className="setting-description">
-          Use smaller spacing and compact layouts
-          {settings.compactView && <span style={{color: '#10b981', fontWeight: 'bold'}}> (Currently Active)</span>}
-        </p>
-      </div>
-    </div>
-  );
+      // Clear sessionStorage
+      sessionStorage.clear();
 
-  const renderNotificationSettings = () => (
-    <div className="settings-content">
-      <h3>Notification Settings</h3>
+      toast.success("Cache cleared successfully!");
+    } catch (error) {
+      console.error("Clear cache error:", error);
+      toast.error("Failed to clear cache");
+    }
+  };
+
+  const handleDeleteAllData = async () => {
+    const confirmed = window.confirm(
+      "⚠️ WARNING: This will permanently delete ALL your data including items, parties, sales, and purchases. This action CANNOT be undone!\n\nType 'DELETE' in the next prompt to confirm."
+    );
+
+    if (!confirmed) return;
+
+    const confirmText = window.prompt("Type 'DELETE' to confirm:");
+    if (confirmText !== 'DELETE') {
+      toast.info("Deletion cancelled");
+      return;
+    }
+
+    if (!user?.id) {
+      toast.error("User not authenticated");
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const result = await deleteAllUserData(user.id);
       
-      <div className="setting-group">
-        <div className="setting-toggle">
-          <label className="setting-label">Enable Notifications</label>
-          <div className="toggle-switch">
-            <input 
-              type="checkbox" 
-              checked={settings.notifications}
-              onChange={(e) => updateSetting('notifications', e.target.checked)}
-            />
-            <span className="toggle-slider"></span>
-          </div>
-        </div>
-        <p className="setting-description">Receive notifications for important updates</p>
-      </div>
-
-      <div className="notification-types">
-        <h4>Notification Types</h4>
-        <div className="notification-item">
-          <span>📧 Email Notifications</span>
-          <div className="toggle-switch small">
-            <input type="checkbox" defaultChecked />
-            <span className="toggle-slider"></span>
-          </div>
-        </div>
-        <div className="notification-item">
-          <span>💰 Payment Reminders</span>
-          <div className="toggle-switch small">
-            <input type="checkbox" defaultChecked />
-            <span className="toggle-slider"></span>
-          </div>
-        </div>
-        <div className="notification-item">
-          <span>📊 Report Updates</span>
-          <div className="toggle-switch small">
-            <input type="checkbox" defaultChecked />
-            <span className="toggle-slider"></span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+      if (result.success) {
+        toast.success("All data deleted successfully");
+        // Optionally redirect to dashboard
+        setTimeout(() => {
+          onNavigate("Dashboard");
+        }, 2000);
+      } else {
+        toast.error("Failed to delete data: " + result.error);
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("Failed to delete data");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const renderDataSettings = () => (
     <div className="settings-content">
@@ -208,33 +239,55 @@ const Settings = ({ onBack, user, onLogout, onNavigate }) => {
         <div className="data-action-item">
           <div className="action-info">
             <h4>Export Data</h4>
-            <p>Download all your business data</p>
+            <p>Download all your business data as JSON</p>
           </div>
-          <button className="action-btn primary">Export</button>
+          <button 
+            className="action-btn primary" 
+            onClick={handleExportData}
+            disabled={isExporting}
+          >
+            {isExporting ? "Exporting..." : "Export"}
+          </button>
         </div>
         
         <div className="data-action-item">
           <div className="action-info">
             <h4>Import Data</h4>
-            <p>Import data from other systems</p>
+            <p>Import data from JSON file</p>
           </div>
-          <button className="action-btn secondary">Import</button>
+          <button 
+            className="action-btn secondary"
+            onClick={handleImportData}
+          >
+            Import
+          </button>
         </div>
         
         <div className="data-action-item">
           <div className="action-info">
             <h4>Clear Cache</h4>
-            <p>Clear temporary files and cache</p>
+            <p>Clear temporary files and cached data</p>
           </div>
-          <button className="action-btn secondary">Clear</button>
+          <button 
+            className="action-btn secondary"
+            onClick={handleClearCache}
+          >
+            Clear
+          </button>
         </div>
         
         <div className="data-action-item danger">
           <div className="action-info">
             <h4>Delete All Data</h4>
-            <p>Permanently delete all your data</p>
+            <p>Permanently delete all your business data</p>
           </div>
-          <button className="action-btn danger">Delete</button>
+          <button 
+            className="action-btn danger"
+            onClick={handleDeleteAllData}
+            disabled={isDeleting}
+          >
+            {isDeleting ? "Deleting..." : "Delete"}
+          </button>
         </div>
       </div>
     </div>
@@ -272,8 +325,6 @@ const Settings = ({ onBack, user, onLogout, onNavigate }) => {
   const renderContent = () => {
     switch (activeSection) {
       case 'general': return renderGeneralSettings();
-      case 'appearance': return renderAppearanceSettings();
-      case 'notifications': return renderNotificationSettings();
       case 'data': return renderDataSettings();
       case 'about': return renderAboutSettings();
       default: return renderGeneralSettings();

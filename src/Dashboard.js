@@ -262,11 +262,10 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
               <div className="action-card-icon"><IconAI /></div>
               <div className="action-card-content">
                 <h4>AI Assistant</h4>
-                <p>Get business insights</p>
+                <p>Get instant help & guidance</p>
               </div>
               <div className="action-arrow">→</div>
-            </div>
-          </div>
+            </div>          </div>
         </div>
 
         {/* ── BOTTOM SECTION ── */}
@@ -395,12 +394,8 @@ const Dashboard = ({ user, onLogout, onNavigate }) => {
 
       </div>
 
-      {/* AI Chatbot */}
-      <AIChatbot
-        isOpen={isChatbotOpen}
-        onClose={() => setIsChatbotOpen(false)}
-        user={user}
-      />
+      <AIChatbot isOpen={isChatbotOpen} onClose={() => setIsChatbotOpen(false)} />
+
     </div>
   );
 };

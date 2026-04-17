@@ -1145,3 +1145,48 @@ export const testStorageBucket = async () => {
     return { success: false, error: err.message };
   }
 };
+
+
+// Delete all user data
+export const deleteAllUserData = async (userId) => {
+  try {
+    // Delete in order: sale_items, sales, purchase_items, purchases, items, parties
+    
+    // 1. Delete sale items (via sales foreign key cascade)
+    const { error: salesError } = await supabase
+      .from('sales')
+      .delete()
+      .eq('user_id', userId);
+    
+    if (salesError) throw salesError;
+
+    // 2. Delete purchase items (via purchases foreign key cascade)
+    const { error: purchasesError } = await supabase
+      .from('purchases')
+      .delete()
+      .eq('user_id', userId);
+    
+    if (purchasesError) throw purchasesError;
+
+    // 3. Delete items
+    const { error: itemsError } = await supabase
+      .from('items')
+      .delete()
+      .eq('user_id', userId);
+    
+    if (itemsError) throw itemsError;
+
+    // 4. Delete parties
+    const { error: partiesError } = await supabase
+      .from('parties')
+      .delete()
+      .eq('user_id', userId);
+    
+    if (partiesError) throw partiesError;
+
+    return { success: true };
+  } catch (err) {
+    console.error("Error deleting all user data:", err);
+    return { success: false, error: err.message };
+  }
+};

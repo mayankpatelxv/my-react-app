@@ -6,6 +6,7 @@ import BizBuddyLogo from "./BizBuddyLogo";
 import PurchasesList from "./PurchasesList";
 import LoadingSkeleton from "./LoadingSkeleton";
 import { useToast } from "./Toast";
+import { handleNumericKeyPress, handleIntegerKeyPress, validateNumericInput } from "./utils/validation";
 
 const Purchases = ({ user, onLogout, onNavigate }) => {
   const { formatCurrency, getText, formatDate } = useSettings();
@@ -551,6 +552,7 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
                               type="number"
                               value={item.quantity}
                               onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                              onKeyDown={handleIntegerKeyPress}
                               min="0"
                               className="quantity-input"
                             />
@@ -560,6 +562,7 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
                               type="number"
                               value={item.unitCost}
                               onChange={(e) => handleUnitCostChange(item.id, e.target.value)}
+                              onKeyDown={handleNumericKeyPress}
                               min="0"
                               step="0.01"
                               className="unit-cost-input"

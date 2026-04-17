@@ -75,8 +75,18 @@ export const SettingsProvider = ({ children }) => {
       JPY: '¥'
     };
 
+    const locales = {
+      USD: 'en-US',
+      EUR: 'de-DE',
+      GBP: 'en-GB',
+      INR: 'en-IN',
+      JPY: 'ja-JP'
+    };
+
     const symbol = currencySymbols[settings.currency] || '$';
-    const formattedAmount = new Intl.NumberFormat('en-US', {
+    const locale = locales[settings.currency] || 'en-US';
+    
+    const formattedAmount = new Intl.NumberFormat(locale, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(amount);

@@ -62,7 +62,7 @@ const LandingPage = ({ onGetStarted }) => {
     { icon: '💰', title: 'Sales & Invoicing',  desc: 'Create professional invoices, track payments and manage your sales pipeline.', color: '#f59e0b', bg: '#fef3c7' },
     { icon: '📦', title: 'Inventory Control',  desc: 'Track stock levels in real-time with low-stock alerts and category management.', color: '#10b981', bg: '#dcfce7' },
     { icon: '👥', title: 'Party Management',   desc: 'Unified customer & supplier database with full transaction history.', color: '#3b82f6', bg: '#dbeafe' },
-    { icon: '🤖', title: 'AI Assistant',       desc: 'Ask business questions in plain English and get instant Gemini-powered insights.', color: '#8b5cf6', bg: '#ede9fe' },
+    { icon: '📊', title: 'Analytics Dashboard', desc: 'Get instant business insights with visual charts and financial summaries.', color: '#8b5cf6', bg: '#ede9fe' },
     { icon: '📈', title: 'Annual Reports',     desc: 'Detailed financial reports with charts, export to PDF and trend analysis.', color: '#ec4899', bg: '#fce7f3' },
   ];
 
@@ -75,10 +75,6 @@ const LandingPage = ({ onGetStarted }) => {
           <div className="nav-brand">
             <div className="brand-logo"><span className="logo-text">BB</span></div>
             <span className="brand-name">BizzBuddy</span>
-          </div>
-          <div className="nav-links-center">
-            <a href="#features" className="nav-link">Features</a>
-            <a href="#preview"  className="nav-link">Preview</a>
           </div>
           <button className="nav-btn login" onClick={onGetStarted}>Get Started →</button>
         </div>
@@ -224,12 +220,6 @@ const LandingPage = ({ onGetStarted }) => {
               </div>
             </div>
           </div>
-
-          <div className="preview-cta">
-            <button className="btn-primary btn-glow" onClick={onGetStarted}>
-              Try It Free — Start Now →
-            </button>
-          </div>
         </div>
       </section>
 
@@ -244,41 +234,6 @@ const LandingPage = ({ onGetStarted }) => {
           </button>
         </div>
       </section>
-
-      {/* ── FOOTER ── */}
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-content">
-            <div className="footer-brand">
-              <div className="footer-logo-row">
-                <div className="brand-logo"><span className="logo-text">BB</span></div>
-                <span className="brand-name footer-brand-name">BizzBuddy</span>
-              </div>
-              <p className="footer-description">
-                The smart business management platform for modern entrepreneurs.
-              </p>
-              <div className="footer-social">
-                <a href="mailto:support@bizzbuddy.com" className="social-link" title="Email">📧</a>
-                <a href="tel:+1234567890"              className="social-link" title="Phone">📞</a>
-              </div>
-            </div>
-            <div className="footer-links">
-              <div className="footer-section">
-                <h4>Product</h4>
-                <a href="#features" onClick={e => { e.preventDefault(); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); }}>Features</a>
-                <a href="#preview"  onClick={e => { e.preventDefault(); document.getElementById('preview')?.scrollIntoView({ behavior: 'smooth' }); }}>Preview</a>
-              </div>
-              <div className="footer-section">
-                <h4>Support</h4>
-                <a href="mailto:support@bizzbuddy.com">Contact Us</a>
-              </div>
-            </div>
-          </div>
-          <div className="footer-bottom">
-            <p className="footer-copyright">© 2026 BizzBuddy. All rights reserved. Made with ❤️ for entrepreneurs.</p>
-          </div>
-        </div>
-      </footer>
 
     </div>
   );

@@ -6,6 +6,7 @@ import BizBuddyLogo from "./BizBuddyLogo";
 import jsPDF from 'jspdf';
 import LoadingSkeleton from "./LoadingSkeleton";
 import { useToast } from "./Toast";
+import { handleNumericKeyPress, handleIntegerKeyPress, validateNumericInput } from "./utils/validation";
 
 const Sales = ({ user, onLogout, onNavigate }) => {
   const { formatCurrency, getText, formatDate } = useSettings();
@@ -330,8 +331,8 @@ const Sales = ({ user, onLogout, onNavigate }) => {
         
         doc.text(item.name.substring(0, 35), 25, currentY + 2);
         doc.text(item.quantity.toString(), 110, currentY + 2);
-        doc.text(`$${item.price.toFixed(2)}`, 130, currentY + 2);
-        doc.text(`$${lineTotal.toFixed(2)}`, 160, currentY + 2);
+        doc.text(formatCurrency(item.price), 130, currentY + 2);
+        doc.text(formatCurrency(lineTotal), 160, currentY + 2);
         
         currentY += 12;
       });
@@ -348,17 +349,17 @@ const Sales = ({ user, onLogout, onNavigate }) => {
       
       // Subtotal
       doc.text("Subtotal:", 130, totalsY);
-      doc.text(`$${subtotal.toFixed(2)}`, 160, totalsY);
+      doc.text(formatCurrency(subtotal), 160, totalsY);
       
       // Discount
       if (discount > 0) {
         doc.text("Discount:", 130, totalsY + 10);
-        doc.text(`-$${discount.toFixed(2)}`, 160, totalsY + 10);
+        doc.text(`-${formatCurrency(discount)}`, 160, totalsY + 10);
       }
       
       // Tax
       doc.text(`Tax (${taxRate}%):`, 130, totalsY + (discount > 0 ? 20 : 10));
-      doc.text(`$${tax.toFixed(2)}`, 160, totalsY + (discount > 0 ? 20 : 10));
+      doc.text(formatCurrency(tax), 160, totalsY + (discount > 0 ? 20 : 10));
       
       // Grand Total
       doc.setFontSize(12);
@@ -371,7 +372,7 @@ const Sales = ({ user, onLogout, onNavigate }) => {
       
       doc.setTextColor(255, 255, 255);
       doc.text("Total:", 130, totalY + 2);
-      doc.text(`$${grandTotal.toFixed(2)}`, 160, totalY + 2);
+      doc.text(formatCurrency(grandTotal), 160, totalY + 2);
       
       // Footer
       doc.setFont("helvetica", "normal");
@@ -522,8 +523,8 @@ const Sales = ({ user, onLogout, onNavigate }) => {
         
         doc.text(item.name.substring(0, 35), 25, currentY + 2);
         doc.text(item.quantity.toString(), 110, currentY + 2);
-        doc.text(`$${item.price.toFixed(2)}`, 130, currentY + 2);
-        doc.text(`$${lineTotal.toFixed(2)}`, 160, currentY + 2);
+        doc.text(formatCurrency(item.price), 130, currentY + 2);
+        doc.text(formatCurrency(lineTotal), 160, currentY + 2);
         
         currentY += 12;
       });
@@ -540,17 +541,17 @@ const Sales = ({ user, onLogout, onNavigate }) => {
       
       // Subtotal
       doc.text("Subtotal:", 130, totalsY);
-      doc.text(`$${subtotal.toFixed(2)}`, 160, totalsY);
+      doc.text(formatCurrency(subtotal), 160, totalsY);
       
       // Discount
       if (discount > 0) {
         doc.text("Discount:", 130, totalsY + 10);
-        doc.text(`-$${discount.toFixed(2)}`, 160, totalsY + 10);
+        doc.text(`-${formatCurrency(discount)}`, 160, totalsY + 10);
       }
       
       // Tax
       doc.text(`Tax (${taxRate}%):`, 130, totalsY + (discount > 0 ? 20 : 10));
-      doc.text(`$${tax.toFixed(2)}`, 160, totalsY + (discount > 0 ? 20 : 10));
+      doc.text(formatCurrency(tax), 160, totalsY + (discount > 0 ? 20 : 10));
       
       // Grand Total
       doc.setFontSize(12);
@@ -563,7 +564,7 @@ const Sales = ({ user, onLogout, onNavigate }) => {
       
       doc.setTextColor(255, 255, 255);
       doc.text("Total:", 130, totalY + 2);
-      doc.text(`$${grandTotal.toFixed(2)}`, 160, totalY + 2);
+      doc.text(formatCurrency(grandTotal), 160, totalY + 2);
       
       // Footer
       doc.setFont("helvetica", "normal");
@@ -742,6 +743,7 @@ const Sales = ({ user, onLogout, onNavigate }) => {
                                 type="number"
                                 value={item.price}
                                 onChange={(e) => handleItemChange(item.id, 'price', parseFloat(e.target.value) || 0)}
+                                onKeyDown={handleNumericKeyPress}
                                 min="0"
                                 step="0.01"
                                 className="price-input"
@@ -752,6 +754,7 @@ const Sales = ({ user, onLogout, onNavigate }) => {
                                 type="number"
                                 value={item.quantity}
                                 onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                                onKeyDown={handleIntegerKeyPress}
                                 min="0"
                                 className="quantity-input"
                               />
@@ -797,7 +800,11 @@ const Sales = ({ user, onLogout, onNavigate }) => {
                     type="number"
                     id="taxRate"
                     value={taxRate}
-                    onChange={(e) => setTaxRate(parseFloat(e.target.value) || 0)}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value) || 0;
+                      setTaxRate(Math.min(100, Math.max(0, val)));
+                    }}
+                    onKeyDown={handleNumericKeyPress}
                     min="0"
                     max="100"
                     step="0.1"
@@ -810,7 +817,11 @@ const Sales = ({ user, onLogout, onNavigate }) => {
                     type="number"
                     id="additionalDiscount"
                     value={additionalDiscount}
-                    onChange={(e) => setAdditionalDiscount(parseFloat(e.target.value) || 0)}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value) || 0;
+                      setAdditionalDiscount(Math.max(0, val));
+                    }}
+                    onKeyDown={handleNumericKeyPress}
                     min="0"
                     step="0.01"
                     className="discount-input"

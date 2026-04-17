@@ -3,6 +3,7 @@ import "./RegisterPage.css";
 import { addUser, signInWithGoogle } from "./supabaseClient";
 import BizBuddyLogo from "./BizBuddyLogo";
 import { useToast } from "./Toast";
+import { validatePassword, validateEmail } from "./utils/validation";
 
 const RegisterPage = ({ onSwitchToLogin }) => {
   const toast = useToast();
@@ -27,30 +28,54 @@ const RegisterPage = ({ onSwitchToLogin }) => {
   const handleRegister = async (e) => {
     e.preventDefault();
     
+    // Clear previous errors
+    setErrors({});
+    
+    // Validate all fields
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
       setErrors({ submit: "Please fill in all fields" });
       return;
     }
 
+    // Validate email
+    const emailValidation = validateEmail(formData.email);
+    if (!emailValidation.isValid) {
+      setErrors({ submit: emailValidation.error });
+      return;
+    }
+
+    // Validate password
+    const passwordValidation = validatePassword(formData.password);
+    if (!passwordValidation.isValid) {
+      setErrors({ 
+        submit: "Password requirements not met:",
+        passwordErrors: passwordValidation.errors 
+      });
+      return;
+    }
+
+    // Check password match
     if (formData.password !== formData.confirmPassword) {
       setErrors({ submit: "Passwords do not match" });
       return;
     }
 
+    // Check terms agreement
     if (!agreeToTerms) {
       setErrors({ submit: "Please agree to the Terms of Service and Privacy Policy" });
       return;
     }
     
     setIsLoading(true);
-    setErrors({});
 
     try {
-      const result = await addUser(
-        formData.email,
-        formData.password,
-        `${formData.firstName} ${formData.lastName}`
-      );
+      const result = await addUser({
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        password: formData.password,
+        first_name: formData.firstName,
+        last_name: formData.lastName
+      });
 
       if (result.success) {
         toast.success("Registration successful! Please log in.");
@@ -159,7 +184,16 @@ const RegisterPage = ({ onSwitchToLogin }) => {
             {errors.submit && (
               <div className="error-alert">
                 <span className="error-icon">⚠️</span>
-                {errors.submit}
+                <div>
+                  {errors.submit}
+                  {errors.passwordErrors && (
+                    <ul style={{ marginTop: '8px', paddingLeft: '20px', fontSize: '0.9em' }}>
+                      {errors.passwordErrors.map((err, idx) => (
+                        <li key={idx}>{err}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             )}
 

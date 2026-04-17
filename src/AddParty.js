@@ -3,6 +3,7 @@ import "./AddParty.css";
 import { useSettings } from "./SettingsContext";
 import BizBuddyLogo from "./BizBuddyLogo";
 import { useToast } from "./Toast";
+import { validateEmail, validatePhone, validateNumericInput, formatPhoneNumber, handleNumericKeyPress, handleIntegerKeyPress } from "./utils/validation";
 const AddParty = ({ user, onLogout, onNavigate }) => {
   const { getText } = useSettings();
   const toast = useToast();
@@ -36,10 +37,20 @@ const AddParty = ({ user, onLogout, onNavigate }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    // Format phone number as user types
+    if (name === 'phone') {
+      const formatted = formatPhoneNumber(value);
+      setFormData(prev => ({
+        ...prev,
+        [name]: formatted
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -47,6 +58,38 @@ const AddParty = ({ user, onLogout, onNavigate }) => {
     setIsLoading(true);
     
     try {
+      // Validate email
+      const emailValidation = validateEmail(formData.email);
+      if (!emailValidation.isValid) {
+        toast.warning(emailValidation.error);
+        setIsLoading(false);
+        return;
+      }
+
+      // Validate phone if provided
+      if (formData.phone) {
+        const phoneValidation = validatePhone(formData.phone);
+        if (!phoneValidation.isValid) {
+          toast.warning(phoneValidation.error);
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // Validate credit limit if provided
+      if (formData.creditLimit) {
+        const creditValidation = validateNumericInput(formData.creditLimit, {
+          min: 0,
+          max: 1000000,
+          fieldName: "Credit Limit"
+        });
+        if (!creditValidation.isValid) {
+          toast.warning(creditValidation.error);
+          setIsLoading(false);
+          return;
+        }
+      }
+
       // Import the addParty function
       const { addParty } = await import('./supabaseClient');
       
@@ -196,7 +239,6 @@ const AddParty = ({ user, onLogout, onNavigate }) => {
                   >
                     <option value="Customer">Customer</option>
                     <option value="Supplier">Supplier</option>
-                    <option value="Both">Both (Customer & Supplier)</option>
                   </select>
                 </div>
 
@@ -292,7 +334,9 @@ const AddParty = ({ user, onLogout, onNavigate }) => {
                     name="zipCode"
                     value={formData.zipCode}
                     onChange={handleInputChange}
+                    onKeyDown={handleIntegerKeyPress}
                     placeholder="10001"
+                    maxLength="10"
                   />
                 </div>
 
@@ -343,8 +387,10 @@ const AddParty = ({ user, onLogout, onNavigate }) => {
                     name="creditLimit"
                     value={formData.creditLimit}
                     onChange={handleInputChange}
+                    onKeyDown={handleNumericKeyPress}
                     placeholder="10000"
                     min="0"
+                    max="1000000"
                     step="0.01"
                   />
                 </div>
