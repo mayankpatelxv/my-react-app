@@ -16,8 +16,6 @@ const Sales = ({ user, onLogout, onNavigate }) => {
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const [taxRate, setTaxRate] = useState(10);
-  const [additionalDiscount, setAdditionalDiscount] = useState(0);
-  const [confirmInventoryUpdate, setConfirmInventoryUpdate] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   
   // Data from database
@@ -94,7 +92,7 @@ const Sales = ({ user, onLogout, onNavigate }) => {
   };
 
   const calculateDiscount = () => {
-    return additionalDiscount;
+    return 0;
   };
 
   const calculateTax = () => {
@@ -184,7 +182,7 @@ const Sales = ({ user, onLogout, onNavigate }) => {
         subtotal: calculateSubtotal(),
         taxRate: taxRate,
         taxAmount: calculateTax(),
-        discountAmount: calculateDiscount(),
+        discountAmount: 0,
         totalAmount: calculateGrandTotal(),
         status: 'draft',
         paymentTerms: null,
@@ -198,34 +196,32 @@ const Sales = ({ user, onLogout, onNavigate }) => {
         const invoiceNum = result.data.sale.invoice_number;
         toast.success(`Invoice saved! Invoice #${invoiceNum}`);
 
-        // Deduct stock for each sold item
-        if (confirmInventoryUpdate) {
-          for (const soldItem of items) {
-            if (!soldItem.itemId) continue;
-            const sourceItem = availableItems.find(ai => ai.id === soldItem.itemId);
-            if (!sourceItem) continue;
-            const newStock = Math.max(0, sourceItem.stock_level - soldItem.quantity);
-            await updateItem(soldItem.itemId, {
-              name: sourceItem.name,
-              category: sourceItem.category,
-              unit: sourceItem.unit,
-              price: sourceItem.price,
-              stockLevel: newStock,
-              minStockLevel: sourceItem.min_stock_level,
-              description: sourceItem.description,
-              sku: sourceItem.sku,
-              barcode: sourceItem.barcode,
-              supplier: sourceItem.supplier,
-              location: sourceItem.location,
-              weight: sourceItem.weight,
-              dimensions: sourceItem.dimensions,
-              notes: sourceItem.notes,
-            }, user.id);
-          }
-          // Refresh available items so stock shows updated values
-          const refreshed = await getItems(user.id);
-          if (refreshed.success) setAvailableItems(refreshed.data);
+        // Automatically deduct stock for each sold item
+        for (const soldItem of items) {
+          if (!soldItem.itemId) continue;
+          const sourceItem = availableItems.find(ai => ai.id === soldItem.itemId);
+          if (!sourceItem) continue;
+          const newStock = Math.max(0, sourceItem.stock_level - soldItem.quantity);
+          await updateItem(soldItem.itemId, {
+            name: sourceItem.name,
+            category: sourceItem.category,
+            unit: sourceItem.unit,
+            price: sourceItem.price,
+            stockLevel: newStock,
+            minStockLevel: sourceItem.min_stock_level,
+            description: sourceItem.description,
+            sku: sourceItem.sku,
+            barcode: sourceItem.barcode,
+            supplier: sourceItem.supplier,
+            location: sourceItem.location,
+            weight: sourceItem.weight,
+            dimensions: sourceItem.dimensions,
+            notes: sourceItem.notes,
+          }, user.id);
         }
+        // Refresh available items so stock shows updated values
+        const refreshed = await getItems(user.id);
+        if (refreshed.success) setAvailableItems(refreshed.data);
 
         // Show browser notification
         if ("Notification" in window && Notification.permission === "granted") {
@@ -237,7 +233,6 @@ const Sales = ({ user, onLogout, onNavigate }) => {
         
         // Reset form
         setItems([]);
-        setAdditionalDiscount(0);
         setTaxRate(10);
         
         // Optionally navigate to a sales list or dashboard
@@ -253,16 +248,100 @@ const Sales = ({ user, onLogout, onNavigate }) => {
     }
   };
 
-  const handlePrintInvoice = () => {
+  // Helper function to validate and save invoice before other actions
+  const validateAndSaveInvoice = async () => {
     if (!selectedCustomer) {
-      toast.warning("Please select a customer first.");
-      return;
+      toast.warning("Please select a customer.");
+      return false;
     }
     
     if (items.length === 0) {
-      toast.warning("Please add at least one item to print invoice.");
-      return;
+      toast.warning("Please add at least one item to the invoice.");
+      return false;
     }
+    
+    if (items.some(item => item.quantity <= 0)) {
+      toast.warning("All items must have a quantity greater than 0.");
+      return false;
+    }
+
+    if (items.some(item => !item.itemId)) {
+      toast.warning("Please select an item for all rows.");
+      return false;
+    }
+
+    try {
+      const saleData = {
+        customerName: selectedCustomer,
+        customerId: selectedCustomerId,
+        subtotal: calculateSubtotal(),
+        taxRate: taxRate,
+        taxAmount: calculateTax(),
+        discountAmount: 0,
+        totalAmount: calculateGrandTotal(),
+        status: 'draft',
+        paymentTerms: null,
+        notes: null,
+        invoiceDate: new Date().toISOString().split('T')[0]
+      };
+
+      const result = await createSaleWithItems(saleData, items, user.id);
+      
+      if (result.success) {
+        const invoiceNum = result.data.sale.invoice_number;
+        toast.success(`Invoice saved! Invoice #${invoiceNum}`);
+
+        // Automatically deduct stock for each sold item
+        for (const soldItem of items) {
+          if (!soldItem.itemId) continue;
+          const sourceItem = availableItems.find(ai => ai.id === soldItem.itemId);
+          if (!sourceItem) continue;
+          const newStock = Math.max(0, sourceItem.stock_level - soldItem.quantity);
+          await updateItem(soldItem.itemId, {
+            name: sourceItem.name,
+            category: sourceItem.category,
+            unit: sourceItem.unit,
+            price: sourceItem.price,
+            stockLevel: newStock,
+            minStockLevel: sourceItem.min_stock_level,
+            description: sourceItem.description,
+            sku: sourceItem.sku,
+            barcode: sourceItem.barcode,
+            supplier: sourceItem.supplier,
+            location: sourceItem.location,
+            weight: sourceItem.weight,
+            dimensions: sourceItem.dimensions,
+            notes: sourceItem.notes,
+          }, user.id);
+        }
+        // Refresh available items so stock shows updated values
+        const refreshed = await getItems(user.id);
+        if (refreshed.success) setAvailableItems(refreshed.data);
+
+        // Show browser notification
+        if ("Notification" in window && Notification.permission === "granted") {
+          new Notification("Invoice Created", {
+            body: `Invoice #${invoiceNum} for ${selectedCustomer} - ${formatCurrency(calculateGrandTotal())}`,
+            icon: "/logo192.png"
+          });
+        }
+        
+        return true;
+      } else {
+        toast.error("Failed to save invoice: " + result.error);
+        return false;
+      }
+    } catch (error) {
+      console.error("Error saving invoice:", error);
+      toast.error("Failed to save invoice. Please try again.");
+      return false;
+    }
+  };
+
+  const handlePrintInvoice = async () => {
+    // Auto-save invoice first
+    const saved = await validateAndSaveInvoice();
+    if (!saved) return;
 
     try {
       // Create new PDF document
@@ -340,7 +419,6 @@ const Sales = ({ user, onLogout, onNavigate }) => {
       // Totals Section
       const totalsY = currentY + 10;
       const subtotal = calculateSubtotal();
-      const discount = calculateDiscount();
       const tax = calculateTax();
       const grandTotal = calculateGrandTotal();
       
@@ -351,21 +429,15 @@ const Sales = ({ user, onLogout, onNavigate }) => {
       doc.text("Subtotal:", 130, totalsY);
       doc.text(formatCurrency(subtotal), 160, totalsY);
       
-      // Discount
-      if (discount > 0) {
-        doc.text("Discount:", 130, totalsY + 10);
-        doc.text(`-${formatCurrency(discount)}`, 160, totalsY + 10);
-      }
-      
       // Tax
-      doc.text(`Tax (${taxRate}%):`, 130, totalsY + (discount > 0 ? 20 : 10));
-      doc.text(formatCurrency(tax), 160, totalsY + (discount > 0 ? 20 : 10));
+      doc.text(`Tax (${taxRate}%):`, 130, totalsY + 10);
+      doc.text(formatCurrency(tax), 160, totalsY + 10);
       
       // Grand Total
       doc.setFontSize(12);
       doc.setTextColor(31, 41, 55);
       doc.setFont("helvetica", "bold");
-      const totalY = totalsY + (discount > 0 ? 35 : 25);
+      const totalY = totalsY + 25;
       
       doc.setFillColor(102, 126, 234);
       doc.rect(125, totalY - 5, 65, 12, 'F');
@@ -399,20 +471,14 @@ const Sales = ({ user, onLogout, onNavigate }) => {
     }
   };
 
-  const handleWhatsAppShare = () => {
-    if (!selectedCustomer) {
-      toast.warning("Please select a customer first.");
-      return;
-    }
-    if (items.length === 0) {
-      toast.warning("Please add at least one item to share.");
-      return;
-    }
+  const handleWhatsAppShare = async () => {
+    // Auto-save invoice first
+    const saved = await validateAndSaveInvoice();
+    if (!saved) return;
 
     const invoiceNumber = `INV-${Date.now().toString().slice(-6)}`;
     const currentDate = new Date().toLocaleDateString('en-IN');
     const subtotal = calculateSubtotal();
-    const discount = calculateDiscount();
     const tax = calculateTax();
     const grandTotal = calculateGrandTotal();
 
@@ -427,7 +493,6 @@ const Sales = ({ user, onLogout, onNavigate }) => {
     message += `Customer: ${selectedCustomer}\n\n`;
     message += `*Items:*\n${itemLines}\n\n`;
     message += `Subtotal: ${formatCurrency(subtotal)}\n`;
-    if (discount > 0) message += `Discount: -${formatCurrency(discount)}\n`;
     message += `Tax (${taxRate}%): ${formatCurrency(tax)}\n`;
     message += `*Total: ${formatCurrency(grandTotal)}*\n\n`;
     message += `_Thank you for your business!_\n— BizBuddy`;
@@ -445,16 +510,10 @@ const Sales = ({ user, onLogout, onNavigate }) => {
     toast.success("Opening WhatsApp...");
   };
 
-  const handleDownloadPDF = () => {
-    if (!selectedCustomer) {
-      toast.warning("Please select a customer first.");
-      return;
-    }
-    
-    if (items.length === 0) {
-      toast.warning("Please add at least one item to generate PDF.");
-      return;
-    }
+  const handleDownloadPDF = async () => {
+    // Auto-save invoice first
+    const saved = await validateAndSaveInvoice();
+    if (!saved) return;
 
     try {
       // Create new PDF document
@@ -532,7 +591,6 @@ const Sales = ({ user, onLogout, onNavigate }) => {
       // Totals Section
       const totalsY = currentY + 10;
       const subtotal = calculateSubtotal();
-      const discount = calculateDiscount();
       const tax = calculateTax();
       const grandTotal = calculateGrandTotal();
       
@@ -543,21 +601,15 @@ const Sales = ({ user, onLogout, onNavigate }) => {
       doc.text("Subtotal:", 130, totalsY);
       doc.text(formatCurrency(subtotal), 160, totalsY);
       
-      // Discount
-      if (discount > 0) {
-        doc.text("Discount:", 130, totalsY + 10);
-        doc.text(`-${formatCurrency(discount)}`, 160, totalsY + 10);
-      }
-      
       // Tax
-      doc.text(`Tax (${taxRate}%):`, 130, totalsY + (discount > 0 ? 20 : 10));
-      doc.text(formatCurrency(tax), 160, totalsY + (discount > 0 ? 20 : 10));
+      doc.text(`Tax (${taxRate}%):`, 130, totalsY + 10);
+      doc.text(formatCurrency(tax), 160, totalsY + 10);
       
       // Grand Total
       doc.setFontSize(12);
       doc.setTextColor(31, 41, 55);
       doc.setFont("helvetica", "bold");
-      const totalY = totalsY + (discount > 0 ? 35 : 25);
+      const totalY = totalsY + 25;
       
       doc.setFillColor(102, 126, 234);
       doc.rect(125, totalY - 5, 65, 12, 'F');
@@ -733,7 +785,7 @@ const Sales = ({ user, onLogout, onNavigate }) => {
                                 <option value="">Select item...</option>
                                 {availableItems.map(availableItem => (
                                   <option key={availableItem.id} value={availableItem.id}>
-                                    {availableItem.name} - ${availableItem.price}
+                                    {availableItem.name} - {formatCurrency(availableItem.price)}
                                   </option>
                                 ))}
                               </select>
@@ -811,33 +863,6 @@ const Sales = ({ user, onLogout, onNavigate }) => {
                     className="tax-input"
                   />
                 </div>
-                <div className="form-group">
-                  <label htmlFor="additionalDiscount">Additional Discount ($)</label>
-                  <input
-                    type="number"
-                    id="additionalDiscount"
-                    value={additionalDiscount}
-                    onChange={(e) => {
-                      const val = parseFloat(e.target.value) || 0;
-                      setAdditionalDiscount(Math.max(0, val));
-                    }}
-                    onKeyDown={handleNumericKeyPress}
-                    min="0"
-                    step="0.01"
-                    className="discount-input"
-                  />
-                </div>
-                <div className="form-group full-width">
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={confirmInventoryUpdate}
-                      onChange={(e) => setConfirmInventoryUpdate(e.target.checked)}
-                      className="checkbox-input"
-                    />
-                    <span className="checkbox-text">Confirm inventory update upon saving</span>
-                  </label>
-                </div>
               </div>
             </div>
           </div>
@@ -850,10 +875,6 @@ const Sales = ({ user, onLogout, onNavigate }) => {
                 <div className="summary-row">
                   <span className="summary-label">Subtotal:</span>
                   <span className="summary-value">{formatCurrency(calculateSubtotal())}</span>
-                </div>
-                <div className="summary-row discount">
-                  <span className="summary-label">Total Item Discount:</span>
-                  <span className="summary-value">-{formatCurrency(calculateDiscount())}</span>
                 </div>
                 <div className="summary-row">
                   <span className="summary-label">Tax ({taxRate}%):</span>

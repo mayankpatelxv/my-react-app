@@ -59,12 +59,6 @@ const RegisterPage = ({ onSwitchToLogin }) => {
       setErrors({ submit: "Passwords do not match" });
       return;
     }
-
-    // Check terms agreement
-    if (!agreeToTerms) {
-      setErrors({ submit: "Please agree to the Terms of Service and Privacy Policy" });
-      return;
-    }
     
     setIsLoading(true);
 
@@ -153,16 +147,6 @@ const RegisterPage = ({ onSwitchToLogin }) => {
                 <p>Set and achieve your business objectives faster</p>
               </div>
             </div>
-          </div>
-
-          <div className="auth-footer-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Contact</a>
-          </div>
-
-          <div className="copyright">
-            © 2025 bizBuddy. All rights reserved.
           </div>
         </div>
       </div>
@@ -291,18 +275,6 @@ const RegisterPage = ({ onSwitchToLogin }) => {
                   {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
                 </button>
               </div>
-            </div>
-
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
-                id="terms"
-                checked={agreeToTerms}
-                onChange={(e) => setAgreeToTerms(e.target.checked)}
-              />
-              <label htmlFor="terms">
-                I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
-              </label>
             </div>
 
             <button 

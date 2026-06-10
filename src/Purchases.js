@@ -542,7 +542,7 @@ const Purchases = ({ user, onLogout, onNavigate }) => {
                               <option value="">Select item...</option>
                               {availableItems.map(availableItem => (
                                 <option key={availableItem.id} value={availableItem.id}>
-                                  {availableItem.name} - ${availableItem.price || 0}
+                                  {availableItem.name} - {formatCurrency(availableItem.price || 0)}
                                 </option>
                               ))}
                             </select>

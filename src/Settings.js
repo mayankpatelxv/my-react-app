@@ -76,21 +76,6 @@ const Settings = ({ onBack, user, onLogout, onNavigate }) => {
           <option value="12h">12 Hour (AM/PM)</option>
         </select>
       </div>
-
-      <div className="setting-group">
-        <div className="setting-toggle">
-          <label className="setting-label">Auto Save</label>
-          <div className="toggle-switch">
-            <input 
-              type="checkbox" 
-              checked={settings.autoSave}
-              onChange={(e) => updateSetting('autoSave', e.target.checked)}
-            />
-            <span className="toggle-slider"></span>
-          </div>
-        </div>
-        <p className="setting-description">Automatically save changes as you work</p>
-      </div>
     </div>
   );
 
@@ -139,56 +124,6 @@ const Settings = ({ onBack, user, onLogout, onNavigate }) => {
       toast.error("Failed to export data");
     } finally {
       setIsExporting(false);
-    }
-  };
-
-  const handleImportData = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      try {
-        const text = await file.text();
-        const data = JSON.parse(text);
-        
-        // Validate data structure
-        if (!data.items && !data.parties && !data.sales && !data.purchases) {
-          toast.error("Invalid data format");
-          return;
-        }
-
-        toast.info("Import functionality coming soon! Data structure validated.");
-        console.log("Import data:", data);
-      } catch (error) {
-        console.error("Import error:", error);
-        toast.error("Failed to import data. Invalid JSON file.");
-      }
-    };
-    input.click();
-  };
-
-  const handleClearCache = () => {
-    try {
-      // Clear localStorage except user session
-      const keysToKeep = ['supabase.auth.token'];
-      const allKeys = Object.keys(localStorage);
-      
-      allKeys.forEach(key => {
-        if (!keysToKeep.some(keepKey => key.includes(keepKey))) {
-          localStorage.removeItem(key);
-        }
-      });
-
-      // Clear sessionStorage
-      sessionStorage.clear();
-
-      toast.success("Cache cleared successfully!");
-    } catch (error) {
-      console.error("Clear cache error:", error);
-      toast.error("Failed to clear cache");
     }
   };
 
@@ -250,32 +185,6 @@ const Settings = ({ onBack, user, onLogout, onNavigate }) => {
           </button>
         </div>
         
-        <div className="data-action-item">
-          <div className="action-info">
-            <h4>Import Data</h4>
-            <p>Import data from JSON file</p>
-          </div>
-          <button 
-            className="action-btn secondary"
-            onClick={handleImportData}
-          >
-            Import
-          </button>
-        </div>
-        
-        <div className="data-action-item">
-          <div className="action-info">
-            <h4>Clear Cache</h4>
-            <p>Clear temporary files and cached data</p>
-          </div>
-          <button 
-            className="action-btn secondary"
-            onClick={handleClearCache}
-          >
-            Clear
-          </button>
-        </div>
-        
         <div className="data-action-item danger">
           <div className="action-info">
             <h4>Delete All Data</h4>
@@ -303,20 +212,61 @@ const Settings = ({ onBack, user, onLogout, onNavigate }) => {
         </div>
         <h2>bizBuddy</h2>
         <p className="version">Version 1.0.0</p>
-        <p className="description">
-          Your smart business support system for managing sales, purchases, 
-          inventory, and generating comprehensive business reports.
-        </p>
         
-        <div className="about-links">
-          <a href="#" className="about-link">📄 Terms of Service</a>
-          <a href="#" className="about-link">🔒 Privacy Policy</a>
-          <a href="#" className="about-link">❓ Help & Support</a>
-          <a href="#" className="about-link">🐛 Report a Bug</a>
+        <div className="about-section">
+          <h3>📌 About Us</h3>
+          <p className="about-description">
+            We are a team of passionate developers from <strong>GLS University, Faculty of Computer Applications & Information Technology</strong>, 
+            pursuing <strong>Integrated MSc (IT)</strong>. Our project, <strong>"Smart Customer Support System for Small Businesses,"</strong> is designed 
+            to simplify and automate daily business operations using modern web technologies.
+          </p>
+          <p className="about-description">
+            This platform is built with <strong>React JS</strong> for the front-end and <strong>Supabase</strong> (PostgreSQL, Authentication, and Storage) 
+            for the back-end, ensuring a secure, scalable, and efficient system.
+          </p>
+          <p className="about-description">
+            Our goal is to help small and medium-sized businesses manage their operations more effectively by providing a centralized solution 
+            that includes user management, sales tracking, purchase handling, expense monitoring, and report generation.
+          </p>
+          <p className="about-description">
+            The system also integrates an <strong>intelligent AI Chatbot</strong> that provides real-time assistance, helping users navigate 
+            the platform and resolve business-related queries instantly.
+          </p>
+          <p className="about-description">
+            We believe in reducing manual work, minimizing errors, and enhancing productivity through automation and smart technology. 
+            Our solution also ensures secure document storage and provides insightful analytics through dashboards and reports, 
+            empowering businesses to make better decisions.
+          </p>
+        </div>
+
+        <div className="team-section">
+          <h3>👨‍💻 Our Team</h3>
+          <div className="team-members">
+            <div className="team-member">
+              <div className="member-avatar">👨‍💻</div>
+              <div className="member-name">Patel Mayank R</div>
+            </div>
+            <div className="team-member">
+              <div className="member-avatar">👨‍💻</div>
+              <div className="member-name">Patel Parv S</div>
+            </div>
+            <div className="team-member">
+              <div className="member-avatar">👨‍💻</div>
+              <div className="member-name">Patel Ark N</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mission-section">
+          <h3>🎯 Our Mission</h3>
+          <p className="mission-text">
+            To create a smart, user-friendly, and efficient digital platform that empowers businesses to manage their operations 
+            seamlessly while leveraging automation and AI for better productivity and growth.
+          </p>
         </div>
         
         <div className="copyright">
-          <p>© 2024 bizBuddy. All rights reserved.</p>
+          <p className="university">GLS University - Faculty of Computer Applications & IT</p>
         </div>
       </div>
     </div>

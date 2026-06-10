@@ -388,9 +388,6 @@ End of Report
                 <span className="metric-icon">💰</span>
               </div>
               <div className="metric-value">{formatCurrency(reportData.totalRevenue)}</div>
-              <div className="metric-change positive">
-                {formatPercentage(reportData.revenueGrowth)} vs last year
-              </div>
             </div>
 
             <div className="metric-card expenses">
@@ -399,9 +396,6 @@ End of Report
                 <span className="metric-icon">📊</span>
               </div>
               <div className="metric-value">{formatCurrency(reportData.totalExpenses)}</div>
-              <div className="metric-change negative">
-                {formatPercentage(reportData.expenseGrowth)} vs last year
-              </div>
             </div>
 
             <div className="metric-card profit">
@@ -410,9 +404,6 @@ End of Report
                 <span className="metric-icon">📈</span>
               </div>
               <div className="metric-value">{formatCurrency(reportData.netProfit)}</div>
-              <div className="metric-change positive">
-                {formatPercentage(reportData.profitGrowth)} vs last year
-              </div>
             </div>
 
             <div className="metric-card margin">
@@ -421,9 +412,6 @@ End of Report
                 <span className="metric-icon">📋</span>
               </div>
               <div className="metric-value">{reportData.profitMargin.toFixed(2)}%</div>
-              <div className="metric-change positive">
-                {formatPercentage(reportData.marginGrowth)} vs last year
-              </div>
             </div>
           </div>
 

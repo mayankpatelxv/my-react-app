@@ -738,3 +738,145 @@ body.compact-view .app-logo {
     font-size: 16px;
   }
 }
+
+
+/* About Section Styles */
+.about-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+  border-radius: 16px;
+  margin: 2rem 0;
+  color: white;
+}
+
+.about-section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.about-description {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.about-description strong {
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+/* Team Section */
+.team-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  margin: 2rem 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.team-section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+  text-align: center;
+}
+
+.team-members {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.team-member {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem 1rem;
+  border-radius: 16px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.team-member:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.member-avatar {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.member-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+}
+
+/* Mission Section */
+.mission-section {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  padding: 2rem;
+  border-radius: 16px;
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.mission-section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.mission-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: white;
+  font-weight: 500;
+}
+
+/* Copyright Section */
+.copyright {
+  text-align: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e2e8f0;
+}
+
+.copyright p {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+}
+
+.university {
+  color: #667eea;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .about-section,
+  .team-section,
+  .mission-section {
+    padding: 1.5rem;
+  }
+
+  .team-members {
+    grid-template-columns: 1fr;
+  }
+
+  .about-section h3,
+  .team-section h3,
+  .mission-section h3 {
+    font-size: 1.25rem;
+  }
+
+  .about-description,
+  .mission-text {
+    font-size: 0.95rem;
+  }
+}

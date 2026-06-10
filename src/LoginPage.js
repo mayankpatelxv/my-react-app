@@ -100,16 +100,6 @@ const LoginPage = ({ onSwitchToRegister, onLoginSuccess }) => {
               </div>
             </div>
           </div>
-
-          <div className="auth-footer-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Contact</a>
-          </div>
-
-          <div className="copyright">
-            © 2025 bizBuddy. All rights reserved.
-          </div>
         </div>
       </div>
 
