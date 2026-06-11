@@ -1,8 +1,9 @@
-// AI Service — Google Gemini API
-// Using Gemini 1.5 Flash for fast, intelligent responses
+// AI Service — Groq (Free AI, no credit card needed)
+// Sign up at https://console.groq.com to get your free API key
 
-const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
+const API_KEY = process.env.REACT_APP_GROQ_API_KEY;
+const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const MODEL   = 'llama-3.1-8b-instant'; // Current supported free model
 
 const SYSTEM_PROMPT = `You are bizBuddy Assistant 🤖 — a smart, friendly AI helper built into the bizBuddy business management app.
 
@@ -23,24 +24,23 @@ export function isAIConfigured() {
 
 export async function getAIResponse(userMessage) {
   if (!isAIConfigured()) {
-    throw new Error('API key not set. Please add REACT_APP_GEMINI_API_KEY to your .env.local file.');
+    throw new Error('API key not set. Please add REACT_APP_GROQ_API_KEY to your .env.local file.');
   }
 
   const res = await fetch(API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${API_KEY}`,
     },
     body: JSON.stringify({
-      contents: [{
-        parts: [{
-          text: `${SYSTEM_PROMPT}\n\nUser: ${userMessage}\n\nAssistant:`
-        }]
-      }],
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 800,
-      }
+      model: MODEL,
+      temperature: 0.7,
+      max_tokens: 800,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user',   content: userMessage },
+      ],
     }),
   });
 
@@ -50,7 +50,7 @@ export async function getAIResponse(userMessage) {
   }
 
   const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+  const text = data?.choices?.[0]?.message?.content?.trim();
   if (!text) throw new Error('Empty response from AI.');
   return text;
 }
